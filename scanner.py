@@ -2,5 +2,5 @@
 
 
 class Scanner:
-    def __init__(self, inputStream):
+    def __init__(self, inputStream=""):
         self.stream = inputStream
