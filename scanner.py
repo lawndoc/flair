@@ -2,4 +2,4 @@
 
 class Scanner:
     def __init__ (self, inputStream):
-        self.stream = inputStreams
+        self.stream = inputStream
