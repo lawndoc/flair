@@ -1,0 +1,101 @@
+Team: Malwareswaldo
++ positive example
+- negative example
+
+keyword
+    + program
+    + function
+    + return
+    + begin
+    + end
+    - main
+    - do
+
+semicolon
+    + ;
+
+colon
+    + :
+
+period
+    + .
+
+comma
+    + ,
+
+leftparen
+    + (
+
+rightparen
+    + )
+
+leftbracket
+    + {
+
+rightbracket
+    + }
+
+identifier
+    + hereIs
+    + a
+    + legal
+    + identifier
+    + ThisTOO
+    - 11notThis
+    - orThis.
+    - &this
+    - doesn't
+    - w0rk
+
+integer
+    + 0
+    + 12
+    + 9585
+    + -1
+    + -38
+    - 032
+    - 000001
+    - -0
+    - -012
+
+boolean
+    + true
+    + false
+
+arithmetic-operator
+    + +
+    + -
+    + *
+    + /
+    - %
+    - //
+
+boolean-operator
+    + and
+    + or
+    + not
+
+comparison-operator
+    + <
+    + =
+    - >
+    - <=
+
+type
+    + integer
+    + boolean
+    - character
+    - string
+    - float
+
+print-statement
+    + print
+
+statement
+    + if
+    + then
+    + else
+    - else if
+    - elif
+    - for
+    - while
