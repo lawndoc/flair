@@ -27,7 +27,6 @@ class Scanner:
         state = State.looking
         pos = 0
         while pos < len(program):
-
             if state == State.looking:
                 if program[pos].isspace():
                     pass
@@ -39,8 +38,6 @@ class Scanner:
                 elif program[pos] in '123456789':
                     accum = program[pos]
                     state = State.integer
-                elif program[pos] in 
-
             elif state == State.zero:
                 pass
             elif state == State.integer:
