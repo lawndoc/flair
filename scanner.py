@@ -1,112 +1,63 @@
 #!/usr/bin/python3
 
 from enum import Enum
+from token import *
+
+class State(Enum):
+    looking = 1
+    zero = 2
+    integer = 3
+    identifier = 4
+    self_delimeted = 5
+    keyword = 6
+    boolean = 7
+    type = 8
+    boolean_operator = 9
+    print_statement = 10
+    statement = 11
 
 class Scanner:
     def __init__(self, program=""):
         self.program = program
 
-class TokenType(Enum):
-    semicolon = 0
-    integer = 1
-    keyword = 2
-    period = 3
-    leftparen = 4
-    rightparen = 5
-    boolean = 6
-    operator = 7
-    type = 8
-    boolean_operator = 9
-    print_statement = 10
-    statement = 11
-    comparison = 12
-    comma = 13
-    colon = 14
-    leftbrace = 15
-    rightbrace = 16
-    identifier = 17
+    def scan(program):
+        tokens = []
+        accum = ''
 
+        state = State.looking
+        pos = 0
+        while pos < len(program):
 
-class Token:
-    def __init__(self, token_type, token_value=";"):
-        self.token_type = token_type
-        self.token_value = token_value
+            if state == State.looking:
+                if program[pos].isspace():
+                    pass
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.semicolon))
+                elif program[position] in '0':
+                    accum = program[pos]
+                    state = State.zero
+                elif program[pos] in '123456789':
+                    accum = program[pos]
+                    state = State.integer
+                elif program[pos] in 
 
-    def isInteger(self):
-        return self.token_type == TokenType.integer
-    def isSemicolon(self):
-        return self.token_type == TokenType.semicolon
-    def isKeyword(self):
-        return self.token_type == TokenType.keyword
-    def isPeriod(self):
-        return self.token_type == TokenType.period
-    def isLeftParen(self):
-        return self.token_type == TokenType.leftparen
-    def isRightParen(self):
-        return self.token_type == TokenType.rightparen
-    def isBoolean(self):
-        return self.token_type == TokenType.boolean
-    def isOperator(self):
-        return self.token_type == TokenType.operator
-    def isType(self):
-        return self.token_type == TokenType.type
-    def isBooleanOperator(self):
-        return self.token_type == TokenType.boolean_operator
-    def isPrintStatement(self):
-        return self.token_type == TokenType.print_statement
-    def isStatement(self):
-        return self.token_type == TokenType.statement
-    def isComparison(self):
-        return self.token_type == TokenType.comparison
-    def isComma(self):
-        return self.token_type == TokenType.comma
-    def isColon(self):
-        return self.token_type == TokenType.colon
-    def isLeftBrace(self):
-        return self.token_type == TokenType.leftbrace
-    def isRightBrace(self):
-        return self.token_type == TokenType.rightbrace
-    def isIdentifier(self):
-        return self.token_type == TokenType.identifier
-    def value(self):
-        return self.token_value
-
-
-
-    def __repr__(self):
-        if self.isInteger():
-            return "integer = " + str(self.token_value)
-        elif self.isSemicolon():
-            return "semicolon"
-        elif self.isKeyword():
-            return "keyword = " + str(self.token_value)
-        elif self.isPeriod():
-            return "period"
-        elif self.isLeftParen():
-            return "left parenthesis"
-        elif self.isRightParen():
-            return "right parenthesis"
-        elif self.isBoolean():
-            return "boolean = " + str(self.token_value)
-        elif self.isOperator():
-            return "operator = " + str(self.token_value)
-        elif self.isType():
-            return "type = " + str(self.token_value)
-        elif self.isBooleanOperator():
-            return "boolean operator = " + str(self.token_value)
-        elif self.isPrintStatement():
-            return "print statement"
-        elif self.isStatement():
-            return "statement = " + str(self.token_value)
-        elif self.isComparison():
-            return "comparison = " + str(self.token_value)
-        elif self.isComma():
-            return "comma"
-        elif self.isColon():
-            return "colon"
-        elif self.isLeftBrace():
-            return "left brace"
-        elif self.isRightBrace():
-            return "right brace"
-        elif self.isIdentifier():
-            return "identifier = " + str(self.token_value)
+            elif state == State.zero:
+                pass
+            elif state == State.integer:
+                pass
+            elif state == State.identifier:
+                pass
+            elif state == State.self_delimeted:
+                pass
+            elif state == State.keyword:
+                pass
+            elif state == State.boolean:
+                pass
+            elif state == State.type:
+                pass
+            elif state == State.boolean_operator:
+                pass
+            elif state == State.print_statement:
+                pass
+            elif state == State.statement:
+                pass
