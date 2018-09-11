@@ -1,3 +1,6 @@
+
+from enum import Enum
+
 class TokenType(Enum):
     semicolon = 0
     integer = 1
