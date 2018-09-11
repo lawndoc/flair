@@ -1,11 +1,3 @@
-#!/usr/bin/python3
-
-from enum import Enum
-
-class Scanner:
-    def __init__(self, program=""):
-        self.program = program
-
 class TokenType(Enum):
     semicolon = 0
     integer = 1
