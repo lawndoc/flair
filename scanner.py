@@ -31,8 +31,8 @@ class Scanner:
                 if program[pos].isspace():
                     pass
                 elif program[pos] == ';':
-                    tokens.append(Token(TokenType.semicolon))
-                elif program[position] in '0':
+                    tokens.append(Token(TokenType.semicolon, ";"))
+                elif program[pos] in '0':
                     accum = program[pos]
                     state = State.zero
                 elif program[pos] in '123456789':
