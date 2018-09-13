@@ -392,6 +392,7 @@ class Scanner:
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
                     raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # "fa" has been read... could be 'false' or an identifier
             elif state == State.false_state:
@@ -418,80 +419,294 @@ class Scanner:
 
             # 'p' has been read... could be 'print', 'program', or an identifier
             elif state == State.pr_state:
-                letters = ["r"]     # rest of 'pr...'
-                pass # to do
+                if program[pos] == 'i':
+                    accum += program[pos]
+                    state = State.print_state
+                elif program[pos] == 'o':
+                    accum += program[pos]
+                    state = State.program_state
+                elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
 
             # 'pri' has been read... could be 'print' or an identifier
             elif state == State.print_state:
                 letters = ["t","n"]     # rest of 'print'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.print_statement, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'pro' has been read... could be 'program' or an identifier
             elif state == State.program_state:
                 letters = ["m","a","r","g"]     # rest of 'program'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'e' has been read... could be 'end', 'else', or an identifier
             elif state == State.e_state:
-                pass # to do
+                if program[pos] == 'n':
+                    accum += program[pos]
+                    state = State.end_state
+                elif program[pos] == 'l':
+                    accum += program[pos]
+                    state = State.else_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'en' has been read... could be 'end' or an identifier
             elif state == State.end_state:
                 letters = ["d"]     # rest of 'end'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'el' has been read... could be 'else' or an identifier
             elif state == State.else_state:
                 letters = ["e","s"]     # rest of 'else'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.statement, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'b' has been read... could be 'begin', 'boolean', or an identifier
             elif state == State.b_state:
-                pass # to do
+                if program[pos] == 'e':
+                    accum += program[pos]
+                    state = State.begin_state
+                elif program[pos] == 'o':
+                    accum += program[pos]
+                    state = State.boolean_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'be' has been read... could be 'begin' or an identifier
             elif state == State.begin_state:
                 letters = ["n","i","g"]     # rest of 'begin'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'bo' has been read... could be 'boolean' or an identifier
             elif state == State.boolean_state:
                 letters = ["n","a","e","l","o"]     # rest of 'boolean'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.type, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 't' has been read... could be 'true', 'then', or an identifier
             elif state == State.t_state:
-                pass # to do
+                if program[pos] == 'r':
+                    accum += program[pos]
+                    state = State.true_state
+                elif program[pos] == 'h':
+                    accum += program[pos]
+                    state = State.then_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'tr' has been read... could be 'true' or an identifier
             elif state == State.true_state:
                 letters = ["e","u"]     # rest of 'true'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'th' has been read... could be 'then' or an identifier
             elif state == State.then_state:
                 letters = ["n","e"]     # rest of 'then'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.statement, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'a' has been read... could be 'and' or an identifier
             elif state == State.and_state:
                 letters = ["d","n"]     # rest of 'and'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'o' has been read... could be 'or' or an identifier
             elif state == State.or_state:
                 letters = ["r"]     # rest of 'or'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'r' has been read... could be 'return' or an identifier
             elif state == State.return_state:
                 letters = ["n","r","u","t","e"]     # rest of 'return'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # 'n' has been read... could be 'not' or an identifier
             elif state == State.not_state:
                 letters = ["t","o"]     # rest of 'not'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
             # identifier detected... read alphabetical characters, digits, and '_' until a delimiter is found
             elif state == State.identifier_state:
