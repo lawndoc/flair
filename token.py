@@ -3,12 +3,12 @@ from enum import Enum
 
 class TokenType(Enum):
     semicolon = 0
-    integer = 1
+    integer_token = 1
     keyword = 2
     period = 3
     leftparen = 4
     rightparen = 5
-    boolean = 6
+    boolean_token = 6
     operator = 7
     type = 8
     boolean_operator = 9
@@ -28,7 +28,7 @@ class Token:
         self.token_value = token_value
 
     def isInteger(self):
-        return self.token_type == TokenType.integer
+        return self.token_type == TokenType.integer_token
     def isSemicolon(self):
         return self.token_type == TokenType.semicolon
     def isKeyword(self):
@@ -40,7 +40,7 @@ class Token:
     def isRightParen(self):
         return self.token_type == TokenType.rightparen
     def isBoolean(self):
-        return self.token_type == TokenType.boolean
+        return self.token_type == TokenType.boolean_token
     def isOperator(self):
         return self.token_type == TokenType.operator
     def isType(self):
