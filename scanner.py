@@ -710,7 +710,51 @@ class Scanner:
 
             # identifier detected... read alphabetical characters, digits, and '_' until a delimiter is found
             elif state == State.identifier_state:
-                pass # to do
+                if program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                #########################NOT DONE YET##############################
 
 
         # end of program... return list of tokens
