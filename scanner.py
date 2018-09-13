@@ -395,22 +395,27 @@ class Scanner:
 
             # "fa" has been read... could be 'false' or an identifier
             elif state == State.false_state:
+                letters = ["e","s","l"]     # rest of 'false'
                 pass # to do
 
             # 'fu' has been read... could be 'function' or an identifier
             elif state == State.function_state:
+                letters = ["n","o","i","t","c","n"]     # rest of 'function'
                 pass # to do
 
             # 'p' has been read... could be 'print', 'program', or an identifier
             elif state == State.pr_state:
+                letters = ["r"]     # rest of 'pr...'
                 pass # to do
 
             # 'pri' has been read... could be 'print' or an identifier
             elif state == State.print_state:
+                letters = ["t","n"]     # rest of 'print'
                 pass # to do
 
             # 'pro' has been read... could be 'program' or an identifier
             elif state == State.program_state:
+                letters = ["m","a","r","g"]     # rest of 'program'
                 pass # to do
 
             # 'e' has been read... could be 'end', 'else', or an identifier
@@ -419,10 +424,12 @@ class Scanner:
 
             # 'en' has been read... could be 'end' or an identifier
             elif state == State.end_state:
+                letters = ["d"]     # rest of 'end'
                 pass # to do
 
             # 'el' has been read... could be 'else' or an identifier
             elif state == State.else_state:
+                letters = ["e","s"]     # rest of 'else'
                 pass # to do
 
             # 'b' has been read... could be 'begin', 'boolean', or an identifier
@@ -431,10 +438,12 @@ class Scanner:
 
             # 'be' has been read... could be 'begin' or an identifier
             elif state == State.begin_state:
+                letters = ["n","i","g"]     # rest of 'begin'
                 pass # to do
 
             # 'bo' has been read... could be 'boolean' or an identifier
             elif state == State.boolean_state:
+                letters = ["n","a","e","l","o"]     # rest of 'boolean'
                 pass # to do
 
             # 't' has been read... could be 'true', 'then', or an identifier
@@ -443,26 +452,32 @@ class Scanner:
 
             # 'tr' has been read... could be 'true' or an identifier
             elif state == State.true_state:
+                letters = ["e","u"]     # rest of 'true'
                 pass # to do
 
             # 'th' has been read... could be 'then' or an identifier
             elif state == State.then_state:
+                letters = ["n","e"]     # rest of 'then'
                 pass # to do
 
             # 'a' has been read... could be 'and' or an identifier
             elif state == State.and_state:
+                letters = ["d","n"]     # rest of 'and'
                 pass # to do
 
             # 'o' has been read... could be 'or' or an identifier
             elif state == State.or_state:
+                letters = ["r"]     # rest of 'or'
                 pass # to do
 
             # 'r' has been read... could be 'return' or an identifier
             elif state == State.return_state:
+                letters = ["n","r","u","t","e"]     # rest of 'return'
                 pass # to do
 
             # 'n' has been read... could be 'not' or an identifier
             elif state == State.not_state:
+                letters = ["t","o"]     # rest of 'not'
                 pass # to do
 
             # identifier detected... read alphabetical characters, digits, and '_' until a delimiter is found
