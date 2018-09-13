@@ -396,7 +396,20 @@ class Scanner:
             # "fa" has been read... could be 'false' or an identifier
             elif state == State.false_state:
                 letters = ["e","s","l"]     # rest of 'false'
-                pass # to do
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    else:
+                        letters.pop()
+                elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
 
             # 'fu' has been read... could be 'function' or an identifier
             elif state == State.function_state:
