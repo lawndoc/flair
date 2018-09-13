@@ -9,30 +9,29 @@ class State(Enum):
     zero_state = 2
     integer_state = 3
     comment_state = 4
-    pr_state = 5
-    print_state = 6
-    program_state = 7
-    and_state = 8
-    f_state = 9
+    i_state = 5
+    if_state = 6
+    integer_type_state = 7
+    f_state = 8
+    false_state = 9
     function_state = 10
-    false_state = 11
-    e_state = 12
-    end_state = 13
-    else_state = 14
-    b_state = 15
-    begin_state = 16
-    boolean_state = 17
-    t_state = 18
-    true_state = 19
-    then_state = 20
-    identifier_state = 21
-    and_state = 22
-    return_state = 23
-    not_state = 24
-    or_state = 25
-    i_state = 26
-    if_state = 27
-    integer_type_state = 28
+    pr_state = 11
+    print_state = 12
+    program_state = 13
+    e_state = 14
+    end_state = 15
+    else_state = 16
+    b_state = 17
+    begin_state = 18
+    boolean_state = 19
+    t_state = 20
+    true_state = 21
+    then_state = 22
+    and_state = 23
+    or_state = 24
+    return_state = 25
+    not_state = 26
+    identifier_state = 27
 
 
 
@@ -116,6 +115,7 @@ class Scanner:
                     error_msg = "Not a recognized character : {} ."
                     raise ValueError(error_msg.format(program[pos]))
                 pos += 1
+
             # '0' was read... next character should be a delimiter
             elif state == State.zero_state:
                 if program[pos].isdigit():
@@ -167,6 +167,7 @@ class Scanner:
                     raise ValueError(error_msg.format(program[pos]))
                 accum = ''
                 pos += 1
+
             # integer detected... read digits until delimiter is found
             elif state == State.integer_state:
                 if program[pos].isdigit():
@@ -225,11 +226,13 @@ class Scanner:
                     error_msg = "Invalid character in integer : {}*{}*"
                     raise ValueError(error_msg.format(accum, program[pos]))
                 pos += 1
+
             # '{' was read... skip over comment until '}' is found
             elif state == State.comment_state:
                 if program[pos] == "}":
                     state = State.looking_state
                 pos += 1
+
             # 'i' was read... could be 'if', 'integer', or an identifier
             elif state == State.i_state:
                 if program[pos] == 'f':
@@ -295,6 +298,7 @@ class Scanner:
                     error_msg = "Illegal character in identifier {} : {}"
                     raise ValueError(error_msg.format(accum, program[pos]))
                 pos += 1
+
             # 'if' has been read... could be 'if' or an identifier
             elif state == State.if_state:
                 if program[pos].isspace():
@@ -306,12 +310,57 @@ class Scanner:
                     tokens.append(Token(TokenType.semicolon, ";"))
                     accum = ""
                     state = State.looking_state
-                else:
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.statement, str(accum)))
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
                 pos += 1
+
             # 'in' was read... could be 'integer' or an identifier
-            elif state == State.integer_state:
+            elif state == State.integer_type_state:
                 letters = ["r","e","g","e","t"]     # rest of 'integer'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
@@ -328,7 +377,8 @@ class Scanner:
                     error_msg = "Illegal character in identifier {} : {}"
                     raise ValueError(error_msg.format(accum, program[pos]))
                 pos += 1
-            # 'f' was read... could be 'function', 'false', or an identifier
+
+            # 'f' was read... could be 'false', 'function', or an identifier
             elif state == State.f_state:
                 if program[pos] == 'a':
                     accum += program[pos]
@@ -342,10 +392,83 @@ class Scanner:
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
                     raise ValueError(error_msg.format(accum, program[pos]))
-            #found an a after the f
+
+            # "fa" has been read... could be 'false' or an identifier
             elif state == State.false_state:
                 pass # to do
 
+            # 'fu' has been read... could be 'function' or an identifier
+            elif state == State.function_state:
+                pass # to do
+
+            # 'p' has been read... could be 'print', 'program', or an identifier
+            elif state == State.pr_state:
+                pass # to do
+
+            # 'pri' has been read... could be 'print' or an identifier
+            elif state == State.print_state:
+                pass # to do
+
+            # 'pro' has been read... could be 'program' or an identifier
+            elif state == State.program_state:
+                pass # to do
+
+            # 'e' has been read... could be 'end', 'else', or an identifier
+            elif state == State.e_state:
+                pass # to do
+
+            # 'en' has been read... could be 'end' or an identifier
+            elif state == State.end_state:
+                pass # to do
+
+            # 'el' has been read... could be 'else' or an identifier
+            elif state == State.else_state:
+                pass # to do
+
+            # 'b' has been read... could be 'begin', 'boolean', or an identifier
+            elif state == State.b_state:
+                pass # to do
+
+            # 'be' has been read... could be 'begin' or an identifier
+            elif state == State.begin_state:
+                pass # to do
+
+            # 'bo' has been read... could be 'boolean' or an identifier
+            elif state == State.boolean_state:
+                pass # to do
+
+            # 't' has been read... could be 'true', 'then', or an identifier
+            elif state == State.t_state:
+                pass # to do
+
+            # 'tr' has been read... could be 'true' or an identifier
+            elif state == State.true_state:
+                pass # to do
+
+            # 'th' has been read... could be 'then' or an identifier
+            elif state == State.then_state:
+                pass # to do
+
+            # 'a' has been read... could be 'and' or an identifier
+            elif state == State.and_state:
+                pass # to do
+
+            # 'o' has been read... could be 'or' or an identifier
+            elif state == State.or_state:
+                pass # to do
+
+            # 'r' has been read... could be 'return' or an identifier
+            elif state == State.return_state:
+                pass # to do
+
+            # 'n' has been read... could be 'not' or an identifier
+            elif state == State.not_state:
+                pass # to do
+
+            # identifier detected... read alphabetical characters, digits, and '_' until a delimiter is found
+            elif state == State.identifier_state:
+                pass # to do
 
 
+        # end of program... return list of tokens
         return tokens
