@@ -6,8 +6,8 @@ class TokenType(Enum):
     integer_token = 1
     keyword = 2
     period = 3
-    leftparen = 4
-    rightparen = 5
+    left_parenthesis = 4
+    right_parenthesis = 5
     boolean_token = 6
     operator = 7
     type = 8
@@ -36,9 +36,9 @@ class Token:
     def isPeriod(self):
         return self.token_type == TokenType.period
     def isLeftParen(self):
-        return self.token_type == TokenType.leftparen
+        return self.token_type == TokenType.left_parenthesis
     def isRightParen(self):
-        return self.token_type == TokenType.rightparen
+        return self.token_type == TokenType.right_parenthesis
     def isBoolean(self):
         return self.token_type == TokenType.boolean_token
     def isOperator(self):

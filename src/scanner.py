@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 
 from enum import Enum
-from token import Token, TokenType
+from sys import path
+import os
+path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.token import Token, TokenType
 
 
 class State(Enum):
@@ -40,7 +43,8 @@ class Scanner:
     def __init__(self, program=""):
         self.program = program
 
-    def scan(program):
+    def scan(self):
+        program = self.program
         tokens = []
         accum = ''
 
@@ -94,7 +98,6 @@ class Scanner:
                 elif program[pos] in '123456789':
                     accum = program[pos]
                     state = State.integer_state
-                    raise ValueError(error_msg)
                 elif program[pos].isalpha():
                     if program[pos] == 'i':
                         accum += program[pos]

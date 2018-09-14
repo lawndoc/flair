@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
-from sys import argv
-import Scanner
+from sys import argv, path
+import os
+path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.scanner import Scanner
 
 # pass in arg for path to flair program
 if len(argv) > 1:
@@ -27,4 +29,4 @@ tokens = scanner.scan()
 
 # print tokens
 for t in tokens:
-    print(t.getType(), (t.getValue() if t.getValue() not in ";.,:(){}" else ""))
+    print(t.getType(), (str(t.getValue()) if str(t.getValue()) not in ";.,:(){}" else ""))
