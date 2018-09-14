@@ -262,7 +262,7 @@ class Scanner:
                     state = State.if_state
                 elif program[pos] == 'n':
                     accum += program[pos]
-                    state = State.integer_state
+                    state = State.integer_type_state
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -405,7 +405,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -472,7 +472,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -544,7 +544,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -616,7 +616,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -680,7 +680,7 @@ class Scanner:
                         state = State.looking_state
                     elif program[pos] == ';':
                         tokens.append(Token(TokenType.identifier, str(accum)))
-                        tokens.append(Token(TokenType.terminator, ';'))
+                        tokens.append(Token(TokenType.semicolon, ';'))
                         accum = ""
                         state = State.looking_state
                     elif program[pos] == ".":
@@ -744,7 +744,7 @@ class Scanner:
                         state = State.looking_state
                     elif program[pos] == ';':
                         tokens.append(Token(TokenType.identifier, str(accum)))
-                        tokens.append(Token(TokenType.terminator, ';'))
+                        tokens.append(Token(TokenType.semicolon, ';'))
                         accum = ""
                         state = State.looking_state
                     elif program[pos] == ".":
@@ -819,7 +819,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -891,7 +891,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -958,7 +958,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1030,7 +1030,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1102,7 +1102,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1169,7 +1169,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1241,7 +1241,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1313,7 +1313,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1380,7 +1380,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1452,7 +1452,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1524,7 +1524,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1596,7 +1596,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1668,7 +1668,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1740,7 +1740,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1812,7 +1812,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
@@ -1872,7 +1872,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == ';':
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.terminator, ';'))
+                    tokens.append(Token(TokenType.semicolon, ';'))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
