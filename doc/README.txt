@@ -13,8 +13,9 @@ Optimizations:
         of if/elif checks and the length of the overall scanner file.
 
 How To Run:
-    To test the scanner, execute the scantest.py file in the tests/ directory
-    using one of these two ways:
+    To test the scanner, use one of these three ways:
+        - call flairs from the command line, passing in an argument for a flair
+            program to scan (ex. $ flairs /path/to/program.flr )
         - give scantest.py execute permissions on a UNIX operating system, and
             call it from the command line, passing in an argument for a flair
             program to scan (ex. $ scantest.py /path/to/program.flr )
