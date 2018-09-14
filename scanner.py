@@ -303,7 +303,10 @@ class Scanner:
 
             # 'if' has been read... could be 'if' or an identifier
             elif state == State.if_state:
-                if program[pos].isspace():
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
                     tokens.append(Token(TokenType.statement, str(accum)))
                     accum = ""
                     state = State.looking_state
@@ -354,9 +357,6 @@ class Scanner:
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
                     raise ValueError(error_msg)
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
                     raise ValueError(error_msg.format(accum, program[pos]))
@@ -375,356 +375,7 @@ class Scanner:
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'f' was read... could be 'false', 'function', or an identifier
-            elif state == State.f_state:
-                if program[pos] == 'a':
-                    accum += program[pos]
-                    state = State.false_state
-                elif program[pos] == 'u':
-                    accum += program[pos]
-                    state = State.function_state
-                elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # "fa" has been read... could be 'false' or an identifier
-            elif state == State.false_state:
-                letters = ["e","s","l"]     # rest of 'false'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.boolean_token, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-
-            # 'fu' has been read... could be 'function' or an identifier
-            elif state == State.function_state:
-                letters = ["n","o","i","t","c","n"]     # rest of 'function'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.keyword, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-
-            # 'p' has been read... could be 'print', 'program', or an identifier
-            elif state == State.pr_state:
-                if accum == "p":    # 'p' has been read... looking for 'r'
-                    if program[pos] == "r":
-                        accum += program[pos]
-                    elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
-                        accum += program[pos]
-                        state = State.identifier_state
-                    else:
-                        error_msg = "Illegal character in identifier {} : {}"
-                        raise ValueError(error_msg.format(accum, program[pos]))
-                elif accum == "pr":     # 'pr' has been read... looking for 'i' or 'o'
-                    if program[pos] == 'i':
-                        accum += program[pos]
-                        state = State.print_state
-                    elif program[pos] == 'o':
-                        accum += program[pos]
-                        state = State.program_state
-                    elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
-                        accum += program[pos]
-                        state = State.identifier_state
-                    else:
-                        error_msg = "Illegal character in identifier {} : {}"
-                        raise ValueError(error_msg.format(accum, program[pos]))
-                else:
-                    error_msg = "{} has been read, but scanner stuck in 'pr' state."
-                    raise ValueError(error_msg.format(accum))
-
-            # 'pri' has been read... could be 'print' or an identifier
-            elif state == State.print_state:
-                letters = ["t","n"]     # rest of 'print'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.print_statement, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'pro' has been read... could be 'program' or an identifier
-            elif state == State.program_state:
-                letters = ["m","a","r","g"]     # rest of 'program'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.keyword, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'e' has been read... could be 'end', 'else', or an identifier
-            elif state == State.e_state:
-                if program[pos] == 'n':
-                    accum += program[pos]
-                    state = State.end_state
-                elif program[pos] == 'l':
-                    accum += program[pos]
-                    state = State.else_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'en' has been read... could be 'end' or an identifier
-            elif state == State.end_state:
-                letters = ["d"]     # rest of 'end'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.keyword, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'el' has been read... could be 'else' or an identifier
-            elif state == State.else_state:
-                letters = ["e","s"]     # rest of 'else'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.statement, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'b' has been read... could be 'begin', 'boolean', or an identifier
-            elif state == State.b_state:
-                if program[pos] == 'e':
-                    accum += program[pos]
-                    state = State.begin_state
-                elif program[pos] == 'o':
-                    accum += program[pos]
-                    state = State.boolean_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'be' has been read... could be 'begin' or an identifier
-            elif state == State.begin_state:
-                letters = ["n","i","g"]     # rest of 'begin'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.keyword, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'bo' has been read... could be 'boolean' or an identifier
-            elif state == State.boolean_state:
-                letters = ["n","a","e","l","o"]     # rest of 'boolean'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.type, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 't' has been read... could be 'true', 'then', or an identifier
-            elif state == State.t_state:
-                if program[pos] == 'r':
-                    accum += program[pos]
-                    state = State.true_state
-                elif program[pos] == 'h':
-                    accum += program[pos]
-                    state = State.then_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'tr' has been read... could be 'true' or an identifier
-            elif state == State.true_state:
-                letters = ["e","u"]     # rest of 'true'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.boolean, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'th' has been read... could be 'then' or an identifier
-            elif state == State.then_state:
-                letters = ["n","e"]     # rest of 'then'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.statement, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'a' has been read... could be 'and' or an identifier
-            elif state == State.and_state:
-                letters = ["d","n"]     # rest of 'and'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'o' has been read... could be 'or' or an identifier
-            elif state == State.or_state:
-                letters = ["r"]     # rest of 'or'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'r' has been read... could be 'return' or an identifier
-            elif state == State.return_state:
-                letters = ["n","r","u","t","e"]     # rest of 'return'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.keyword, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # 'n' has been read... could be 'not' or an identifier
-            elif state == State.not_state:
-                letters = ["t","o"]     # rest of 'not'
-                if program[pos] == letters[-1]:
-                    accum += program[pos]
-                    letters.pop()
-                    if len(letters) == 0:
-                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
-                        accum = ""
-                        state = State.looking_state
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
-                    accum += program[pos]
-                    state = State.identifier_state
-                else:
-                    error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
-                pos += 1
-
-            # identifier detected... read alphabetical characters, digits, and '_' until a delimiter is found
-            elif state == State.identifier_state:
-                if program[pos].isspace():
+                elif program[pos].isspace():
                     tokens.append(Token(TokenType.identifier,str(accum)))
                     accum = ""
                     state = State.looking_state
@@ -768,8 +419,1448 @@ class Scanner:
                     tokens.append(Token(TokenType.comparison, program[pos]))
                     accum = ""
                     state = State.looking_state
-                #########################NOT DONE YET##############################
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
+            # 'f' was read... could be 'false', 'function', or an identifier
+            elif state == State.f_state:
+                if program[pos] == 'a':
+                    accum += program[pos]
+                    state = State.false_state
+                elif program[pos] == 'u':
+                    accum += program[pos]
+                    state = State.function_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # "fa" has been read... could be 'false' or an identifier
+            elif state == State.false_state:
+                letters = ["e","s","l"]     # rest of 'false'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_token, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'fu' has been read... could be 'function' or an identifier
+            elif state == State.function_state:
+                letters = ["n","o","i","t","c","n"]     # rest of 'function'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'p' or 'pr' has been read... could be 'print', 'program', or an identifier
+            elif state == State.pr_state:   # technically a combined state ('p'+'pr')
+                if accum == "p":    # 'p' has been read... looking for 'r'
+                    if program[pos] == "r":
+                        accum += program[pos]
+                    elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                        accum += program[pos]
+                        state = State.identifier_state
+                    elif program[pos].isspace():
+                        tokens.append(Token(TokenType.identifier,str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ';':
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.terminator, ';'))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ".":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.period, "."))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ",":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.comma, ","))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ":":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.colon, ":"))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == "(":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.left_parenthesis, "("))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ")":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.right_parenthesis, ")"))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] in "+-*/":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.operator, program[pos]))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] in "<=":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.comparison, program[pos]))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == "{":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        accum = ""
+                        state = State.comment_state
+                    elif program[pos] == "}":
+                        error_msg = "Unmatched end of comment character : '}'"
+                        raise ValueError(error_msg)
+                    else:
+                        error_msg = "Illegal character in identifier {} : {}"
+                        raise ValueError(error_msg.format(accum, program[pos]))
+                elif accum == "pr":     # 'pr' has been read... looking for 'i' or 'o'
+                    if program[pos] == 'i':
+                        accum += program[pos]
+                        state = State.print_state
+                    elif program[pos] == 'o':
+                        accum += program[pos]
+                        state = State.program_state
+                    elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                        accum += program[pos]
+                        state = State.identifier_state
+                    elif program[pos].isspace():
+                        tokens.append(Token(TokenType.identifier,str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ';':
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.terminator, ';'))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ".":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.period, "."))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ",":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.comma, ","))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ":":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.colon, ":"))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == "(":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.left_parenthesis, "("))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == ")":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.right_parenthesis, ")"))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] in "+-*/":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.operator, program[pos]))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] in "<=":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        tokens.append(Token(TokenType.comparison, program[pos]))
+                        accum = ""
+                        state = State.looking_state
+                    elif program[pos] == "{":
+                        tokens.append(Token(TokenType.identifier, str(accum)))
+                        accum = ""
+                        state = State.comment_state
+                    elif program[pos] == "}":
+                        error_msg = "Unmatched end of comment character : '}'"
+                        raise ValueError(error_msg)
+                    else:
+                        error_msg = "Illegal character in identifier {} : {}"
+                        raise ValueError(error_msg.format(accum, program[pos]))
+                else:
+                    error_msg = "{} has been read, but scanner stuck in 'pr' state."
+                    raise ValueError(error_msg.format(accum))
+                pos += 1
+
+            # 'pri' has been read... could be 'print' or an identifier
+            elif state == State.print_state:
+                letters = ["t","n"]     # rest of 'print'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.print_statement, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'pro' has been read... could be 'program' or an identifier
+            elif state == State.program_state:
+                letters = ["m","a","r","g"]     # rest of 'program'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'e' has been read... could be 'end', 'else', or an identifier
+            elif state == State.e_state:
+                if program[pos] == 'n':
+                    accum += program[pos]
+                    state = State.end_state
+                elif program[pos] == 'l':
+                    accum += program[pos]
+                    state = State.else_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'en' has been read... could be 'end' or an identifier
+            elif state == State.end_state:
+                letters = ["d"]     # rest of 'end'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'el' has been read... could be 'else' or an identifier
+            elif state == State.else_state:
+                letters = ["e","s"]     # rest of 'else'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.statement, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'b' has been read... could be 'begin', 'boolean', or an identifier
+            elif state == State.b_state:
+                if program[pos] == 'e':
+                    accum += program[pos]
+                    state = State.begin_state
+                elif program[pos] == 'o':
+                    accum += program[pos]
+                    state = State.boolean_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'be' has been read... could be 'begin' or an identifier
+            elif state == State.begin_state:
+                letters = ["n","i","g"]     # rest of 'begin'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'bo' has been read... could be 'boolean' or an identifier
+            elif state == State.boolean_state:
+                letters = ["n","a","e","l","o"]     # rest of 'boolean'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.type, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 't' has been read... could be 'true', 'then', or an identifier
+            elif state == State.t_state:
+                if program[pos] == 'r':
+                    accum += program[pos]
+                    state = State.true_state
+                elif program[pos] == 'h':
+                    accum += program[pos]
+                    state = State.then_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'tr' has been read... could be 'true' or an identifier
+            elif state == State.true_state:
+                letters = ["e","u"]     # rest of 'true'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_token, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'th' has been read... could be 'then' or an identifier
+            elif state == State.then_state:
+                letters = ["n","e"]     # rest of 'then'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.statement, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'a' has been read... could be 'and' or an identifier
+            elif state == State.and_state:
+                letters = ["d","n"]     # rest of 'and'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'o' has been read... could be 'or' or an identifier
+            elif state == State.or_state:
+                letters = ["r"]     # rest of 'or'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'r' has been read... could be 'return' or an identifier
+            elif state == State.return_state:
+                letters = ["n","r","u","t","e"]     # rest of 'return'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # 'n' has been read... could be 'not' or an identifier
+            elif state == State.not_state:
+                letters = ["t","o"]     # rest of 'not'
+                if program[pos] == letters[-1]:
+                    accum += program[pos]
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                        accum = ""
+                        state = State.looking_state
+                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                    state = State.identifier_state
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
+
+            # identifier detected... read alphabetical characters, digits, and '_' until a delimiter is found
+            elif state == State.identifier_state:
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                    accum += program[pos]
+                elif program[pos].isspace():
+                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ';':
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.terminator, ';'))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ".":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.period, "."))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ",":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comma, ","))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ":":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.colon, ":"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "(":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.left_parenthesis, "("))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == ")":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.right_parenthesis, ")"))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "+-*/":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.operator, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] in "<=":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    accum = ""
+                    state = State.looking_state
+                elif program[pos] == "{":
+                    tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
+                    state = State.comment_state
+                elif program[pos] == "}":
+                    error_msg = "Unmatched end of comment character : '}'"
+                    raise ValueError(error_msg)
+                else:
+                    error_msg = "Illegal character in identifier {} : {}"
+                    raise ValueError(error_msg.format(accum, program[pos]))
+                pos += 1
 
         # end of program... return list of tokens
         return tokens
+
+
+"""
+Things our parser will have to check for:
+    - correct keyword being used
+"""
