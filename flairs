@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# pass in path to flair program as an argument
+FILE_PATH=$1
+
+python3 ./tests/scantest.py $FILE_PATH

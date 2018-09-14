@@ -63,8 +63,10 @@ class Token:
         return self.token_type == TokenType.rightbrace
     def isIdentifier(self):
         return self.token_type == TokenType.identifier
-    def value(self):
+    def getValue(self):
         return self.token_value
+    def getType(self):
+        return self.token_type
 
 
 

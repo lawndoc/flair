@@ -27,5 +27,4 @@ tokens = scanner.scan()
 
 # print tokens
 for t in tokens:
-    print(t, end=", ")
-    print()
+    print(t.getType(), (t.getValue() if t.getValue() not in ";.,:(){}" else ""))
