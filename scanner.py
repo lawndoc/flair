@@ -218,6 +218,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == "{":
                     tokens.append(Token(TokenType.integer_token, int(accum)))
+                    accum = ""
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
@@ -290,6 +291,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == "{":
                     tokens.append(Token(TokenType.identifier, str(accum)))
+                    accum = ""
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
@@ -347,6 +349,7 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] == "{":
                     tokens.append(Token(TokenType.statement, str(accum)))
+                    accum = ""
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
@@ -364,12 +367,11 @@ class Scanner:
                 letters = ["r","e","g","e","t"]     # rest of 'integer'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.type, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -399,12 +401,11 @@ class Scanner:
                 letters = ["e","s","l"]     # rest of 'false'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
-                        tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                        tokens.append(Token(TokenType.boolean_token, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -415,16 +416,13 @@ class Scanner:
             # 'fu' has been read... could be 'function' or an identifier
             elif state == State.function_state:
                 letters = ["n","o","i","t","c","n"]     # rest of 'function'
-                pass # to do
-
-            # 'p' has been read... could be 'print', 'program', or an identifier
-            elif state == State.pr_state:
-                if program[pos] == 'i':
+                if program[pos] == letters[-1]:
                     accum += program[pos]
-                    state = State.print_state
-                elif program[pos] == 'o':
-                    accum += program[pos]
-                    state = State.program_state
+                    letters.pop()
+                    if len(letters) == 0:
+                        tokens.append(Token(TokenType.keyword, str(accum)))
+                        accum = ""
+                        state = State.looking_state
                 elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -432,17 +430,44 @@ class Scanner:
                     error_msg = "Illegal character in identifier {} : {}"
                     raise ValueError(error_msg.format(accum, program[pos]))
 
+            # 'p' has been read... could be 'print', 'program', or an identifier
+            elif state == State.pr_state:
+                if accum == "p":    # 'p' has been read... looking for 'r'
+                    if program[pos] == "r":
+                        accum += program[pos]
+                    elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
+                        accum += program[pos]
+                        state = State.identifier_state
+                    else:
+                        error_msg = "Illegal character in identifier {} : {}"
+                        raise ValueError(error_msg.format(accum, program[pos]))
+                elif accum == "pr":     # 'pr' has been read... looking for 'i' or 'o'
+                    if program[pos] == 'i':
+                        accum += program[pos]
+                        state = State.print_state
+                    elif program[pos] == 'o':
+                        accum += program[pos]
+                        state = State.program_state
+                    elif program[pos].isalpha() or program[pos] == '_' or program[pos].isdigit():
+                        accum += program[pos]
+                        state = State.identifier_state
+                    else:
+                        error_msg = "Illegal character in identifier {} : {}"
+                        raise ValueError(error_msg.format(accum, program[pos]))
+                else:
+                    error_msg = "{} has been read, but scanner stuck in 'pr' state."
+                    raise ValueError(error_msg.format(accum))
+
             # 'pri' has been read... could be 'print' or an identifier
             elif state == State.print_state:
                 letters = ["t","n"]     # rest of 'print'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.print_statement, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -456,12 +481,11 @@ class Scanner:
                 letters = ["m","a","r","g"]     # rest of 'program'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.keyword, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -491,12 +515,11 @@ class Scanner:
                 letters = ["d"]     # rest of 'end'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.keyword, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -510,12 +533,11 @@ class Scanner:
                 letters = ["e","s"]     # rest of 'else'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.statement, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -545,12 +567,11 @@ class Scanner:
                 letters = ["n","i","g"]     # rest of 'begin'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.keyword, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -564,12 +585,11 @@ class Scanner:
                 letters = ["n","a","e","l","o"]     # rest of 'boolean'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.type, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -599,12 +619,11 @@ class Scanner:
                 letters = ["e","u"]     # rest of 'true'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.boolean, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -618,12 +637,11 @@ class Scanner:
                 letters = ["n","e"]     # rest of 'then'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.statement, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -637,12 +655,11 @@ class Scanner:
                 letters = ["d","n"]     # rest of 'and'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.boolean_operator, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -656,12 +673,11 @@ class Scanner:
                 letters = ["r"]     # rest of 'or'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.boolean_operator, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -675,12 +691,11 @@ class Scanner:
                 letters = ["n","r","u","t","e"]     # rest of 'return'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.keyword, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
@@ -694,12 +709,11 @@ class Scanner:
                 letters = ["t","o"]     # rest of 'not'
                 if program[pos] == letters[-1]:
                     accum += program[pos]
+                    letters.pop()
                     if len(letters) == 0:
                         tokens.append(Token(TokenType.boolean_operator, str(accum)))
                         accum = ""
                         state = State.looking_state
-                    else:
-                        letters.pop()
                 elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
