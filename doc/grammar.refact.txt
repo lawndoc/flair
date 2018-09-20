@@ -1,0 +1,71 @@
+
+<PROGRAM> ::= program <IDENTIFIER> ( <FORMALS> ) ;
+                 <DEFINITIONS>
+                 <BODY> .
+
+<DEFINITIONS> ::= ε
+            | <DEF> <DEFINITIONS>
+
+    <DEF> ::= function <IDENTIFIER> ( <FORMALS> ) : <TYPE>
+                 <BODY> ;
+
+<FORMALS> ::= ε
+            | <NONEMPTYFORMALS>
+
+<NONEMPTYFORMALS> ::= <FORMAL> <NONEMPTYFORMALS'>
+
+<NONEMPTYFORMALS'> ::= ε
+            | , <NONEMPTYFORMALS>
+
+ <FORMAL> ::= <IDENTIFIER> : <TYPE>
+
+   <BODY> ::= begin <STATEMENT-LIST> end
+
+<STATEMENT-LIST> ::= <PRINT-STATEMENT> <STATEMENT-LIST>
+            | return <EXPR>
+
+   <TYPE> ::= integer
+            | boolean
+
+   <EXPR> ::= <SIMPLE-EXPR> <EXPR'>
+
+   <EXPR'> ::= ε
+            | < <SIMPLE-EXPR> <EXPR'>
+            | = <SIMPLE-EXPR> <EXPR'>
+
+<SIMPLE-EXPR> ::= <TERM> <SIMPLE-EXPR'>
+
+<SIMPLE-EXPR'> ::= ε
+            | or <TERM> <SIMPLE-EXPR'>
+            | + <TERM> <SIMPLE-EXPR'>
+            | - <TERM> <SIMPLE-EXPR'>
+
+   <TERM> ::= <FACTOR> <TERM'>
+
+  <TERM'> ::= ε
+            | and <FACTOR> <TERM'>
+            | * <FACTOR> <TERM'>
+            | / <FACTOR> <TERM'>
+
+ <FACTOR> ::= if <EXPR> then <EXPR> else <EXPR>
+            | not <FACTOR>
+            | <IDENTIFIER> <FACTOR'>
+            | <LITERAL>
+            | - <FACTOR>
+            | ( <EXPR> )
+
+ <FACTOR'> ::= ε
+            | ( <ACTUALS> )
+
+<ACTUALS> ::= ε
+            | <NONEMPTYACTUALS>
+
+<NONEMPTYACTUALS> ::= <EXPR> <NONEMPTYACTUALS'>
+
+<NONEMPTYACTUALS'> ::= ε
+            | , <NONEMPTYACTUALS>
+
+<LITERAL> ::= <NUMBER>
+            | <BOOLEAN>
+
+<PRINT-STATEMENT> ::= print ( <EXPR> ) ;
