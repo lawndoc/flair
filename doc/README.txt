@@ -1,9 +1,6 @@
 Malwareswaldo: C.J. May, Nick Sanford
 
 Known Bugs:
-    - *possible bug* We didn't get to test our bash flairs script in a UNIX
-        environment. There is a possibility that it will throw an import error
-        when launching due to the directory structure, but it may work correctly.
 
 Features Not Implemented:
     - Compiler doesn't track which line of code an error occurred on.
@@ -17,7 +14,8 @@ Optimizations:
 
 How To Run:
     To test the scanner, use one of these three ways:
-        - call flairs from the command line, passing in an argument for a flair
+        - give flairs execute permissions on a UNIX system with chmod 755, and
+            call flairs from the command line, passing in an argument for a flair
             program to scan (ex. $ flairs /path/to/program.flr )
         - give scantest.py execute permissions on a UNIX operating system, and
             call it from the command line, passing in an argument for a flair

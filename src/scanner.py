@@ -37,11 +37,18 @@ class State(Enum):
     identifier_state = 27
 
 
-
-
 class Scanner:
     def __init__(self, program=""):
         self.program = program
+        self.tokens = self.scan()
+        self.tokenIndex = 0
+
+    def next(self):
+        if self.tokenIndex < len(self.tokens) - 1:
+            self.tokenIndex += 1
+
+    def peek(self):
+        return self.tokens[self.tokenIndex]
 
     def scan(self):
         program = self.program
@@ -52,21 +59,21 @@ class Scanner:
         pos = 0
 
         # rest of letters for keyword states
-        integer_ltrs = ["r","e","g","e","t"]
-        false_ltrs = ["e","s","l"]
-        function_ltrs = ["n","o","i","t","c","n"]
-        print_ltrs = ["t","n"]
-        program_ltrs = ["m","a","r","g"]
+        integer_ltrs = ["r", "e", "g", "e", "t"]
+        false_ltrs = ["e", "s", "l"]
+        function_ltrs = ["n", "o", "i", "t", "c", "n"]
+        print_ltrs = ["t", "n"]
+        program_ltrs = ["m", "a", "r", "g"]
         end_ltrs = ["d"]
-        else_ltrs = ["e","s"]
-        begin_ltrs = ["n","i","g"]
-        boolean_ltrs = ["n","a","e","l","o"]
-        true_ltrs = ["e","u"]
-        then_ltrs = ["n","e"]
-        and_ltrs = ["d","n"]
+        else_ltrs = ["e", "s"]
+        begin_ltrs = ["n", "i", "g"]
+        boolean_ltrs = ["n", "a", "e", "l", "o"]
+        true_ltrs = ["e", "u"]
+        then_ltrs = ["n", "e"]
+        and_ltrs = ["d", "n"]
         or_ltrs = ["r"]
-        return_ltrs = ["n","r","u","t","e"]
-        not_ltrs = ["t","o"]
+        return_ltrs = ["n", "r", "u", "t", "e"]
+        not_ltrs = ["t", "o"]
 
         while pos < len(program):
             # beginning of program or identifying new token after a delimiter
@@ -400,7 +407,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -467,7 +474,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -539,7 +546,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -611,7 +618,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -675,7 +682,7 @@ class Scanner:
                         accum += program[pos]
                         state = State.identifier_state
                     elif program[pos].isspace():
-                        tokens.append(Token(TokenType.identifier,str(accum)))
+                        tokens.append(Token(TokenType.identifier, str(accum)))
                         accum = ""
                         state = State.looking_state
                     elif program[pos] == ';':
@@ -739,7 +746,7 @@ class Scanner:
                         accum += program[pos]
                         state = State.identifier_state
                     elif program[pos].isspace():
-                        tokens.append(Token(TokenType.identifier,str(accum)))
+                        tokens.append(Token(TokenType.identifier, str(accum)))
                         accum = ""
                         state = State.looking_state
                     elif program[pos] == ';':
@@ -814,7 +821,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -886,7 +893,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -953,7 +960,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1025,7 +1032,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1097,7 +1104,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1164,7 +1171,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1236,7 +1243,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1308,7 +1315,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1375,7 +1382,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1447,7 +1454,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1519,7 +1526,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1591,7 +1598,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1663,7 +1670,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1735,7 +1742,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1807,7 +1814,7 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
@@ -1867,7 +1874,7 @@ class Scanner:
                 if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.identifier,str(accum)))
+                    tokens.append(Token(TokenType.identifier, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':

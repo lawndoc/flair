@@ -1,6 +1,7 @@
 
 from enum import Enum
 
+
 class TokenType(Enum):
     semicolon = 0
     integer_token = 1
@@ -29,46 +30,63 @@ class Token:
 
     def isInteger(self):
         return self.token_type == TokenType.integer_token
+
     def isSemicolon(self):
         return self.token_type == TokenType.semicolon
+
     def isKeyword(self):
         return self.token_type == TokenType.keyword
+
     def isPeriod(self):
         return self.token_type == TokenType.period
+
     def isLeftParen(self):
         return self.token_type == TokenType.left_parenthesis
+
     def isRightParen(self):
         return self.token_type == TokenType.right_parenthesis
+
     def isBoolean(self):
         return self.token_type == TokenType.boolean_token
+
     def isOperator(self):
         return self.token_type == TokenType.operator
+
     def isType(self):
         return self.token_type == TokenType.type
+
     def isBooleanOperator(self):
         return self.token_type == TokenType.boolean_operator
+
     def isPrintStatement(self):
         return self.token_type == TokenType.print_statement
+
     def isStatement(self):
         return self.token_type == TokenType.statement
+
     def isComparison(self):
         return self.token_type == TokenType.comparison
+
     def isComma(self):
         return self.token_type == TokenType.comma
+
     def isColon(self):
         return self.token_type == TokenType.colon
+
     def isLeftBrace(self):
         return self.token_type == TokenType.leftbrace
+
     def isRightBrace(self):
         return self.token_type == TokenType.rightbrace
+
     def isIdentifier(self):
         return self.token_type == TokenType.identifier
+
     def getValue(self):
         return self.token_value
+
     def getType(self):
         return self.token_type
-
-
 
     def __repr__(self):
         if self.isInteger():
