@@ -7,9 +7,9 @@ from src.scanner import Scanner
 
 # pass in arg for path to flair program
 if len(argv) > 1:
-    if argv[0] == 'scantest.py':
+    if "scantest.py" in argv[0]:
         FILE_PATH = argv[1]
-    elif argv[1] == "scantest.py":
+    elif "scantest.py" in argv[1]:
         FILE_PATH = argv[2]
     else:
         error_msg = ("Unexpected call from the command line: {}")
