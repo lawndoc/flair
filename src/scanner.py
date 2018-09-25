@@ -46,9 +46,10 @@ class Scanner:
     def next(self):
         if self.tokenIndex < len(self.tokens) - 1:
             self.tokenIndex += 1
+        return self.tokens[self.tokenIndex]
 
     def peek(self):
-        return self.tokens[self.tokenIndex]
+        return self.tokens[self.tokenIndex + 1]
 
     def scan(self):
         program = self.program

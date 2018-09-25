@@ -31,9 +31,9 @@ tokens = scanner.scan()
 while True:
     call = input("Enter 'n' for next or 'p' for peek, 'a' for all tokens, or 'x' to exit. $> ")
     if call == "n":
-        scanner.next()
+        print(scanner.next())
     elif call == "p":
-        scanner.peek()
+        print(scanner.peek())
     elif call == "a":
         for t in tokens:
             print(t.getType(), (str(t.getValue()) if str(t.getValue()) not in ";.,:(){}" else ""))
