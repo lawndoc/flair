@@ -1,0 +1,47 @@
+FIRST[PROGRAM] = { program }
+FIRST[DEFINITIONS] = { ε, function}
+FIRST[DEF] = { function }
+FIRST[FORMALS] = { ε, token.identifier }
+FIRST[NONEMPTYFORMALS] = { token.identifier }
+FIRST[NONEMPTYFORMALS'] = { ε, "," }
+FIRST[FORMAL] = { token.identifier }
+FIRST[BODY] = { begin }
+FIRST[STATEMENT-LIST] = { print, return }
+FIRST[TYPE] = { integer, boolean }
+FIRST[EXPR] = { if, not, token.identifier, token.integer_token, token.boolean_token, -, ( }
+FIRST[EXPR'] = { ε, <, = }
+FIRST[SIMPLE-EXPR] = { if, not, token.identifier, token.integer_token, token.boolean_token, -, ( }
+FIRST[SIMPLE-EXPR'] = { ε, or, +, - }
+FIRST[TERM] = { if, not, token.identifier, token.integer_token, token.boolean_token, -, ( }
+FIRST[TERM'] = { ε, and, *, / }
+FIRST[FACTOR] = { if, not, token.identifier, token.integer_token, token.boolean_token, -, ( }
+FIRST[FACTOR'] = { ε, ( }
+FIRST[ACTUALS] = { ε, if, not, token.identifier, token.integer_token, token.boolean_token, -, ( }
+FIRST[NONEMPTYACTUALS] = { if, not, token.identifier, token.integer_token, token.boolean_token, -, ( }
+FIRST[NONEMPTYACTUALS'] = { ε, "," }
+FIRST[LITERAL] = { token.integer_token, token.boolean_token }
+FIRST[PRINT-STATEMENT] = { print }
+
+FOLLOW[PROGRAM] = { $ }
+FOLLOW[DEFINITIONS] = { begin }
+FOLLOW[DEF] = { function, begin }
+FOLLOW[FORMALS] = { ) }
+FOLLOW[NONEMPTYFORMALS] = { ) }
+FOLLOW[NONEMPTYFORMALS'] = { ) }
+FOLLOW[FORMAL] = { ), "," }
+FOLLOW[BODY] = { ., ; }
+FOLLOW[STATEMENT-LIST] = { end }
+FOLLOW[TYPE] = { begin, ), "," }
+FOLLOW[EXPR] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[EXPR'] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[SIMPLE-EXPR] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[SIMPLE-EXPR'] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[TERM] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[TERM'] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[FACTOR] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[FACTOR'] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[ACTUALS] = { ) }
+FOLLOW[NONEMPTYACTUALS] = { ) }
+FOLLOW[NONEMPTYACTUALS'] = { ) }
+FOLLOW[LITERAL] = { end, then, else, and, *, /, ), ",", <, =, or, +, - }
+FOLLOW[PRINT-STATEMENT] { print, return }
