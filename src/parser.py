@@ -1,8 +1,9 @@
+#!/usr/bin/python3
 
 from sys import path
 import os
-from src.token import Token, TokenType
 path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.token import TokenType
 from src.linkedStack import LinkedStack
 
 class NonTerminal(Enum):
