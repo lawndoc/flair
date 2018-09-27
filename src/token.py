@@ -16,19 +16,31 @@ class TokenType(Enum):
     left_parenthesis = 4
     right_parenthesis = 5
     boolean_token = 6       # value
-    operator = 7
+    # v
+    plus = 7
+    minus = 28
+    times = 29
+    divide = 30
+    # ^
     # v
     integer_type = 8        # type keyword
     boolean_type = 18       # type keyword
     # ^
-    boolean_operator = 9
+    # v
+    and_operator = 9
+    or_operator = 23
+    not_operator = 24
+    # ^
     print_statement = 10
     # v
     if_statement = 11
     then_statement = 25
     else_statement = 26
     # ^
-    comparison = 12
+    # v
+    less_than = 12
+    equal_to = 27
+    # ^
     comma = 13
     colon = 14
     leftbrace = 15
