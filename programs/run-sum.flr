@@ -1,0 +1,12 @@
+program RunSum(n: integer);
+	{ Return the sum of every number between 1 and n inclusive }
+	function recursiveAdd( n: integer )
+	begin
+		return if n = 1 {then}
+			n
+		else  
+			n + recursiveAdd(n-1)
+	end;
+begin
+	return recursiveAdd(n, 0)
+end.

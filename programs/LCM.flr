@@ -1,0 +1,23 @@
+program LCM( n: integer, m: integer ) : integer {should be ; }
+	{ Input two numbers and return their least common multiple }
+	function MOD(n:integer,divisor:integer):integer
+	begin
+		return m-m/n*n
+	end;
+	function findMultiple(n:integer,m:integer,check:integer):integer
+	begin
+		return if MOD(check,n)=0 then
+			if MOD(check,m)=0 then
+				check
+			else
+				findMultiple(n,m,check+1)
+		else
+			findMultiple(n,m,check+1)
+	end;
+
+begin
+	return if n < m then
+		findMultiple(n,m,m)
+	else
+		findMultiple(n,m,n)
+end.

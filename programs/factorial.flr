@@ -1,0 +1,12 @@
+program Factorial( n : integer );
+	{ Input a number and return its factorial. }
+	function factorial( n : integer ) : integer
+	begin
+		return if n = 1 then
+			1
+		else
+			n * factorial(n-1)
+	end;
+begin
+	return (factorial(n) { didn't close with ) }
+end.

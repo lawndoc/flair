@@ -1,0 +1,16 @@
+program DecToBin(decimal: integer);
+	{ Input a decimal number and return its binary representation }
+	function MOD( n: integer, divisor: integer ): integer
+	begin
+		return m - m/n * n
+	end;
+	function findBinary( n: integer ) : integer
+	begin
+		{ should have return statement here }
+		if n = 0 then
+			return 0
+		else
+			return MOD(n,2) + 10 * findBinary(n/2)
+begin
+	return findBinary( decimal )
+end.
