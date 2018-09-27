@@ -1,6 +1,7 @@
 
 from sys import path
 import os
+from src.token import Token, TokenType
 path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.linkedStack import LinkedStack
 
@@ -22,13 +23,12 @@ class NonTerminal(Enum):
     Nonempty_Actuals = 14
     Literal     = 15
 
+parse_table = {
+    (NonTerminal.Program, TokenType.keyword) : [TokenType.keyword
+                                                TokenType.identifier] 
 
 
-
-
-
-
-
+}
 
 class Parser:
     def __init__(self):
