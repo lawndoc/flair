@@ -40,3 +40,6 @@ class Parser:
                                                         NonTerminal.Body,
                                                         TokenType.period]
         }
+
+    def parse(self):
+        pass
