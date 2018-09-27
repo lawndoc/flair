@@ -25,7 +25,7 @@ class NonTerminal(Enum):
     Literal     = 15
 
 parse_table = {
-    (NonTerminal.Program, TokenType.keyword) : [TokenType.keyword,
+    (NonTerminal.Program, TokenType.program) : [TokenType.program,
                                                 TokenType.identifier,
                                                 TokenType.left_parenthesis,
                                                 NonTerminal.Formals,
