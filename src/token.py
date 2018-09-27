@@ -4,15 +4,15 @@ from enum import Enum
 
 class TokenType(Enum):
     semicolon = 0
-    integer_token = 1
+    integer_token = 1       # value
     keyword = 2
     period = 3
     left_parenthesis = 4
     right_parenthesis = 5
-    boolean_token = 6
+    boolean_token = 6       # value
     operator = 7
-    integer_type = 8
-    boolean_type = 18
+    integer_type = 8        # type keyword
+    boolean_type = 18       # type keyword
     boolean_operator = 9
     print_statement = 10
     statement = 11
