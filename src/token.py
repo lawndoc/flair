@@ -11,7 +11,8 @@ class TokenType(Enum):
     right_parenthesis = 5
     boolean_token = 6
     operator = 7
-    type = 8
+    integer_type = 8
+    boolean_type = 18
     boolean_operator = 9
     print_statement = 10
     statement = 11
