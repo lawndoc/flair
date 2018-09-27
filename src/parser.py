@@ -25,7 +25,7 @@ class NonTerminal(Enum):
 
 parse_table = {
     (NonTerminal.Program, TokenType.keyword) : [TokenType.keyword
-                                                TokenType.identifier] 
+                                                TokenType.identifier]
 
 
 }
