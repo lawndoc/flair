@@ -24,21 +24,19 @@ class NonTerminal(Enum):
     Nonempty_Actuals = 14
     Literal     = 15
 
-parse_table = {
-    (NonTerminal.Program, TokenType.program) : [TokenType.program,
-                                                TokenType.identifier,
-                                                TokenType.left_parenthesis,
-                                                NonTerminal.Formals,
-                                                TokenType.right_parenthesis,
-                                                TokenType.semicolon,
-                                                NonTerminal.Definitions,
-                                                NonTerminal.Body,
-                                                TokenType.period]
-
-
-}
 
 class Parser:
     def __init__(self):
         stack = LinkedStack()
         stack.push("$")
+        parse_table = {
+            (NonTerminal.Program, TokenType.program) : [TokenType.program,
+                                                        TokenType.identifier,
+                                                        TokenType.left_parenthesis,
+                                                        NonTerminal.Formals,
+                                                        TokenType.right_parenthesis,
+                                                        TokenType.semicolon,
+                                                        NonTerminal.Definitions,
+                                                        NonTerminal.Body,
+                                                        TokenType.period]
+        }
