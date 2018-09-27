@@ -5,17 +5,33 @@ from enum import Enum
 class TokenType(Enum):
     semicolon = 0
     integer_token = 1       # value
-    keyword = 2
+    # v
+    program_keyword = 2
+    function_keyword = 19
+    return_keyword = 20
+    begin_keyword = 21
+    end_keyword = 22
+    # ^
     period = 3
     left_parenthesis = 4
     right_parenthesis = 5
     boolean_token = 6       # value
     operator = 7
+    # v
     integer_type = 8        # type keyword
     boolean_type = 18       # type keyword
-    boolean_operator = 9
+    # ^
+    # v
+    and_operator = 9
+    or_operator = 23
+    not_operator = 24
+    # ^
     print_statement = 10
-    statement = 11
+    # v
+    if_statement = 11
+    then_statement = 25
+    else_statement = 26
+    # ^
     comparison = 12
     comma = 13
     colon = 14
