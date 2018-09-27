@@ -21,11 +21,7 @@ class TokenType(Enum):
     integer_type = 8        # type keyword
     boolean_type = 18       # type keyword
     # ^
-    # v
-    and_operator = 9
-    or_operator = 23
-    not_operator = 24
-    # ^
+    boolean_operator = 9
     print_statement = 10
     # v
     if_statement = 11
