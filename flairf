@@ -5,3 +5,4 @@ FILE_PATH=$1
 
 # call parsetest.py and pass in path to flair program
 python3 ./tests/parsetest.py $FILE_PATH
+
