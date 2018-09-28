@@ -251,9 +251,9 @@ def push_rule(lst, stack):
         stack.append(element)
 
 class Parser:
-    def __init__(self, tokenList):
+    def __init__(self, scanner):
         self.parseStack = LinkedStack()
-        self.tokenList = tokenList
+        self.scanner = scanner
 
 
 
@@ -262,11 +262,11 @@ class Parser:
         self.parseStack.push(NonTerminal.Program)
         while self.parseStack.peek() != "$":
             A = self.parseStack.peek()
-            t = self.tokenList[0].getType()
+            t = self.scanner.peek().getType()
             if isinstance(A, TokenType):
                 if A == t:
                     self.parseStack.pop()
-                    self.tokenList.pop(0)
+                    self.scanner.next()
                 else:
                     error_msg = "Parsing error: Expected {} but found {}"
                     raise ParseError(error_msg.format(A,t))
