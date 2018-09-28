@@ -94,9 +94,19 @@ class Scanner:
                 elif program[pos] == ")":
                     tokens.append(Token(TokenType.right_parenthesis, ")"))
                 elif program[pos] in "+-*/":
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                 elif program[pos] in "<=":
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                 elif program[pos] == "{":
                     state = State.comment_state
                 elif program[pos] == "}":
@@ -179,11 +189,21 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.integer_token, 0))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.integer_token, 0))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     state = State.looking_state
                 elif program[pos] == "{":
                     tokens.append(Token(TokenType.integer_token, 0))
@@ -237,12 +257,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.integer_token, int(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.integer_token, int(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -310,12 +340,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -336,51 +376,61 @@ class Scanner:
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ';':
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
                     tokens.append(Token(TokenType.semicolon, ";"))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ".":
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
                     tokens.append(Token(TokenType.period, "."))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ",":
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
                     tokens.append(Token(TokenType.comma, ","))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ":":
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
                     tokens.append(Token(TokenType.colon, ":"))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "(":
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
                     tokens.append(Token(TokenType.left_parenthesis, "("))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == ")":
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
                     tokens.append(Token(TokenType.right_parenthesis, ")"))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "+-*/":
-                    tokens.append(Token(TokenType.statement, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
-                    tokens.append(Token(TokenType.statement, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.if_statement, str(accum)))
                     accum = ""
                     state = State.comment_state
                 elif program[pos] == "}":
@@ -395,7 +445,7 @@ class Scanner:
             elif state == State.integer_type_state:
                 # rest of 'integer' in integer_ltrs
                 if integer_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.type, str(accum)))
+                    tokens.append(Token(TokenType.integer_type, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -443,12 +493,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -510,12 +570,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -582,12 +652,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -606,7 +686,7 @@ class Scanner:
             elif state == State.function_state:
                 # rest of 'function' in function_ltrs
                 if function_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.keyword, str(accum)))
+                    tokens.append(Token(TokenType.function_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -654,12 +734,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -718,12 +808,22 @@ class Scanner:
                         state = State.looking_state
                     elif program[pos] in "+-*/":
                         tokens.append(Token(TokenType.identifier, str(accum)))
-                        tokens.append(Token(TokenType.operator, program[pos]))
+                        if program[pos] == "+":
+                            tokens.append(Token(TokenType.plus, program[pos]))
+                        elif program[pos] == "-":
+                            tokens.append(Token(TokenType.minus, program[pos]))
+                        elif program[pos] == "*":
+                            tokens.append(Token(TokenType.times, program[pos]))
+                        else:
+                            tokens.append(Token(TokenType.divide, program[pos]))
                         accum = ""
                         state = State.looking_state
                     elif program[pos] in "<=":
                         tokens.append(Token(TokenType.identifier, str(accum)))
-                        tokens.append(Token(TokenType.comparison, program[pos]))
+                        if program[pos] == "<":
+                            tokens.append(Token(TokenType.less_than, program[pos]))
+                        else:
+                            tokens.append(Token(TokenType.equal_to, program[pos]))
                         accum = ""
                         state = State.looking_state
                     elif program[pos] == "{":
@@ -782,12 +882,22 @@ class Scanner:
                         state = State.looking_state
                     elif program[pos] in "+-*/":
                         tokens.append(Token(TokenType.identifier, str(accum)))
-                        tokens.append(Token(TokenType.operator, program[pos]))
+                        if program[pos] == "+":
+                            tokens.append(Token(TokenType.plus, program[pos]))
+                        elif program[pos] == "-":
+                            tokens.append(Token(TokenType.minus, program[pos]))
+                        elif program[pos] == "*":
+                            tokens.append(Token(TokenType.times, program[pos]))
+                        else:
+                            tokens.append(Token(TokenType.divide, program[pos]))
                         accum = ""
                         state = State.looking_state
                     elif program[pos] in "<=":
                         tokens.append(Token(TokenType.identifier, str(accum)))
-                        tokens.append(Token(TokenType.comparison, program[pos]))
+                        if program[pos] == "<":
+                            tokens.append(Token(TokenType.less_than, program[pos]))
+                        else:
+                            tokens.append(Token(TokenType.equal_to, program[pos]))
                         accum = ""
                         state = State.looking_state
                     elif program[pos] == "{":
@@ -857,12 +967,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -881,7 +1001,7 @@ class Scanner:
             elif state == State.program_state:
                 # rest of 'program' in program_ltrs
                 if program_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.keyword, str(accum)))
+                    tokens.append(Token(TokenType.program_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -929,12 +1049,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -996,12 +1126,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1020,7 +1160,7 @@ class Scanner:
             elif state == State.end_state:
                 # rest of 'end' in end_ltrs
                 if end_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.keyword, str(accum)))
+                    tokens.append(Token(TokenType.end_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1068,12 +1208,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1092,7 +1242,7 @@ class Scanner:
             elif state == State.else_state:
                 # rest of 'else' in else_ltrs
                 if else_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.else_statement, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1140,12 +1290,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1207,12 +1367,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1231,7 +1401,7 @@ class Scanner:
             elif state == State.begin_state:
                 # rest of 'begin' in begin_ltrs
                 if begin_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.keyword, str(accum)))
+                    tokens.append(Token(TokenType.begin_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1279,12 +1449,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1303,7 +1483,7 @@ class Scanner:
             elif state == State.boolean_state:
                 # rest of 'boolean' in boolean_ltrs
                 if boolean_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.type, str(accum)))
+                    tokens.append(Token(TokenType.boolean_type, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1351,12 +1531,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1418,12 +1608,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1490,12 +1690,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1514,7 +1724,7 @@ class Scanner:
             elif state == State.then_state:
                 # rest of 'then' in then_ltrs
                 if then_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.statement, str(accum)))
+                    tokens.append(Token(TokenType.then_statement, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1562,12 +1772,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1586,7 +1806,7 @@ class Scanner:
             elif state == State.and_state:
                 # rest of 'and' in and_ltrs
                 if and_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                    tokens.append(Token(TokenType.and_operator, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1634,12 +1854,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1658,7 +1888,7 @@ class Scanner:
             elif state == State.or_state:
                 # rest of 'or' in or_ltrs
                 if or_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                    tokens.append(Token(TokenType.or_operator, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1706,12 +1936,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1730,7 +1970,7 @@ class Scanner:
             elif state == State.return_state:
                 # rest of 'return' in return_ltrs
                 if return_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.keyword, str(accum)))
+                    tokens.append(Token(TokenType.return_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1778,12 +2018,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1802,7 +2052,7 @@ class Scanner:
             elif state == State.not_state:
                 # rest of 'not' in not_ltrs
                 if not_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    tokens.append(Token(TokenType.boolean_operator, str(accum)))
+                    tokens.append(Token(TokenType.not_operator, str(accum)))
                     accum = ""
                     state = State.looking_state
                     continue
@@ -1850,12 +2100,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1910,12 +2170,22 @@ class Scanner:
                     state = State.looking_state
                 elif program[pos] in "+-*/":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.operator, program[pos]))
+                    if program[pos] == "+":
+                        tokens.append(Token(TokenType.plus, program[pos]))
+                    elif program[pos] == "-":
+                        tokens.append(Token(TokenType.minus, program[pos]))
+                    elif program[pos] == "*":
+                        tokens.append(Token(TokenType.times, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.divide, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] in "<=":
                     tokens.append(Token(TokenType.identifier, str(accum)))
-                    tokens.append(Token(TokenType.comparison, program[pos]))
+                    if program[pos] == "<":
+                        tokens.append(Token(TokenType.less_than, program[pos]))
+                    else:
+                        tokens.append(Token(TokenType.equal_to, program[pos]))
                     accum = ""
                     state = State.looking_state
                 elif program[pos] == "{":
@@ -1932,9 +2202,3 @@ class Scanner:
 
         # end of program... return list of tokens
         return tokens
-
-
-"""
-Things our parser will have to check for:
-    - correct keyword being used
-"""
