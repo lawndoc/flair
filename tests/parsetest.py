@@ -25,3 +25,7 @@ with open(FILE_PATH, "r") as flr:
 
 scanner = Scanner(flairProgram)
 parser = Parser(scanner)
+
+result = parser.parse()
+if result:
+    print("Valid Program.")
