@@ -37,7 +37,7 @@ class Parser:
         stack = LinkedStack()
         stack.push("$")
         parse_table = {
-            (NonTerminal.Program, TokenType.program_keyword):   [TokenType.program_keyword,
+            (NonTerminal.Program, TokenType.program_keyword):  [TokenType.program_keyword,
                                                                 TokenType.identifier,
                                                                 TokenType.left_parenthesis,
                                                                 NonTerminal.Formals,
@@ -46,9 +46,9 @@ class Parser:
                                                                 NonTerminal.Definitions,
                                                                 NonTerminal.Body,
                                                                 TokenType.period],
-            (NonTerminal.Expr, TokenType.left_parenthesis)  :   [NonTerminal.Simple_Expr,
+            (NonTerminal.Expr, TokenType.left_parenthesis)  :  [NonTerminal.Simple_Expr,
                                                                 NonTerminal.Expr_p]
-            (NonTerminal.Expr, TokenType.identifier)        :   [NonTerminal.Simple_Expr,
+            (NonTerminal.Expr, TokenType.identifier)        :  [NonTerminal.Simple_Expr,
                                                                 NonTerminal.Expr_p]
             #Expr and -
         }
