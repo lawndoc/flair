@@ -2,6 +2,7 @@
 
 from enum import Enum
 from sys import path
+from errors import ParseError
 import os
 path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.token import TokenType
@@ -239,11 +240,51 @@ parse_table = {
                                                                TokenType.semicolon]
 }  # end of parse table
 
+def top(stack):
+    return stack[-1]
+
+def pop(stack):
+    return stack.pop()
+
+def push_rule(lst, stack):
+    for element in reversed(lst):
+        stack.append(element)
 
 class Parser:
-    def __init__(self):
-        parseStack = LinkedStack()
-        parseStack.push("$")
+    def __init__(self, tokenList):
+        self.parseStack = LinkedStack()
+        self.tokenList = tokenList
+
+
 
     def parse(self):
-        pass
+        self.parseStack.push("$")
+        self.parseStack.push(NonTerminal.Program)
+        while self.parseStack.peek() != "$":
+            A = self.parseStack.peek()
+            t = self.tokenList[0].getType()
+            if isinstance(A, TokenType):
+                if A == t:
+                    self.parseStack.pop()
+                    self.tokenList.pop(0)
+                else:
+                    error_msg = "Parsing error: Expected {} but found {}"
+                    raise ParseError(error_msg.format(A,t))
+            elif isinstance(A, NonTerminal):
+                if (A,t) in parse_table:
+                    self.parseStack.pop()
+                    if parse_table[(A,t)] == "ε":  # rule is ε, push nothing onto stack
+                        continue
+                    else:
+                        reversedRule = parse_table[(A,t)]
+                        for y in reversedRule:
+                            self.parseStack.push(y)
+                else:
+                    error_msg = "No transition for {} from {}"
+                    raise ParseError(error_msg.format(A,t))
+            else:
+                error_msg = "An unidentified object is on the stack: {}"
+                raise ParseError(error_msg.format(A))
+
+        # end of loop, program threw no errors
+        return True
