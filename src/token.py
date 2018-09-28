@@ -59,8 +59,20 @@ class Token:
     def isSemicolon(self):
         return self.token_type == TokenType.semicolon
 
-    def isKeyword(self):
-        return self.token_type == TokenType.keyword
+    def isProgramKeyword(self):
+        return self.token_type == TokenType.program_keyword
+
+    def isFunctionKeyword(self):
+        return self.token_type == TokenType.function_keyword
+
+    def isReturnKeyword(self):
+        return self.token_type == TokenType.return_keyword
+
+    def isBeginKeyword(self):
+        return self.token_type == TokenType.begin_keyword
+
+    def isEndKeyword(self):
+        return self.token_type == TokenType.end_keyword
 
     def isPeriod(self):
         return self.token_type == TokenType.period
@@ -74,23 +86,50 @@ class Token:
     def isBoolean(self):
         return self.token_type == TokenType.boolean_token
 
-    def isOperator(self):
-        return self.token_type == TokenType.operator
+    def isPlus(self):
+        return self.token_type == TokenType.plus
 
-    def isType(self):
-        return self.token_type == TokenType.type
+    def isMinus(self):
+        return self.token_type == TokenType.minus
 
-    def isBooleanOperator(self):
-        return self.token_type == TokenType.boolean_operator
+    def isTimes(self):
+        return self.token_type == TokenType.times
+
+    def isDivide(self):
+        return self.token_type == TokenType.divide
+
+    def isIntegerType(self):
+        return self.token_type == TokenType.integer_type
+
+    def isBooleanType(self):
+        return self.token_type == TokenType.boolean_type
+
+    def isAndOperator(self):
+        return self.token_type == TokenType.and_operator
+
+    def isOrOperator(self):
+        return self.token_type == TokenType.or_operator
+
+    def isNotOperator(self):
+        return self.token_type == TokenType.not_operator
 
     def isPrintStatement(self):
         return self.token_type == TokenType.print_statement
 
-    def isStatement(self):
-        return self.token_type == TokenType.statement
+    def isIfStatement(self):
+        return self.token_type == TokenType.if_statement
 
-    def isComparison(self):
-        return self.token_type == TokenType.comparison
+    def isThenStatement(self):
+        return self.token_type == TokenType.then_statement
+
+    def isElseStatement(self):
+        return self.token_type == TokenType.else_statement
+
+    def isLessThan(self):
+        return self.token_type == TokenType.less_than
+
+    def isEqualTo(self):
+        return self.token_type == TokenType.equal_to
 
     def isComma(self):
         return self.token_type == TokenType.comma
@@ -118,7 +157,15 @@ class Token:
             return "integer = " + str(self.token_value)
         elif self.isSemicolon():
             return "semicolon"
-        elif self.isKeyword():
+        elif self.isProgramKeyword():
+            return "keyword = " + str(self.token_value)
+        elif self.isFunctionKeyword():
+            return "keyword = " + str(self.token_value)
+        elif self.isReturnKeyword():
+            return "keyword = " + str(self.token_value)
+        elif self.isBeginKeyword():
+            return "keyword = " + str(self.token_value)
+        elif self.isEndKeyword():
             return "keyword = " + str(self.token_value)
         elif self.isPeriod():
             return "period"
@@ -128,17 +175,35 @@ class Token:
             return "right parenthesis"
         elif self.isBoolean():
             return "boolean = " + str(self.token_value)
-        elif self.isOperator():
-            return "operator = " + str(self.token_value)
-        elif self.isType():
+        elif self.isPlus():
+            return "arithmetic operator = " + str(self.token_value)
+        elif self.isMinus():
+            return "arithmetic operator = " + str(self.token_value)
+        elif self.isTimes():
+            return "arithmetic operator = " + str(self.token_value)
+        elif self.isDivide():
+            return "arithmetic operator = " + str(self.token_value)
+        elif self.isIntegerType():
             return "type = " + str(self.token_value)
-        elif self.isBooleanOperator():
+        elif self.isBooleanType():
+            return "type = " + str(self.token_value)
+        elif self.isAndOperator():
+            return "boolean operator = " + str(self.token_value)
+        elif self.isOrOperator():
+            return "boolean operator = " + str(self.token_value)
+        elif self.isNotOperator():
             return "boolean operator = " + str(self.token_value)
         elif self.isPrintStatement():
             return "print statement"
-        elif self.isStatement():
-            return "statement = " + str(self.token_value)
-        elif self.isComparison():
+        elif self.isIfStatement():
+            return "if statement"
+        elif self.isThenStatement():
+            return "then statement"
+        elif self.isElseStatement():
+            return "else statement"
+        elif self.isLessThan():
+            return "comparison = " + str(self.token_value)
+        elif self.isEqualTo():
             return "comparison = " + str(self.token_value)
         elif self.isComma():
             return "comma"
