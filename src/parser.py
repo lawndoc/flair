@@ -242,8 +242,8 @@ parse_table = {
 
 class Parser:
     def __init__(self):
-        stack = LinkedStack()
-        stack.push("$")
+        parseStack = LinkedStack()
+        parseStack.push("$")
 
     def parse(self):
         pass
