@@ -278,6 +278,8 @@ class Parser:
                         continue
                     else:
                         reversedRule = parse_table[(A,t)].reverse()
+                        print(A,t)
+                        print(reversedRule)
                         for y in reversedRule:
                             self.parseStack.push(y)
                 else:
