@@ -265,8 +265,9 @@ class Parser:
             print("Parse Stack:", self.parseStack)
             A = self.parseStack.peek()
             t = self.scanner.peek().getType()
+            tVal = self.scanner.peek().getValue()
             print("A =", A, "t =", t)
-            print(self.scanner.scan())
+            print(tVal)
             if isinstance(A, TokenType):
                 if A == t:
                     self.parseStack.pop()
