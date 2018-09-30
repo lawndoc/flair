@@ -452,6 +452,7 @@ class Scanner:
                     tokens.append(Token(TokenType.integer_type, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    integer_ltrs = ["r", "e", "g", "e", "t"]
                     continue
                 elif program[pos] == integer_ltrs[-1]:
                     accum += program[pos]
@@ -611,6 +612,7 @@ class Scanner:
                     tokens.append(Token(TokenType.boolean_token, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    false_ltrs = ["e", "s", "l"]
                     continue
                 elif program[pos] == false_ltrs[-1]:
                     accum += program[pos]
@@ -693,6 +695,7 @@ class Scanner:
                     tokens.append(Token(TokenType.function_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    function_ltrs = ["n", "o", "i", "t", "c", "n"]
                     continue
                 elif program[pos] == function_ltrs[-1]:
                     accum += program[pos]
@@ -926,6 +929,7 @@ class Scanner:
                     tokens.append(Token(TokenType.print_statement, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    print_ltrs = ["t", "n"]
                     continue
                 elif program[pos] == print_ltrs[-1]:
                     accum += program[pos]
@@ -1008,6 +1012,7 @@ class Scanner:
                     tokens.append(Token(TokenType.program_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    program_ltrs = ["m", "a", "r", "g"]
                     continue
                 elif program[pos] == program_ltrs[-1]:
                     accum += program[pos]
@@ -1167,6 +1172,7 @@ class Scanner:
                     tokens.append(Token(TokenType.end_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    end_ltrs = ["d"]
                     continue
                 elif program[pos] == end_ltrs[-1]:
                     accum += program[pos]
@@ -1249,6 +1255,7 @@ class Scanner:
                     tokens.append(Token(TokenType.else_statement, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    else_ltrs = ["e", "s"]
                     continue
                 elif program[pos] == else_ltrs[-1]:
                     accum += program[pos]
@@ -1408,6 +1415,7 @@ class Scanner:
                     tokens.append(Token(TokenType.begin_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    begin_ltrs = ["n", "i", "g"]
                     continue
                 elif program[pos] == begin_ltrs[-1]:
                     accum += program[pos]
@@ -1490,6 +1498,7 @@ class Scanner:
                     tokens.append(Token(TokenType.boolean_type, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    boolean_ltrs = ["n", "a", "e", "l", "o"]
                     continue
                 elif program[pos] == boolean_ltrs[-1]:
                     accum += program[pos]
@@ -1649,6 +1658,7 @@ class Scanner:
                     tokens.append(Token(TokenType.boolean_token, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    true_ltrs = ["e", "u"]
                     continue
                 elif program[pos] == true_ltrs[-1]:
                     accum += program[pos]
@@ -1731,6 +1741,7 @@ class Scanner:
                     tokens.append(Token(TokenType.then_statement, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    then_ltrs = ["n", "e"]
                     continue
                 elif program[pos] == then_ltrs[-1]:
                     accum += program[pos]
@@ -1813,6 +1824,7 @@ class Scanner:
                     tokens.append(Token(TokenType.and_operator, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    and_ltrs = ["d", "n"]
                     continue
                 elif program[pos] == and_ltrs[-1]:
                     accum += program[pos]
@@ -1895,6 +1907,7 @@ class Scanner:
                     tokens.append(Token(TokenType.or_operator, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    or_ltrs = ["r"]
                     continue
                 elif program[pos] == or_ltrs[-1]:
                     accum += program[pos]
@@ -1977,6 +1990,7 @@ class Scanner:
                     tokens.append(Token(TokenType.return_keyword, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    return_ltrs = ["n", "r", "u", "t", "e"]
                     continue
                 elif program[pos] == return_ltrs[-1]:
                     accum += program[pos]
@@ -2059,6 +2073,7 @@ class Scanner:
                     tokens.append(Token(TokenType.not_operator, str(accum)))
                     accum = ""
                     state = State.looking_state
+                    not_ltrs = ["t", "o"]
                     continue
                 elif program[pos] == not_ltrs[-1]:
                     accum += program[pos]
