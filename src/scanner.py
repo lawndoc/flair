@@ -48,12 +48,12 @@ class Scanner:
             self.tokenIndex += 1
         else:
             return "EOF"
-        return self.tokens[self.tokenIndex]
+        return self.tokens[self.tokenIndex-1]
 
     def peek(self):
         if self.tokenIndex >= len(self.tokens) - 1:
             return "EOF"
-        return self.tokens[self.tokenIndex + 1]
+        return self.tokens[self.tokenIndex]
 
     def scan(self):
         program = self.program
