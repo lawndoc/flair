@@ -278,7 +278,7 @@ class Parser:
                         continue
                     else:
                         reversedRule = parse_table[(A,t)]
-                        reversedRule.revers()
+                        reversedRule.reverse()
                         print(A,t)
                         print(reversedRule)
                         for y in reversedRule:
