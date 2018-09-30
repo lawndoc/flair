@@ -261,9 +261,10 @@ class Parser:
         self.parseStack.push("$")
         self.parseStack.push(NonTerminal.Program)
         while self.parseStack.peek() != "$":
-            print(self.parseStack)
+            print("Parse Stack:", self.parseStack)
             A = self.parseStack.peek()
             t = self.scanner.peek().getType()
+            print("A =", A, "t =", t)
             if isinstance(A, TokenType):
                 if A == t:
                     self.parseStack.pop()
@@ -279,8 +280,6 @@ class Parser:
                     else:
                         reversedRule = parse_table[(A,t)]
                         reversedRule.reverse()
-                        print(A,t)
-                        print(reversedRule)
                         for y in reversedRule:
                             self.parseStack.push(y)
                 else:
