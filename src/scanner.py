@@ -44,14 +44,14 @@ class Scanner:
         self.tokenIndex = 0
 
     def next(self):
-        if self.tokenIndex < len(self.tokens) - 1:
+        if self.tokenIndex < len(self.tokens):
             self.tokenIndex += 1
         else:
             return "EOF"
         return self.tokens[self.tokenIndex-1]
 
     def peek(self):
-        if self.tokenIndex >= len(self.tokens) - 1:
+        if self.tokenIndex >= len(self.tokens):
             return "EOF"
         return self.tokens[self.tokenIndex]
 
