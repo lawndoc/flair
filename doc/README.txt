@@ -14,12 +14,19 @@ Optimizations:
 
 How To Run:
     To test the scanner, use one of these three ways:
-        - give flairs execute permissions on a UNIX system with chmod 755, and
-            call flairs from the command line, passing in an argument for a flair
+        - call flairs from the command line, passing in an argument for a flair
             program to scan (ex. $ flairs /path/to/program.flr )
-        - give scantest.py execute permissions on a UNIX operating system, and
-            call it from the command line, passing in an argument for a flair
-            program to scan (ex. $ scantest.py /path/to/program.flr )
+        - call scantest.py from from the command line, passing in an argument
+            for a flair program to scan (ex. $ scantest.py /path/to/program.flr )
         - call scantest.py with python3 from the command line, passing in an
             argument for a flair program to scan
             (ex. python3 scantest.py /path/to/program.flr )
+
+    To test the parser, use one of these three ways:
+        - call flairf from the command line, passing in an argument for a flair
+            program to scan (ex. $ flairf /path/to/program.flr )
+        - call parsetest.py from from the command line, passing in an argument
+            for a flair program to scan (ex. $ parsetest.py /path/to/program.flr )
+        - call parsetest.py with python3 from the command line, passing in an
+            argument for a flair program to scan
+            (ex. python3 parsetest.py /path/to/program.flr )
