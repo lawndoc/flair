@@ -277,8 +277,7 @@ class Parser:
                     if parse_table[(A,t)] == "ε":  # rule is ε, push nothing onto stack
                         continue
                     else:
-                        reversedRule = parse_table[(A,t)]
-                        for y in reversedRule:
+                        for y in parse_table[(A,t)]:
                             self.parseStack.push(y)
                 else:
                     error_msg = "No transition for {} from {}"
