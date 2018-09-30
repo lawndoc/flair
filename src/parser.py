@@ -274,7 +274,7 @@ class Parser:
             elif isinstance(A, NonTerminal):
                 if (A,t) in parse_table:
                     self.parseStack.pop()
-                    if parse_table[(A,t)] == "ε":  # rule is ε, push nothing onto stack
+                    if "ε" in parse_table[(A,t)]:  # rule is ε, push nothing onto stack
                         continue
                     else:
                         reversedRule = parse_table[(A,t)]
