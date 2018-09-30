@@ -281,7 +281,7 @@ class Parser:
                     if "ε" in parse_table[(A,t)]:  # rule is ε, push nothing onto stack
                         continue
                     else:
-                        reversedRule = parse_table[(A,t)]
+                        reversedRule = parse_table[(A,t)].copy()
                         reversedRule.reverse()
                         for y in reversedRule:
                             self.parseStack.push(y)
