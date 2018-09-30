@@ -459,7 +459,9 @@ class Scanner:
                     integer_ltrs.pop()
                     if len(integer_ltrs) == 0:      # push '$' if empty list
                         integer_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    integer_ltrs = ["r", "e", "g", "e", "t"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -619,7 +621,9 @@ class Scanner:
                     false_ltrs.pop()
                     if len(false_ltrs) == 0:      # push '$' if empty list
                         false_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    false_ltrs = ["e", "s", "l"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -702,7 +706,9 @@ class Scanner:
                     function_ltrs.pop()
                     if len(function_ltrs) == 0:      # push '$' if empty list
                         function_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    function_ltrs = ["n", "o", "i", "t", "c", "n"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -940,7 +946,9 @@ class Scanner:
                     print_ltrs.pop()
                     if len(print_ltrs) == 0:      # push '$' if empty list
                         print_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    print_ltrs = ["t", "n"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1023,7 +1031,9 @@ class Scanner:
                     program_ltrs.pop()
                     if len(program_ltrs) == 0:      # push '$' if empty list
                         program_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    program_ltrs = ["m", "a", "r", "g"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1183,7 +1193,9 @@ class Scanner:
                     end_ltrs.pop()
                     if len(end_ltrs) == 0:      # push '$' if empty list
                         end_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    end_ltrs = ["d"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1266,7 +1278,9 @@ class Scanner:
                     else_ltrs.pop()
                     if len(else_ltrs) == 0:      # push '$' if empty list
                         else_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    else_ltrs = ["e", "s"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1426,7 +1440,9 @@ class Scanner:
                     begin_ltrs.pop()
                     if len(begin_ltrs) == 0:      # push '$' if empty list
                         begin_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    begin_ltrs = ["n", "i", "g"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1509,7 +1525,9 @@ class Scanner:
                     boolean_ltrs.pop()
                     if len(boolean_ltrs) == 0:      # push '$' if empty list
                         boolean_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    boolean_ltrs = ["n", "a", "e", "l", "o"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1669,7 +1687,9 @@ class Scanner:
                     true_ltrs.pop()
                     if len(true_ltrs) == 0:      # push '$' if empty list
                         true_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    true_ltrs = ["e", "u"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1752,7 +1772,9 @@ class Scanner:
                     then_ltrs.pop()
                     if len(then_ltrs) == 0:      # push '$' if empty list
                         then_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    then_ltrs = ["n", "e"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1835,7 +1857,9 @@ class Scanner:
                     and_ltrs.pop()
                     if len(and_ltrs) == 0:      # push '$' if empty list
                         and_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    and_ltrs = ["d", "n"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -1918,7 +1942,9 @@ class Scanner:
                     or_ltrs.pop()
                     if len(or_ltrs) == 0:      # push '$' if empty list
                         or_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    or_ltrs = ["r"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -2001,7 +2027,9 @@ class Scanner:
                     return_ltrs.pop()
                     if len(return_ltrs) == 0:      # push '$' if empty list
                         return_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    return_ltrs = ["n", "r", "u", "t", "e"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
@@ -2084,7 +2112,9 @@ class Scanner:
                     not_ltrs.pop()
                     if len(not_ltrs) == 0:      # push '$' if empty list
                         not_ltrs.append("$")
-                elif program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
+                else:
+                    not_ltrs = ["t", "o"]
+                if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                     state = State.identifier_state
                 elif program[pos].isspace():
