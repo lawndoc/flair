@@ -1,0 +1,49 @@
+{---------------------------------------------------------------
+
+ This program prints the first n digits of a/b and returns
+ -- and prints -- the division's remainder at that point.
+ For example,
+   $ flair divide 7 12 2
+   5
+   8
+   4
+   $ flair divide 7 12 4
+   5
+   8
+   3
+   3
+   4
+
+---------------------------------------------------------------}
+
+program divide(a : integer, b : integer, n : integer);
+
+  { ----------------------------------------------
+    functions from the Flair library
+    ---------------------------------------------- }
+
+  function MOD( m : integer, n : integer ) : integer
+  begin
+    return m - m/n * n
+  end;
+
+  { ----------------------------------------------
+    primary functions
+    ----------------------------------------------  }
+
+  function printAndDivide(a : integer, b : integer, n : integer) : integer
+  begin
+    print((10 * a) / b);
+    return divide(MOD(a*10, b), b, n-1)
+  end;
+
+  function divide(a : integer, b : integer, n : integer) : integer
+  begin
+    return if n = 0
+              then a
+              else printAndDivide(a, b, n)
+  end;
+
+begin
+  return divide(a, b, n)
+end.
