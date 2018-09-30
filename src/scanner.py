@@ -925,7 +925,7 @@ class Scanner:
             # 'pri' has been read... could be 'print' or an identifier
             elif state == State.print_state:
                 # rest of 'print' in print_ltrs
-                print("\nprogram[pos] =", program[pos])
+                print("\nprogram =", program[pos-5:pos+5])
                 print("accum =", accum)
                 print("print_ltrs =", print_ltrs)
                 if print_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
