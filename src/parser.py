@@ -261,6 +261,7 @@ class Parser:
         self.parseStack.push("$")
         self.parseStack.push(NonTerminal.Program)
         while self.parseStack.peek() != "$":
+            print(a for a in self.parseStack)
             A = self.parseStack.peek()
             t = self.scanner.peek().getType()
             if isinstance(A, TokenType):
