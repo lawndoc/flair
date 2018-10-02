@@ -235,7 +235,7 @@ parse_table = {
     (NonTerminal.Literal, TokenType.integer_token)       :   [TokenType.integer_token],
     (NonTerminal.Literal, TokenType.boolean_token)       :   [TokenType.boolean_token],
     (NonTerminal.Print_Statement, TokenType.print_statement): [TokenType.print_statement,
-                                                               TokenType.right_parenthesis,
+                                                               TokenType.left_parenthesis,
                                                                NonTerminal.Expr,
                                                                TokenType.right_parenthesis,
                                                                TokenType.semicolon]

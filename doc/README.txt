@@ -1,7 +1,6 @@
 Malwareswaldo: C.J. May, Nick Sanford
 
 Known Bugs:
-    - Scanner inconsistently recognizes keywords as identifiers.
 
 Features Not Implemented:
     - Compiler doesn't track which line of code an error occurred on.
