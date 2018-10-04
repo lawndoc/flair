@@ -262,11 +262,11 @@ class Parser:
         self.parseStack.push("$")
         self.parseStack.push(NonTerminal.Program)
         while self.parseStack.peek() != "$":
-            print("\nParse Stack: [", self.parseStack, "]")
+            # print("\nParse Stack: [", self.parseStack, "]")
             A = self.parseStack.peek()
             t = self.scanner.peek().getType()
-            tVal = self.scanner.peek().getValue()
-            print("A =", A, "t =", t, "(", tVal, ")")
+            # tVal = self.scanner.peek().getValue()
+            # print("A =", A, "t =", t, "(", tVal, ")")
             if isinstance(A, TokenType):
                 if A == t:
                     self.parseStack.pop()
@@ -276,7 +276,7 @@ class Parser:
                     raise ParseError(error_msg.format(A,t))
             elif isinstance(A, NonTerminal):
                 if (A,t) in parse_table:
-                    print("PT Rule: '", parse_table[(A,t)], "'")
+                    # print("PT Rule: '", parse_table[(A,t)], "'")
                     self.parseStack.pop()
                     if "ε" in parse_table[(A,t)]:  # rule is ε, push nothing onto stack
                         continue
@@ -293,4 +293,8 @@ class Parser:
                 raise ParseError(error_msg.format(A))
 
         # end of loop, program threw no errors
-        return True
+        if self.scanner.peek() == "EOF":
+            return True
+        else:
+            error_msg = "Code found after end of program."
+            raise ParseError(error_msg)
