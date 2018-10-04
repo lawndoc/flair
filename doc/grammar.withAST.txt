@@ -1,0 +1,71 @@
+
+<PROGRAM> ::= program <IDENTIFIER> ( <FORMALS> ) ;
+                 <DEFINITIONS>
+                 <BODY> . {make-Program}
+
+<DEFINITIONS> ::= ε
+            | <DEF> <DEFINITIONS> {make-Definitions}
+
+    <DEF> ::= function <IDENTIFIER> ( <FORMALS> ) : <TYPE>
+                 <BODY> ; {make-Function}
+
+<FORMALS> ::= ε
+            | <NONEMPTYFORMALS>
+
+<NONEMPTYFORMALS> ::= <FORMAL> <NONEMPTYFORMALS'>
+
+<NONEMPTYFORMALS'> ::= ε
+            | , <NONEMPTYFORMALS>
+
+ <FORMAL> ::= <IDENTIFIER> : <TYPE>
+
+   <BODY> ::= begin <STATEMENT-LIST> end
+
+<STATEMENT-LIST> ::= <PRINT-STATEMENT> <STATEMENT-LIST>
+            | return <EXPR> {make-ReturnStatement}
+
+   <TYPE> ::= integer {make-Type}
+            | boolean {make-Type}
+
+   <EXPR> ::= <SIMPLE-EXPR> <EXPR'>
+
+   <EXPR'> ::= ε
+            | < <SIMPLE-EXPR> {make-LessThan} <EXPR'>
+            | = <SIMPLE-EXPR> {make-EqualTo} <EXPR'>
+
+<SIMPLE-EXPR> ::= <TERM> <SIMPLE-EXPR'>
+
+<SIMPLE-EXPR'> ::= ε
+            | or <TERM> {make-OrExpr} <SIMPLE-EXPR'>
+            | + <TERM> {make-PlusExpr} <SIMPLE-EXPR'>
+            | - <TERM> {make-MinusExpr} <SIMPLE-EXPR'>
+
+   <TERM> ::= <FACTOR> <TERM'>
+
+  <TERM'> ::= ε
+            | and <FACTOR> {make-AndExpr} <TERM'>
+            | * <FACTOR> {make-TimesExpr} <TERM'>
+            | / <FACTOR> {make-DivideExpr} <TERM'>
+
+ <FACTOR> ::= if <EXPR> then <EXPR> else <EXPR> {make-IfStatement}
+            | not <FACTOR> {make-NotExpr}
+            | <IDENTIFIER> {make-Identifier} <FACTOR'>
+            | <LITERAL> {make-Literal}
+            | - <FACTOR> {make-NegateExpr}
+            | ( <EXPR> )
+
+ <FACTOR'> ::= ε
+            | ( <ACTUALS> )
+
+<ACTUALS> ::= ε
+            | <NONEMPTYACTUALS> {make-FunctionCall}
+
+<NONEMPTYACTUALS> ::= <EXPR> <NONEMPTYACTUALS'>
+
+<NONEMPTYACTUALS'> ::= ε
+            | , <NONEMPTYACTUALS>
+
+<LITERAL> ::= <NUMBER>
+            | <BOOLEAN>
+
+<PRINT-STATEMENT> ::= print ( <EXPR> ) ; {make-PrintStatement}
