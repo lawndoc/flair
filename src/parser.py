@@ -9,7 +9,7 @@ from src.linkedStack import LinkedStack
 from src.errors import ParseError
 
 def excepthook(type, value, traceback):
-    print(str(type) + ": " + str(value))
+    print(str(value))
 
 sys.excepthook = excepthook
 
@@ -291,15 +291,15 @@ class Parser:
                         for y in reversedRule:
                             self.parseStack.push(y)
                 else:
-                    error_msg = "No transition for {} from {}"
+                    error_msg = "Parsing Error: No transition for {} from {}"
                     raise ParseError(error_msg.format(A,t))
             else:
-                error_msg = "An unidentified object is on the stack: {}"
+                error_msg = "Parsing Error: An unidentified object is on the stack: {}"
                 raise ParseError(error_msg.format(A))
 
         # end of loop, program threw no errors
         if self.scanner.peek() == "EOF":
             return True
         else:
-            error_msg = "Code found after end of program."
+            error_msg = "Parsing Error: Code found after end of program."
             raise ParseError(error_msg)
