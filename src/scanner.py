@@ -3,6 +3,7 @@
 from enum import Enum
 from sys import path
 import os
+from src.errors import LexicalError
 path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.token import Token, TokenType
 
@@ -153,17 +154,17 @@ class Scanner:
                         state = State.identifier_state
                 elif program[pos] == "_":
                     error_msg = "Identifiers must start with a letter, not an '_'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Not a recognized character : {} ."
-                    raise ValueError(error_msg.format(program[pos]))
+                    raise LexicalError(error_msg.format(program[pos]))
                 pos += 1
 
             # '0' was read... next character should be a delimiter
             elif state == State.zero_state:
                 if program[pos].isdigit():
                     error_msg = "Integers do not have leading zeros : {}"
-                    raise ValueError(error_msg.format(program[pos]))
+                    raise LexicalError(error_msg.format(program[pos]))
                 elif program[pos].isspace():
                     tokens.append(Token(TokenType.integer_token, 0))
                     state = State.looking_state
@@ -214,10 +215,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Invalid character after a 0: 0{}"
-                    raise ValueError(error_msg.format(program[pos]))
+                    raise LexicalError(error_msg.format(program[pos]))
                 accum = ''
                 pos += 1
 
@@ -285,10 +286,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Invalid character in integer : {}*{}*"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # '{' was read... skip over comment until '}' is found
@@ -368,10 +369,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'if' has been read... could be 'if' or an identifier
@@ -439,10 +440,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'in' was read... could be 'integer' or an identifier
@@ -533,10 +534,10 @@ class Scanner:
                     integer_ltrs = ["r", "e", "g", "e", "t"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'f' was read... could be 'false', 'function', or an identifier
@@ -610,10 +611,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # "fa" has been read... could be 'false' or an identifier
@@ -704,10 +705,10 @@ class Scanner:
                     false_ltrs = ["e", "s", "l"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'fu' has been read... could be 'function' or an identifier
@@ -798,10 +799,10 @@ class Scanner:
                     function_ltrs = ["n", "o", "i", "t", "c", "n"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'p' or 'pr' has been read... could be 'print', 'program', or an identifier
@@ -872,10 +873,10 @@ class Scanner:
                         state = State.comment_state
                     elif program[pos] == "}":
                         error_msg = "Unmatched end of comment character : '}'"
-                        raise ValueError(error_msg)
+                        raise LexicalError(error_msg)
                     else:
                         error_msg = "Illegal character in identifier {} : {}"
-                        raise ValueError(error_msg.format(accum, program[pos]))
+                        raise LexicalError(error_msg.format(accum, program[pos]))
                 elif accum == "pr":     # 'pr' has been read... looking for 'i' or 'o'
                     if program[pos] == 'i':
                         accum += program[pos]
@@ -946,13 +947,13 @@ class Scanner:
                         state = State.comment_state
                     elif program[pos] == "}":
                         error_msg = "Unmatched end of comment character : '}'"
-                        raise ValueError(error_msg)
+                        raise LexicalError(error_msg)
                     else:
                         error_msg = "Illegal character in identifier {} : {}"
-                        raise ValueError(error_msg.format(accum, program[pos]))
+                        raise LexicalError(error_msg.format(accum, program[pos]))
                 else:
                     error_msg = "{} has been read, but scanner stuck in 'pr' state."
-                    raise ValueError(error_msg.format(accum))
+                    raise LexicalError(error_msg.format(accum))
                 pos += 1
 
             # 'pri' has been read... could be 'print' or an identifier
@@ -1044,10 +1045,10 @@ class Scanner:
                     print_ltrs = ["t", "n"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'pro' has been read... could be 'program' or an identifier
@@ -1138,10 +1139,10 @@ class Scanner:
                     program_ltrs = ["m", "a", "r", "g"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'e' has been read... could be 'end', 'else', or an identifier
@@ -1215,10 +1216,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'en' has been read... could be 'end' or an identifier
@@ -1309,10 +1310,10 @@ class Scanner:
                     end_ltrs = ["d"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'el' has been read... could be 'else' or an identifier
@@ -1403,10 +1404,10 @@ class Scanner:
                     else_ltrs = ["e", "s"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'b' has been read... could be 'begin', 'boolean', or an identifier
@@ -1480,10 +1481,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'be' has been read... could be 'begin' or an identifier
@@ -1574,10 +1575,10 @@ class Scanner:
                     begin_ltrs = ["n", "i", "g"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'bo' has been read... could be 'boolean' or an identifier
@@ -1668,10 +1669,10 @@ class Scanner:
                     boolean_ltrs = ["n", "a", "e", "l", "o"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 't' has been read... could be 'true', 'then', or an identifier
@@ -1745,10 +1746,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'tr' has been read... could be 'true' or an identifier
@@ -1839,10 +1840,10 @@ class Scanner:
                     true_ltrs = ["e", "u"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'th' has been read... could be 'then' or an identifier
@@ -1933,10 +1934,10 @@ class Scanner:
                     then_ltrs = ["n", "e"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'a' has been read... could be 'and' or an identifier
@@ -2027,10 +2028,10 @@ class Scanner:
                     and_ltrs = ["d", "n"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'o' has been read... could be 'or' or an identifier
@@ -2121,10 +2122,10 @@ class Scanner:
                     or_ltrs = ["r"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'r' has been read... could be 'return' or an identifier
@@ -2215,10 +2216,10 @@ class Scanner:
                     return_ltrs = ["n", "r", "u", "t", "e"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # 'n' has been read... could be 'not' or an identifier
@@ -2309,10 +2310,10 @@ class Scanner:
                     not_ltrs = ["t", "o"]
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
             # identifier detected... read alphabetical characters, digits, and '_' until a delimiter is found
@@ -2379,10 +2380,10 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
-                    raise ValueError(error_msg)
+                    raise LexicalError(error_msg)
                 else:
                     error_msg = "Illegal character in identifier {} : {}"
-                    raise ValueError(error_msg.format(accum, program[pos]))
+                    raise LexicalError(error_msg.format(accum, program[pos]))
                 pos += 1
 
         # end of program... return list of tokens
