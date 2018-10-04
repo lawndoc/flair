@@ -1,12 +1,17 @@
 #!/usr/bin/python3
 
 from enum import Enum
-from sys import path
+import sys
 import os
-path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.token import TokenType
 from src.linkedStack import LinkedStack
 from src.errors import ParseError
+
+def excepthook(type, value, traceback):
+    print(type + ": " + value)
+
+sys.excepthook = excepthook
 
 
 class NonTerminal(Enum):
