@@ -2,14 +2,14 @@
 # errors thrown by the scanner
 class LexicalError(ValueError):
     def __str__(self):
-        return "Lexical Error: "
+        return "Lexical Error: " + ValueError
 
 # errors thrown by the parser
 class ParseError(ValueError):
     def __str__(self):
-        return "Parse Error: "
+        return "Parse Error: " + ValueError
 
 # errors thrown by the type checker
 class SemanticError(ValueError):
     def __str__(self):
-        return "Semantic Error: "
+        return "Semantic Error: " + ValueError
