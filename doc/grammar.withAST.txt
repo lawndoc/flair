@@ -1,18 +1,18 @@
 
 <PROGRAM> ::= program <IDENTIFIER> ( <FORMALS> ) ;
-                 <DEFINITIONS>
+                 <DEFINITIONS> {make-Definitions}
                  <BODY> . {make-Program}
 
 <DEFINITIONS> ::= ε
-            | <DEF> <DEFINITIONS> {make-Definitions}
+            | <DEF> <DEFINITIONS>
 
     <DEF> ::= function <IDENTIFIER> ( <FORMALS> ) : <TYPE>
                  <BODY> ; {make-Function}
 
 <FORMALS> ::= ε
-            | <NONEMPTYFORMALS>
+            | <NONEMPTYFORMALS> {make-Formals}
 
-<NONEMPTYFORMALS> ::= <FORMAL> <NONEMPTYFORMALS'> {make-Formals}
+<NONEMPTYFORMALS> ::= <FORMAL> <NONEMPTYFORMALS'>
 
 <NONEMPTYFORMALS'> ::= ε
             | , <NONEMPTYFORMALS>
@@ -50,7 +50,7 @@
  <FACTOR> ::= if <EXPR> then <EXPR> else <EXPR> {make-IfStatement}
             | not <FACTOR> {make-NotExpr}
             | <IDENTIFIER> {make-Identifier} <FACTOR'>
-            | <LITERAL> {make-Literal}
+            | <LITERAL>
             | - <FACTOR> {make-NegateExpr}
             | ( <EXPR> )
 
@@ -65,7 +65,7 @@
 <NONEMPTYACTUALS'> ::= ε
             | , <NONEMPTYACTUALS>
 
-<LITERAL> ::= <NUMBER>
-            | <BOOLEAN>
+<LITERAL> ::= <NUMBER> {make-IntegerLiteral}
+            | <BOOLEAN> {make-BooleanLiteral}
 
 <PRINT-STATEMENT> ::= print ( <EXPR> ) ; {make-PrintStatement}
