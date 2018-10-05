@@ -12,14 +12,14 @@
 <FORMALS> ::= ε
             | <NONEMPTYFORMALS>
 
-<NONEMPTYFORMALS> ::= <FORMAL> <NONEMPTYFORMALS'>
+<NONEMPTYFORMALS> ::= <FORMAL> <NONEMPTYFORMALS'> {make-Formals}
 
 <NONEMPTYFORMALS'> ::= ε
             | , <NONEMPTYFORMALS>
 
- <FORMAL> ::= <IDENTIFIER> : <TYPE>
+ <FORMAL> ::= <IDENTIFIER> : <TYPE> {make-Formal}
 
-   <BODY> ::= begin <STATEMENT-LIST> end
+   <BODY> ::= begin <STATEMENT-LIST> end {make-Body}
 
 <STATEMENT-LIST> ::= <PRINT-STATEMENT> <STATEMENT-LIST>
             | return <EXPR> {make-ReturnStatement}
@@ -55,10 +55,10 @@
             | ( <EXPR> )
 
  <FACTOR'> ::= ε
-            | ( <ACTUALS> )
+            | ( <ACTUALS> ) {make-FunctionCall}
 
 <ACTUALS> ::= ε
-            | <NONEMPTYACTUALS> {make-FunctionCall}
+            | <NONEMPTYACTUALS> {make-Actuals}
 
 <NONEMPTYACTUALS> ::= <EXPR> <NONEMPTYACTUALS'>
 
