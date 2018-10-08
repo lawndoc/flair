@@ -6,24 +6,26 @@ program NextTwentyLeapYears(last: integer);
 	end;
 	function getNextLeapYear( n: integer, m: integer ) : integer
 	begin
-		print if m > 1 then
-			if MOD(n, 100) = 0 then
-				if MOD(n, 400) = 0 then
-					n + 4
+		print( if m > 1 then
+				if MOD(n, 100) = 0 then
+					if MOD(n, 400) = 0 then
+						n + 4
+					else
+						n + 8
 				else
-					n + 8
+					n + 4
 			else
-				n + 4 ;
+				getNextLeapYear(n+4, m-1) );
 		return if m = 1 then
-			if MOD(n, 100) = 0 then
-				if MOD(n, 400) = 0 then
-					n + 4
+				if MOD(n, 100) = 0 then
+					if MOD(n, 400) = 0 then
+						n + 4
+					else
+						n + 8
 				else
-					n + 8
+					n + 4
 			else
-				n + 4
-		else
-			getNextLeapYear(n+4, m-1)
+				getNextLeapYear(n+4, m-1)
 	end{;}
 begin
 	return getNextLeapYear(last, 20)

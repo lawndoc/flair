@@ -1,0 +1,59 @@
+program floatAdd ( n1 : integer, d1 : integer, n2 : integer, d2 : integer);
+
+    function pow ( n : integer, power : integer ) : integer
+    begin
+        return if power = 0 then
+                1
+            else
+                n * pow(n, power-1)
+    end;
+
+    function len ( n : integer ) : integer
+    begin
+        return lenHelper(n, 1)
+    end;
+
+    function lenHelper ( n : integer, testLen : integer ) : integer
+    begin
+        return if n - pow(10, testLen) < 0 then
+                testLen
+            else
+                lenHelper(n, testLen + 1)
+    end;
+
+    function matchLength ( targetLength : integer, matchee : integer ) : integer
+    begin
+        return matchee * pow(10, len(targetLength) - len(matchee))
+    end;
+
+    function rightLessThanLeftLength ( left : integer, right : integer ) : boolean
+    begin
+        return len(right) < len(left)
+    end;
+
+    function decimalAdd ( d1 : integer, d2 : integer) : integer
+    begin
+        return if rightLessThanLeftDegree(d1, d2) then
+                d1 + matchLength(d1, d2)
+            else if rightLessThanLeftDegree(d2, d1) then
+                d2 + matchLength(d2, d1)
+            else
+                d1 + d2
+
+    end;
+
+    function carries ( d1 : integer, d2 : integer ) : boolean
+    begin
+        return if rightLessThanLeftDegree(d1, d2) then
+                len(d1) = len(decimalAdd(d1, d2))
+            else
+                len(d2) = len(decimalAdd(d1, d2))
+    end;
+
+begin
+    print( if carries(d1, d2) then
+        n1 + n2 + 1
+    else
+        n1 + n2 );
+    return decimalAdd(d1, d2)
+end.

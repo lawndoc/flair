@@ -1,4 +1,5 @@
 program IsPrime(n : integer);
+
     function MOD( n : integer, divisor : integer ) : integer
     begin
         return m - m/n * n
