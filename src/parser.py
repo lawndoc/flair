@@ -5,6 +5,7 @@ import sys
 from token import TokenType
 from linkedStack import LinkedStack
 from errors import ParseError
+import AST
 
 def excepthook(type, value, traceback):
     print(str(value))
@@ -41,27 +42,33 @@ class NonTerminal(Enum):
 parse_table = {
     (NonTerminal.Program, TokenType.program_keyword)     :   [TokenType.program_keyword,
                                                               TokenType.identifier,
+                                                              AST.Identifier,
                                                               TokenType.left_parenthesis,
                                                               NonTerminal.Formals,
                                                               TokenType.right_parenthesis,
                                                               TokenType.semicolon,
                                                               NonTerminal.Definitions,
+                                                              AST.Definitions,
                                                               NonTerminal.Body,
-                                                              TokenType.period],
+                                                              TokenType.period,
+                                                              AST.Program],
     (NonTerminal.Definitions, TokenType.function_keyword):   [NonTerminal.Def,
                                                               NonTerminal.Definitions],
     (NonTerminal.Definitions, TokenType.begin_keyword)   :   ["ε"],
     (NonTerminal.Def, TokenType.function_keyword)        :   [TokenType.function_keyword,
                                                               TokenType.identifier,
+                                                              AST.Identifier,
                                                               TokenType.left_parenthesis,
                                                               NonTerminal.Formals,
                                                               TokenType.right_parenthesis,
                                                               TokenType.colon,
                                                               NonTerminal.Type,
                                                               NonTerminal.Body,
-                                                              TokenType.semicolon],
+                                                              TokenType.semicolon,
+                                                              AST.Function],
     (NonTerminal.Formals, TokenType.right_parenthesis)   :   ["ε"],
-    (NonTerminal.Formals, TokenType.identifier)          :   [NonTerminal.Nonempty_Formals],
+    (NonTerminal.Formals, TokenType.identifier)          :   [NonTerminal.Nonempty_Formals,
+                                                              AST.Formals],
     (NonTerminal.Nonempty_Formals, TokenType.right_parenthesis): ["ε"],
     (NonTerminal.Nonempty_Formals, TokenType.identifier) :   [NonTerminal.Formal,
                                                               NonTerminal.Nonempty_Formals_p],
@@ -69,17 +76,23 @@ parse_table = {
     (NonTerminal.Nonempty_Formals_p, TokenType.comma)    :   [TokenType.comma,
                                                               NonTerminal.Nonempty_Formals],
     (NonTerminal.Formal, TokenType.identifier)           :   [TokenType.identifier,
+                                                              AST.Identifier,
                                                               TokenType.colon,
-                                                              NonTerminal.Type],
+                                                              NonTerminal.Type,
+                                                              AST.Formal],
     (NonTerminal.Body, TokenType.begin_keyword)          :   [TokenType.begin_keyword,
                                                               NonTerminal.Statement_List,
-                                                              TokenType.end_keyword],
+                                                              TokenType.end_keyword,
+                                                              AST.Body],
     (NonTerminal.Statement_List, TokenType.return_keyword):  [TokenType.return_keyword,
-                                                              NonTerminal.Expr],
+                                                              NonTerminal.Expr,
+                                                              AST.ReturnStatement],
     (NonTerminal.Statement_List, TokenType.print_statement): [NonTerminal.Print_Statement,
                                                               NonTerminal.Statement_List],
-    (NonTerminal.Type, TokenType.integer_type)           :   [TokenType.integer_type],
-    (NonTerminal.Type, TokenType.boolean_type)           :   [TokenType.boolean_type],
+    (NonTerminal.Type, TokenType.integer_type)           :   [TokenType.integer_type,
+                                                              AST.Type],
+    (NonTerminal.Type, TokenType.boolean_type)           :   [TokenType.boolean_type,
+                                                              AST.Type],
     (NonTerminal.Expr, TokenType.left_parenthesis)       :   [NonTerminal.Simple_Expr,
                                                               NonTerminal.Expr_p],
     (NonTerminal.Expr, TokenType.identifier)             :   [NonTerminal.Simple_Expr,
@@ -99,9 +112,11 @@ parse_table = {
     (NonTerminal.Expr_p, TokenType.end_keyword)          :   ["ε"],
     (NonTerminal.Expr_p, TokenType.less_than)            :   [TokenType.less_than,
                                                               NonTerminal.Simple_Expr,
+                                                              AST.LessThan,
                                                               NonTerminal.Expr_p],
     (NonTerminal.Expr_p, TokenType.equal_to)             :   [TokenType.equal_to,
                                                               NonTerminal.Simple_Expr,
+                                                              AST.EqualTo,
                                                               NonTerminal.Expr_p],
     (NonTerminal.Expr_p, TokenType.or_operator)          :   ["ε"],
     (NonTerminal.Expr_p, TokenType.plus)                 :   ["ε"],
@@ -244,19 +259,11 @@ parse_table = {
                                                                TokenType.semicolon]
 }  # end of parse table
 
-def top(stack):
-    return stack[-1]
-
-def pop(stack):
-    return stack.pop()
-
-def push_rule(lst, stack):
-    for element in reversed(lst):
-        stack.append(element)
-
 class Parser:
     def __init__(self, scanner):
         self.parseStack = LinkedStack()
+        self.semanticStack = LinkedStack()
+        self.last = None
         self.scanner = scanner
 
 
@@ -268,10 +275,11 @@ class Parser:
             # print("\nParse Stack: [", self.parseStack, "]")
             A = self.parseStack.peek()
             t = self.scanner.peek().getType()
-            # tVal = self.scanner.peek().getValue()
+            tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
             if isinstance(A, TokenType):
                 if A == t:
+                    self.last = tVal
                     self.parseStack.pop()
                     self.scanner.next()
                 else:
@@ -291,6 +299,8 @@ class Parser:
                 else:
                     error_msg = "Parsing Error: No transition for {} from {}"
                     raise ParseError(error_msg.format(A,t))
+            elif isinstance(A, AST.ASTnode):
+                self.semanticStack.push(A(self.last, self.semanticStack))
             else:
                 error_msg = "Parsing Error: An unidentified object is on the stack: {}"
                 raise ParseError(error_msg.format(A))
