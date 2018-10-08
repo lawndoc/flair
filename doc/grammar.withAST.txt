@@ -1,12 +1,12 @@
 
-<PROGRAM> ::= program <IDENTIFIER> ( <FORMALS> ) ;
+<PROGRAM> ::= program <IDENTIFIER> {make-Identifier} ( <FORMALS> ) ;
                  <DEFINITIONS> {make-Definitions}
                  <BODY> . {make-Program}
 
 <DEFINITIONS> ::= ε
             | <DEF> <DEFINITIONS>
 
-    <DEF> ::= function <IDENTIFIER> ( <FORMALS> ) : <TYPE>
+    <DEF> ::= function <IDENTIFIER> {make-Identifier} ( <FORMALS> ) : <TYPE>
                  <BODY> ; {make-Function}
 
 <FORMALS> ::= ε
@@ -17,7 +17,7 @@
 <NONEMPTYFORMALS'> ::= ε
             | , <NONEMPTYFORMALS>
 
- <FORMAL> ::= <IDENTIFIER> : <TYPE> {make-Formal}
+ <FORMAL> ::= <IDENTIFIER> {make-Identifier} : <TYPE> {make-Formal}
 
    <BODY> ::= begin <STATEMENT-LIST> end {make-Body}
 

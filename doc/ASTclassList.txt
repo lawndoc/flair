@@ -15,12 +15,18 @@ IntegerLiteral           (value)
 BooleanLiteral           (value)
 Type                     (value)
 NegateExpr               (factor)
-Program                  (id, formals, definitions, body)
-Formals                  (*formal)
+Program                  (id, [formals], definitions, body)
+Formals                  (+formal)
 Formal                   (id, type)
 Definitions              (*function)
-Function                 (id, formals, type, body)
+Function                 (id, [formals], type, body)
 Body                     (*print, return)
 ReturnStatement          (expr)
-FunctionCall             (id, actuals)
-Actuals                  (*expr)
+FunctionCall             (id, [actuals])
+Actuals                  (+expr)
+
+
+# Key:
+#        * -- could be 0 or more of this on the semantic stack
+#        + -- could be 1 or more of this on the semantic stack
+#        [] -- there is either 0 or 1 of these on the semantic stack
