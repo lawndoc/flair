@@ -1,4 +1,5 @@
 program floatAdd ( n1 : integer, d1 : integer, n2 : integer, d2 : integer);
+    { input 2 floats, separating each decimal a space instead of a "." }
 
     function pow ( n : integer, power : integer ) : integer
     begin
