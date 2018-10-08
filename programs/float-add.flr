@@ -33,9 +33,9 @@ program floatAdd ( n1 : integer, d1 : integer, n2 : integer, d2 : integer);
 
     function decimalAdd ( d1 : integer, d2 : integer) : integer
     begin
-        return if rightLessThanLeftDegree(d1, d2) then
+        return if rightLessThanLeftLength(d1, d2) then
                 d1 + matchLength(d1, d2)
-            else if rightLessThanLeftDegree(d2, d1) then
+            else if rightLessThanLeftLength(d2, d1) then
                 d2 + matchLength(d2, d1)
             else
                 d1 + d2
@@ -44,7 +44,7 @@ program floatAdd ( n1 : integer, d1 : integer, n2 : integer, d2 : integer);
 
     function carries ( d1 : integer, d2 : integer ) : boolean
     begin
-        return if rightLessThanLeftDegree(d1, d2) then
+        return if rightLessThanLeftLength(d1, d2) then
                 len(d1) = len(decimalAdd(d1, d2))
             else
                 len(d2) = len(decimalAdd(d1, d2))
