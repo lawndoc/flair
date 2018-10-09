@@ -8,7 +8,7 @@ class PrintStatement(ASTnode):
     def __init__(self, last, semanticStack):
         expr = semanticStack.pop()
     def __str__(self, level = 0):
-        rep = "\t" * level + "print \n"
+        rep = "\t" * level + "print: \n"
         rep += self.expr.__str__(level+1)
         return rep
 
@@ -200,9 +200,9 @@ class Definitions(ASTnode):
         definitions = []
         while isinstance(semanticStack.peek(), Function):
             definitions.append(semanticStack.pop())
-        definitons.reverse()
+        self.definitons.reverse()
     def __iter__(self):
-        for funciton in self.definitons:
+        for function in self.definitons:
             yield function
         raise StopIteration
     def __str__(self, level = 0):
@@ -231,24 +231,49 @@ class Function(ASTnode):
         return rep
 
 class Body(ASTnode):
-    pass
+    def __init__(self, last, semanticStack):
+        returnStatement = semanticStack.pop()
+        printStatements = []
+        while isinstance(semanticStack.peek(), PrintStatement):
+            printStatements.append(semanticStack.pop())
+        printStatements.reverse()
+    def __str__(self, level = 0):
+        rep = ""
+        if self.printStatments:
+            for p in self.printStatements:
+                rep += p.__str__(level+1)
+        rep += self.returnStatement.__str__(level+1)
+
 
 class ReturnStatement(ASTnode):
     def __init__(self, last, semanticStack):
         retStatement = semanticStack.pop()
     def __str__(self, level = 0):
-        rep = self.identifier.__str__(level+1)
-        rep += "\t" * level + "return: \n"
-        rep += self.type.__str__(level+1)
+        rep = "\t" * level + "return: \n"
+        rep += self.retStatement.__str__(level+1)
         return rep
 
 class FunctionCall(ASTnode):
-    pass
+    def __init__(self, last, semanticStack):
+        if isinstance(semanticStack.peek(), Actuals):
+            actuals = semanticStack.pop()
+        else:
+            actuals = None
+        identifier = semanticStack.pop()
+    def __str__(self, level = 0):
+        rep = "\t" * level + "program: \n"
+        rep += self.identifier.__str__(level+1)
+        if self.actuals:
+            rep += self.actuals.__str__(level+1)
+        return rep
 
 class Actuals(ASTnode):
     def __init__(self, last, semanticStack):
         actuals = [semanticStack.pop()]
-        while semanticStack.peek().__name__() in ["""listOfClasses"""]: #TODO
+        while semanticStack.peek().__name__() in [LessThan, EqualTo, PlusExpr,
+            MinusExpr, TimesExpr, DivideExpr, AndExpr, OrExpr, NotExpr,
+            IfStatement, Identifier, IntegerLiteral, BooleanLiteral, Type,
+            NegateExpr, FunctionCall]:
             actuals.append(semanticStack.pop())
         actuals.reverse()
     def __iter__(self):
