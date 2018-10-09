@@ -7,6 +7,10 @@ class ASTnode():
 class PrintStatement(ASTnode):
     def __init__(self, last, semanticStack):
         expr = semanticStack.pop()
+    def __str__(self, level = 0):
+        rep = "\t" * level + str(self.expr) + "\n"
+        rep += self.expr.__str__(level+1)
+        return rep
 
 class LessThan(ASTnode):
     def __init__(self, last, semanticStack):
