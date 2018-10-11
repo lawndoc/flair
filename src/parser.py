@@ -9,6 +9,8 @@ from src.linkedStack import LinkedStack
 from src.errors import ParseError
 from src import AST
 
+import time
+
 def excepthook(type, value, traceback):
     print(str(value))
 
@@ -326,6 +328,7 @@ class Parser:
                     raise ParseError(error_msg.format(A,t))
             elif issubclass(A, AST.ASTnode):
                 print(A)
+                time.sleep(1)
                 self.semanticStack.push(A(self.last, self.semanticStack))
             else:
                 error_msg = "Parsing Error: An unidentified object is on the stack: {}"
