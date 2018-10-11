@@ -9,12 +9,10 @@ from src.linkedStack import LinkedStack
 from src.errors import ParseError
 from src import AST
 
-import time
-
 def excepthook(type, value, traceback):
     print(str(value))
 
-sys.excepthook = excepthook
+#sys.excepthook = excepthook
 
 
 class NonTerminal(Enum):
