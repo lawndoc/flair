@@ -294,13 +294,10 @@ class Parser:
     def parse(self):
         self.parseStack.push("$")
         self.parseStack.push(NonTerminal.Program)
-        while self.parseStack.peek() != "$":
+        while self.parseStack.peek() != "$" and self.scanner.peek() != "EOF":
             # print("\nParse Stack: [", self.parseStack, "]")
             A = self.parseStack.peek()
-            try:
-                t = self.scanner.peek().getType()
-            except:
-                print(self.scanner.peek())
+            t = self.scanner.peek().getType()
             tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
             if isinstance(A, TokenType):
@@ -335,8 +332,11 @@ class Parser:
                 raise ParseError(error_msg.format(A))
 
         # end of loop, program threw no errors
-        if self.scanner.peek() == "EOF":
-            return True
-        else:
+        if self.parseStack.peek() != "$":
+            error_msg = "Parsing Error: Parse stack not empty at EOF: {}"
+            raise ParseError(error_msg.format(str(self.parseStack)))
+        if self.scanner.peek() != "EOF":
             error_msg = "Parsing Error: Code found after end of program."
             raise ParseError(error_msg)
+        else:
+            return True
