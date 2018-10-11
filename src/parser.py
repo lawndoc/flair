@@ -304,9 +304,9 @@ class Parser:
                 t = self.scanner.peek().getType()
                 tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
-            print("Parse Stack: ")
-            for i in self.parseStack:
-                print(type(i))
+            #print("Parse Stack: ")
+            #for i in self.parseStack:
+            #    print(type(i))
             print("Semantic Stack:")
             for node in self.semanticStack:
                 print(type(node))
