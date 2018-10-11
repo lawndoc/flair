@@ -299,9 +299,10 @@ class Parser:
             A = self.parseStack.peek()
             if self.scanner.peek() == "EOF":
                 t = "EOF"
+                tVal = "EOF"
             else:
                 t = self.scanner.peek().getType()
-            tVal = self.scanner.peek().getValue()
+                tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
             if isinstance(A, TokenType):
                 print(A)
