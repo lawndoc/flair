@@ -7,10 +7,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.errors import LexicalError
 from src.token import Token, TokenType
 
-#def excepthook(type, value, traceback):
-#    print(str(value))
+def excepthook(type, value, traceback):
+    print(str(value))
 
-#sys.excepthook = excepthook
+sys.excepthook = excepthook
 
 class State(Enum):
     looking_state = 1

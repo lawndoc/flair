@@ -9,10 +9,10 @@ from src.linkedStack import LinkedStack
 from src.errors import ParseError
 from src import AST
 
-# def excepthook(type, value, traceback):
-#    print(str(value))
+def excepthook(type, value, traceback):
+    print(str(value))
 
-# sys.excepthook = excepthook
+sys.excepthook = excepthook
 
 
 class NonTerminal(Enum):
@@ -302,7 +302,6 @@ class Parser:
         self.parseStack.push("$")
         self.parseStack.push(NonTerminal.Program)
         while self.parseStack.peek() != "$":
-            # print("\nParse Stack: [", self.parseStack, "]")
             A = self.parseStack.peek()
             if self.scanner.peek() == "EOF":
                 t = "EOF"
@@ -310,15 +309,11 @@ class Parser:
             else:
                 t = self.scanner.peek().getType()
                 tVal = self.scanner.peek().getValue()
-            # print("A =", A, "t =", t, "(", tVal, ")")
-            #print("Parse Stack: ")
-            #for i in self.parseStack:
-            #    print(type(i))
-            print("\nSemantic Stack:")
-            for node in self.semanticStack:
-                print(type(node))
-            print("Top of Semantic Stack:", A)
-            print("Next token:", t, "(", tVal, ")")
+            # print("\nSemantic Stack:")
+            # for node in self.semanticStack:
+            #     print(type(node))
+            # print("Top of Parse Stack:", A)
+            # print("Next token:", t, "(", tVal, ")")
 
             if isinstance(A, TokenType):
                 if A == t:
@@ -353,4 +348,4 @@ class Parser:
             error_msg = "Parsing Error: Code found after end of program."
             raise ParseError(error_msg)
         else:
-            return True
+            return self.semanticStack.pop()
