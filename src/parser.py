@@ -301,6 +301,7 @@ class Parser:
             tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
             if isinstance(A, TokenType):
+                print(A)
                 if A == t:
                     self.last = tVal
                     self.parseStack.pop()
@@ -309,6 +310,7 @@ class Parser:
                     error_msg = "Parsing error: Expected {} but found {}"
                     raise ParseError(error_msg.format(A,t))
             elif isinstance(A, NonTerminal):
+                print(A)
                 if (A,t) in parse_table:
                     # print("PT Rule: '", parse_table[(A,t)], "'")
                     self.parseStack.pop()
@@ -323,6 +325,7 @@ class Parser:
                     error_msg = "Parsing Error: No transition for {} from {}"
                     raise ParseError(error_msg.format(A,t))
             elif issubclass(A, AST.ASTnode):
+                print(A)
                 self.semanticStack.push(A(self.last, self.semanticStack))
             else:
                 error_msg = "Parsing Error: An unidentified object is on the stack: {}"
