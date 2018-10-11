@@ -33,7 +33,6 @@ class LinkedStack(object):
     def pop(self):
         """Removes and returns the item at top of the stack.
         Precondition: the stack is not empty."""
-
         temp = self._top
         self._top = self._top.getNext()
         self._size -= 1
@@ -42,7 +41,10 @@ class LinkedStack(object):
     def peek(self):
         """Returns the item at top of the stack.
         Precondition: the stack is not empty."""
-        return self._top.getData()
+        if self._top:
+            return self._top.getData()
+        else:
+            return None
 
     def __len__(self):
         """Returns the number of items in the stack."""
