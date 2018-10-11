@@ -305,8 +305,8 @@ class Parser:
                 tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
             if isinstance(A, TokenType):
-                print(A)
                 if A == t:
+                    print(A)
                     self.last = tVal
                     self.parseStack.pop()
                     self.scanner.next()
@@ -314,7 +314,6 @@ class Parser:
                     error_msg = "Parsing error: Expected {} but found {}"
                     raise ParseError(error_msg.format(A,t))
             elif isinstance(A, NonTerminal):
-                print(A)
                 if (A,t) in parse_table:
                     # print("PT Rule: '", parse_table[(A,t)], "'")
                     self.parseStack.pop()
@@ -329,6 +328,7 @@ class Parser:
                     error_msg = "Parsing Error: No transition for {} from {}"
                     raise ParseError(error_msg.format(A,t))
             elif issubclass(A, AST.ASTnode):
+                print(self.parseStack)
                 self.parseStack.pop()
                 self.semanticStack.push(A(self.last, self.semanticStack))
             else:
