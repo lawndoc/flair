@@ -294,7 +294,7 @@ class Parser:
     def parse(self):
         self.parseStack.push("$")
         self.parseStack.push(NonTerminal.Program)
-        while self.parseStack.peek() != "$" and self.scanner.peek() != "EOF":
+        while self.parseStack.peek() != "$":
             # print("\nParse Stack: [", self.parseStack, "]")
             A = self.parseStack.peek()
             t = self.scanner.peek().getType()
@@ -332,9 +332,6 @@ class Parser:
                 raise ParseError(error_msg.format(A))
 
         # end of loop, program threw no errors
-        if not isinstance(self.parseStack.peek(), AST.Program):
-            error_msg = "Parsing Error: Parse stack not empty at EOF: {}"
-            raise ParseError(error_msg.format(str(self.parseStack)))
         if self.scanner.peek() != "EOF":
             error_msg = "Parsing Error: Code found after end of program."
             raise ParseError(error_msg)
