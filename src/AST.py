@@ -270,10 +270,10 @@ class FunctionCall(ASTnode):
 class Actuals(ASTnode):
     def __init__(self, last, semanticStack):
         actuals = [semanticStack.pop()]
-        while semanticStack.peek().__name__() in [LessThan, EqualTo, PlusExpr,
+        while isinstance(semanticStack.peek(), (LessThan, EqualTo, PlusExpr,
             MinusExpr, TimesExpr, DivideExpr, AndExpr, OrExpr, NotExpr,
             IfStatement, Identifier, IntegerLiteral, BooleanLiteral, Type,
-            NegateExpr, FunctionCall]:
+            NegateExpr, FunctionCall)):
             actuals.append(semanticStack.pop())
         actuals.reverse()
     def __iter__(self):
