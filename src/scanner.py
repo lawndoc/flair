@@ -964,7 +964,6 @@ class Scanner:
             elif state == State.print_state:
                 # rest of 'print' in print_ltrs
                 if print_ltrs[-1] == "$" and not program[pos].isalpha() and program[pos] != "_" and not program[pos].isdigit():
-                    print("test")
                     tokens.append(Token(TokenType.print_statement, str(accum)))
                     accum = ""
                     state = State.looking_state
