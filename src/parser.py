@@ -307,7 +307,7 @@ class Parser:
             #print("Parse Stack: ")
             #for i in self.parseStack:
             #    print(type(i))
-            print("Semantic Stack:")
+            print("\nSemantic Stack:")
             for node in self.semanticStack:
                 print(type(node))
             print("Top of Semantic Stack:", A)
