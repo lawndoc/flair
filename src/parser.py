@@ -327,8 +327,7 @@ class Parser:
                     error_msg = "Parsing Error: No transition for {} from {}"
                     raise ParseError(error_msg.format(A,t))
             elif issubclass(A, AST.ASTnode):
-                print(A)
-                time.sleep(1)
+                self.parseStack.pop()
                 self.semanticStack.push(A(self.last, self.semanticStack))
             else:
                 error_msg = "Parsing Error: An unidentified object is on the stack: {}"
