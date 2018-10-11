@@ -297,7 +297,10 @@ class Parser:
         while self.parseStack.peek() != "$":
             # print("\nParse Stack: [", self.parseStack, "]")
             A = self.parseStack.peek()
-            t = self.scanner.peek().getType()
+            if self.scanner.peek() == "EOF":
+                t = "EOF"
+            else:
+                t = self.scanner.peek().getType()
             tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
             if isinstance(A, TokenType):
