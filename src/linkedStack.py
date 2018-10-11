@@ -53,6 +53,12 @@ class LinkedStack(object):
     def isEmpty(self):
         return len(self) == 0
 
+    def __iter__(self):
+        current = self._top
+        while current:
+            yield current.getData()
+            current = current.getNext()
+
     def __str__(self):
         """Items strung from top to bottom."""
         stackStr = ""
