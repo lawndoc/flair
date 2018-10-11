@@ -2,8 +2,10 @@
 
 from enum import Enum
 import sys
-from errors import LexicalError
-from token import Token, TokenType
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.errors import LexicalError
+from src.token import Token, TokenType
 
 def excepthook(type, value, traceback):
     print(str(value))

@@ -2,9 +2,11 @@
 
 from enum import Enum
 import sys
-from token import TokenType
-from linkedStack import LinkedStack
-from errors import ParseError
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.token import TokenType
+from src.linkedStack import LinkedStack
+from src.errors import ParseError
 import AST
 
 def excepthook(type, value, traceback):
