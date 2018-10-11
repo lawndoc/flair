@@ -304,6 +304,14 @@ class Parser:
                 t = self.scanner.peek().getType()
                 tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
+            print("Parse Stack: ")
+            for t in self.parseStack:
+                print(type(t))
+            print("Semantic Stack:")
+            for node in self.semanticStack:
+                print(type(node))
+            print("Next token: " + t, "(", tVal, ")")
+
             if isinstance(A, TokenType):
                 if A == t:
                     print(A)
@@ -328,8 +336,6 @@ class Parser:
                     error_msg = "Parsing Error: No transition for {} from {}"
                     raise ParseError(error_msg.format(A,t))
             elif issubclass(A, AST.ASTnode):
-                for node in self.semanticStack:
-                    print(type(node))
                 self.parseStack.pop()
                 self.semanticStack.push(A(self.last, self.semanticStack))
             else:
