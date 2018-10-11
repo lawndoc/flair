@@ -9,8 +9,8 @@ from src.linkedStack import LinkedStack
 from src.errors import ParseError
 from src import AST
 
-def excepthook(type, value, traceback):
-    print(str(value))
+#def excepthook(type, value, traceback):
+#    print(str(value))
 
 #sys.excepthook = excepthook
 
