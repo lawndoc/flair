@@ -305,8 +305,8 @@ class Parser:
                 tVal = self.scanner.peek().getValue()
             # print("A =", A, "t =", t, "(", tVal, ")")
             print("Parse Stack: ")
-            for t in self.parseStack:
-                print(type(t))
+            for i in self.parseStack:
+                print(type(i))
             print("Semantic Stack:")
             for node in self.semanticStack:
                 print(type(node))
@@ -314,7 +314,6 @@ class Parser:
 
             if isinstance(A, TokenType):
                 if A == t:
-                    print(A)
                     self.last = tVal
                     self.parseStack.pop()
                     self.scanner.next()
@@ -323,7 +322,6 @@ class Parser:
                     raise ParseError(error_msg.format(A,t))
             elif isinstance(A, NonTerminal):
                 if (A,t) in parse_table:
-                    # print("PT Rule: '", parse_table[(A,t)], "'")
                     self.parseStack.pop()
                     if "ε" in parse_table[(A,t)]:  # rule is ε, push nothing onto stack
                         continue
