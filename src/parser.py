@@ -310,6 +310,7 @@ class Parser:
             print("Semantic Stack:")
             for node in self.semanticStack:
                 print(type(node))
+            print("Top of Semantic Stack:", A)
             print("Next token:", t, "(", tVal, ")")
 
             if isinstance(A, TokenType):
