@@ -200,7 +200,7 @@ class Definitions(ASTnode):
         definitions = []
         while isinstance(semanticStack.peek(), Function):
             definitions.append(semanticStack.pop())
-        self.definitions.reverse()
+        definitions.reverse()
     def __iter__(self):
         for function in self.definitons:
             yield function
