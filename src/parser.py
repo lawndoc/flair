@@ -332,7 +332,7 @@ class Parser:
                 raise ParseError(error_msg.format(A))
 
         # end of loop, program threw no errors
-        if self.parseStack.peek() != "$":
+        if not isinstance(self.parseStack.peek(), AST.Program):
             error_msg = "Parsing Error: Parse stack not empty at EOF: {}"
             raise ParseError(error_msg.format(str(self.parseStack)))
         if self.scanner.peek() != "EOF":
