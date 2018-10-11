@@ -23,7 +23,8 @@ Function                 (id, [formals], type, body)
 Body                     (*print, return)
 ReturnStatement          (expr)
 FunctionCall             (id, [actuals])
-Actuals                  (+expr)
+Actuals                  (+actual)
+Actual                   (expr)
 
 
 # Key:

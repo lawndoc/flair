@@ -243,6 +243,7 @@ class Body(ASTnode):
             for p in self.printStatements:
                 rep += p.__str__(level+1)
         rep += self.returnStatement.__str__(level+1)
+        return rep
 
 
 class ReturnStatement(ASTnode):
@@ -270,10 +271,7 @@ class FunctionCall(ASTnode):
 class Actuals(ASTnode):
     def __init__(self, last, semanticStack):
         actuals = [semanticStack.pop()]
-        while isinstance(semanticStack.peek(), (LessThan, EqualTo, PlusExpr,
-            MinusExpr, TimesExpr, DivideExpr, AndExpr, OrExpr, NotExpr,
-            IfStatement, Identifier, IntegerLiteral, BooleanLiteral, Type,
-            NegateExpr, FunctionCall)):
+        while isinstance(semanticStack.peek(), Actual):
             actuals.append(semanticStack.pop())
         actuals.reverse()
     def __iter__(self):
@@ -284,3 +282,11 @@ class Actuals(ASTnode):
         rep = "\t" * level + "actuals: \n"
         for expr in self.actuals:
             rep += expr.__str__(level+1)
+        return rep
+
+class Actual(ASTnode):
+    def __init__(self, last, semanticStack):
+        expr = semanticStack.pop()
+    def __str__(self, level=0):
+        rep = self.expr.__str__(level)
+        return rep

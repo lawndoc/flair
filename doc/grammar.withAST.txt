@@ -60,7 +60,7 @@
 <ACTUALS> ::= ε
             | <NONEMPTYACTUALS> {make-Actuals}
 
-<NONEMPTYACTUALS> ::= <EXPR> <NONEMPTYACTUALS'>
+<NONEMPTYACTUALS> ::= <EXPR> {make-Actual} <NONEMPTYACTUALS'>
 
 <NONEMPTYACTUALS'> ::= ε
             | , <NONEMPTYACTUALS>

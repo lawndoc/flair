@@ -9,10 +9,10 @@ from src.linkedStack import LinkedStack
 from src.errors import ParseError
 from src import AST
 
-#def excepthook(type, value, traceback):
+# def excepthook(type, value, traceback):
 #    print(str(value))
 
-#sys.excepthook = excepthook
+# sys.excepthook = excepthook
 
 
 class NonTerminal(Enum):
@@ -254,18 +254,25 @@ parse_table = {
     (NonTerminal.Actuals, TokenType.boolean_token)       :   [NonTerminal.Nonempty_Actuals,
                                                               AST.Actuals],
     (NonTerminal.Nonempty_Actuals, TokenType.left_parenthesis): [NonTerminal.Expr,
+                                                                 AST.Actual,
                                                                  NonTerminal.Nonempty_Actuals_p],
     (NonTerminal.Nonempty_Actuals, TokenType.identifier) :   [NonTerminal.Expr,
+                                                              AST.Actual,
                                                               NonTerminal.Nonempty_Actuals_p],
     (NonTerminal.Nonempty_Actuals, TokenType.minus)      :   [NonTerminal.Expr,
+                                                              AST.Actual,
                                                               NonTerminal.Nonempty_Actuals_p],
     (NonTerminal.Nonempty_Actuals, TokenType.if_statement):  [NonTerminal.Expr,
+                                                              AST.Actual,
                                                               NonTerminal.Nonempty_Actuals_p],
     (NonTerminal.Nonempty_Actuals, TokenType.not_operator):  [NonTerminal.Expr,
+                                                              AST.Actual,
                                                               NonTerminal.Nonempty_Actuals_p],
     (NonTerminal.Nonempty_Actuals, TokenType.integer_token): [NonTerminal.Expr,
+                                                              AST.Actual,
                                                               NonTerminal.Nonempty_Actuals_p],
     (NonTerminal.Nonempty_Actuals, TokenType.boolean_token): [NonTerminal.Expr,
+                                                              AST.Actual,
                                                               NonTerminal.Nonempty_Actuals_p],
     (NonTerminal.Nonempty_Actuals_p, TokenType.right_parenthesis): ["ε"],
     (NonTerminal.Nonempty_Actuals_p, TokenType.comma)    :   [TokenType.comma,
