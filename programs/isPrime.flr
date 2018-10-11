@@ -2,6 +2,7 @@ program IsPrime(n : integer);
 
     function MOD( n : integer, divisor : integer ) : integer
     begin
+
         return m - m/n * n
     end;
 
@@ -15,7 +16,9 @@ program IsPrime(n : integer);
             isPrime( n, divisor-1)
     end;
 
+
 begin
+
     return if isPrime(n, n-1) then
         1
     else
