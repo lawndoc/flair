@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.token import TokenType
 from src.linkedStack import LinkedStack
 from src.errors import ParseError
-import AST
+from src import AST
 
 def excepthook(type, value, traceback):
     print(str(value))
