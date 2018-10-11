@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-class ASTnode():
+class ASTnode(object):
     def __init__(self, last, semanticStack):
         pass
 
