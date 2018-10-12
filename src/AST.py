@@ -82,7 +82,7 @@ class IfStatement(ASTnode):
     def __str__(self, level = 0):
         rep = "\t" * level + "if "
         rep += self.ifExpr.__str__()
-        rep += "\t" * level + "then \n"
+        rep += " then \n"
         rep += self.thenExpr.__str__(level+1) + "\n"
         rep += "\t" * level + "else \n"
         rep += self.elseExpr.__str__(level+1) + "\n"
@@ -201,9 +201,9 @@ class Function(ASTnode):
             rep += self.formals.__str__()
         rep += " ) : "
         rep += self.type.__str__()
-        rep += "\n" + "\t" * level + "begin"
+        rep += "\n" + "\t" * level + "begin\n"
         rep += self.body.__str__(level+1)
-        rep += "end;\n"
+        rep += "\n" + "\t" * level + "end;\n"
         return rep
 
 class Body(ASTnode):
