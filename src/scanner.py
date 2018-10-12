@@ -228,6 +228,9 @@ class Scanner:
 
             # integer detected... read digits until delimiter is found
             elif state == State.integer_state:
+                if int(accum) > 2**32:
+                    error_msg = "Integer {} too large"
+                    raise LexicalError(error_msg.format(accum))
                 if program[pos].isdigit():
                     accum += program[pos]
                 elif program[pos].isspace():
@@ -300,6 +303,9 @@ class Scanner:
             elif state == State.comment_state:
                 if program[pos] == "}":
                     state = State.looking_state
+                elif program[pos] == "EOF":
+                    error_msg = "Unclosed comment at end of file."
+                    raise LexicalError(error_msg)
                 pos += 1
 
             # 'i' was read... could be 'if', 'integer', or an identifier
@@ -2321,6 +2327,9 @@ class Scanner:
 
             # identifier detected... read alphabetical characters, digits, and '_' until a delimiter is found
             elif state == State.identifier_state:
+                if len(accum) > 256:
+                    error_msg = "Identifier name {} too long"
+                    raise LexicalError(error_msg.format(accum))
                 if program[pos].isalpha() or program[pos] == "_" or program[pos].isdigit():
                     accum += program[pos]
                 elif program[pos].isspace():
