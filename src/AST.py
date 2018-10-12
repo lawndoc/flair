@@ -207,7 +207,7 @@ class Definitions(ASTnode):
         raise StopIteration
     def __str__(self, level = 0):
         rep = "\t" * level + "definitons: \n"
-        for function in self.definitons:
+        for function in self.definitions:
             rep += function.__str__(level+1)
         return rep
 
