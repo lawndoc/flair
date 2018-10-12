@@ -156,6 +156,8 @@ class Formals(ASTnode):
         rep = ""
         for formal in self.formals:
             rep += formal.__str__()
+            rep += ", "
+        rep = rep[:-2]
         return rep
 
 class Formal(ASTnode):
