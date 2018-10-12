@@ -239,7 +239,7 @@ class Body(ASTnode):
         self.printStatements.reverse()
     def __str__(self, level = 0):
         rep = ""
-        if self.printStatments:
+        if self.printStatements:
             for p in self.printStatements:
                 rep += p.__str__(level+1)
         rep += self.returnStatement.__str__(level+1)
