@@ -225,7 +225,7 @@ class Function(ASTnode):
         rep += self.identifier.__str__(level+1)
         if self.formals:
             rep += self.formals.__str__(level+1)
-        rep += "\t" * level+1 + "returns type: \n"
+        rep += "\t" * (level+1) + "returns type: \n"
         rep += self.type.__str__(level+1)
         rep += self.body.__str__(level+1)
         return rep
