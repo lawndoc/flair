@@ -6,7 +6,7 @@ class ASTnode(object):
 
 class PrintStatement(ASTnode):
     def __init__(self, last, semanticStack):
-        expr = semanticStack.pop()
+        self.expr = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "print: \n"
         rep += self.expr.__str__(level+1)
@@ -14,8 +14,8 @@ class PrintStatement(ASTnode):
 
 class LessThan(ASTnode):
     def __init__(self, last, semanticStack):
-        right = semanticStack.pop()
-        left = semanticStack.pop()
+        self.right = semanticStack.pop()
+        self.left = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.left.__str__(level+1)
         rep += "\t" * level + "< \n"
@@ -24,8 +24,8 @@ class LessThan(ASTnode):
 
 class EqualTo(ASTnode):
     def __init__(self, last, semanticStack):
-        right = semanticStack.pop()
-        left = semanticStack.pop()
+        self.right = semanticStack.pop()
+        self.left = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.left.__str__(level+1)
         rep += "\t" * level + "= \n"
@@ -34,8 +34,8 @@ class EqualTo(ASTnode):
 
 class PlusExpr(ASTnode):
     def __init__(self, last, semanticStack):
-        right = semanticStack.pop()
-        left = semanticStack.pop()
+        self.right = semanticStack.pop()
+        self.left = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.left.__str__(level+1)
         rep += "\t" * level + "+ \n"
@@ -44,8 +44,8 @@ class PlusExpr(ASTnode):
 
 class MinusExpr(ASTnode):
     def __init__(self, last, semanticStack):
-        right = semanticStack.pop()
-        left = semanticStack.pop()
+        self.right = semanticStack.pop()
+        self.left = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.left.__str__(level+1)
         rep += "\t" * level + "- \n"
@@ -54,8 +54,8 @@ class MinusExpr(ASTnode):
 
 class TimesExpr(ASTnode):
     def __init__(self, last, semanticStack):
-        right = semanticStack.pop()
-        left = semanticStack.pop()
+        self.right = semanticStack.pop()
+        self.left = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.left.__str__(level+1)
         rep += "\t" * level + "* \n"
@@ -64,8 +64,8 @@ class TimesExpr(ASTnode):
 
 class DivideExpr(ASTnode):
     def __init__(self, last, semanticStack):
-        right = semanticStack.pop()
-        left = semanticStack.pop()
+        self.right = semanticStack.pop()
+        self.left = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.left.__str__(level+1)
         rep += "\t" * level + "/ \n"
@@ -74,8 +74,8 @@ class DivideExpr(ASTnode):
 
 class AndExpr(ASTnode):
     def __init__(self, last, semanticStack):
-        right = semanticStack.pop()
-        left = semanticStack.pop()
+        self.right = semanticStack.pop()
+        self.left = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.left.__str__(level+1)
         rep += "\t" * level + "and \n"
@@ -84,8 +84,8 @@ class AndExpr(ASTnode):
 
 class OrExpr(ASTnode):
     def __init__(self, last, semanticStack):
-        right = semanticStack.pop()
-        left = semanticStack.pop()
+        self.right = semanticStack.pop()
+        self.left = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.left.__str__(level+1)
         rep += "\t" * level + "or \n"
@@ -94,7 +94,7 @@ class OrExpr(ASTnode):
 
 class NotExpr(ASTnode):
     def __init__(self, last, semanticStack):
-        expr = semanticStack.pop()
+        self.expr = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "not \n"
         rep += self.expr.__str__(level+1)
@@ -102,9 +102,9 @@ class NotExpr(ASTnode):
 
 class IfStatement(ASTnode):
     def __init__(self, last, semanticStack):
-        elseExpr = semanticStack.pop()
-        thenExpr = semanticStack.pop()
-        ifExpr = semanticStack.pop()
+        self.elseExpr = semanticStack.pop()
+        self.thenExpr = semanticStack.pop()
+        self.ifExpr = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "if: \n"
         rep += self.ifExpr.__str__(level+1)
@@ -116,35 +116,35 @@ class IfStatement(ASTnode):
 
 class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
-        value = last
+        self.value = last
     def __str__(self, level = 0):
         rep = "\t" * level + self.value + "\n"
         return rep
 
 class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
-        value = last
+        self.value = last
     def __str__(self, level = 0):
         rep = "\t" * level + self.value + "\n"
         return rep
 
 class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
-        value = last
+        self.value = last
     def __str__(self, level = 0):
         rep = "\t" * level + self.value + "\n"
         return rep
 
 class Type(ASTnode):
     def __init__(self, last, semanticStack):
-        value = last
+        self.value = last
     def __str__(self, level = 0):
         rep = "\t" * level + self.value + "\n"
         return rep
 
 class NegateExpr(ASTnode):
     def __init__(self, last, semanticStack):
-        factor = semanticStack.pop()
+        self.factor = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "- \n"
         rep += self.factor.__str__(level+1)
@@ -152,13 +152,13 @@ class NegateExpr(ASTnode):
 
 class Program(ASTnode):
     def __init__(self, last, semanticStack):
-        body = semanticStack.pop()
-        definitions = semanticStack.pop()
+        self.body = semanticStack.pop()
+        self.definitions = semanticStack.pop()
         if isinstance(semanticStack.peek(), Formals):
-            formals = semanticStack.pop()
+            self.formals = semanticStack.pop()
         else:
-            formals = None
-        identifier = semanticStack.pop()
+            self.formals = None
+        self.identifier = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "program: \n"
         rep += self.identifier.__str__(level+1)
@@ -171,10 +171,10 @@ class Program(ASTnode):
 
 class Formals(ASTnode):
     def __init__(self, last, semanticStack):
-        formals = [semanticStack.pop()]
+        self.formals = [semanticStack.pop()]
         while isinstance(semanticStack.peek(), Formal):
-            formals.append(semanticStack.pop())
-        formals.reverse()
+            self.formals.append(semanticStack.pop())
+        self.formals.reverse()
     def __iter__(self):
         for formal in self.formals:
             yield formal
@@ -187,8 +187,8 @@ class Formals(ASTnode):
 
 class Formal(ASTnode):
     def __init__(self, last, semanticStack):
-        type = semanticStack.pop()
-        identifier = semanticStack.pop()
+        self.type = semanticStack.pop()
+        self.identifier = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.identifier.__str__(level+1)
         rep += "\t" * level + "formal: \n"
@@ -197,10 +197,10 @@ class Formal(ASTnode):
 
 class Definitions(ASTnode):
     def __init__(self, last, semanticStack):
-        definitions = []
+        self.definitions = []
         while isinstance(semanticStack.peek(), Function):
-            definitions.append(semanticStack.pop())
-        definitions.reverse()
+            self.definitions.append(semanticStack.pop())
+        self.definitions.reverse()
     def __iter__(self):
         for function in self.definitons:
             yield function
@@ -213,13 +213,13 @@ class Definitions(ASTnode):
 
 class Function(ASTnode):
     def __init__(self, last, semanticStack):
-        body = semanticStack.pop()
-        type = semanticStack.pop()
+        self.body = semanticStack.pop()
+        self.type = semanticStack.pop()
         if isinstance(semanticStack.peek(), Formals):
-            formals = semanticStack.pop()
+            self.formals = semanticStack.pop()
         else:
-            formals = None
-        identifier = semanticStack.pop()
+            self.formals = None
+        self.identifier = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "function: \n"
         rep += self.identifier.__str__(level+1)
@@ -232,11 +232,11 @@ class Function(ASTnode):
 
 class Body(ASTnode):
     def __init__(self, last, semanticStack):
-        returnStatement = semanticStack.pop()
-        printStatements = []
+        self.returnStatement = semanticStack.pop()
+        self.printStatements = []
         while isinstance(semanticStack.peek(), PrintStatement):
-            printStatements.append(semanticStack.pop())
-        printStatements.reverse()
+            self.printStatements.append(semanticStack.pop())
+        self.printStatements.reverse()
     def __str__(self, level = 0):
         rep = ""
         if self.printStatments:
@@ -248,7 +248,7 @@ class Body(ASTnode):
 
 class ReturnStatement(ASTnode):
     def __init__(self, last, semanticStack):
-        retStatement = semanticStack.pop()
+        self.retStatement = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "return: \n"
         rep += self.retStatement.__str__(level+1)
@@ -257,9 +257,9 @@ class ReturnStatement(ASTnode):
 class FunctionCall(ASTnode):
     def __init__(self, last, semanticStack):
         if isinstance(semanticStack.peek(), Actuals):
-            actuals = semanticStack.pop()
+            self.actuals = semanticStack.pop()
         else:
-            actuals = None
+            self.actuals = None
         identifier = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "program: \n"
@@ -270,10 +270,10 @@ class FunctionCall(ASTnode):
 
 class Actuals(ASTnode):
     def __init__(self, last, semanticStack):
-        actuals = [semanticStack.pop()]
+        self.actuals = [semanticStack.pop()]
         while isinstance(semanticStack.peek(), Actual):
-            actuals.append(semanticStack.pop())
-        actuals.reverse()
+            self.actuals.append(semanticStack.pop())
+        self.actuals.reverse()
     def __iter__(self):
         for expr in self.actuals:
             yield expr
@@ -286,7 +286,7 @@ class Actuals(ASTnode):
 
 class Actual(ASTnode):
     def __init__(self, last, semanticStack):
-        expr = semanticStack.pop()
+        self.expr = semanticStack.pop()
     def __str__(self, level=0):
         rep = self.expr.__str__(level)
         return rep
