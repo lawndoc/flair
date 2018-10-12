@@ -5,7 +5,7 @@ class colors():
     green = "\033[92m"
     yellow = "\33[33m"
     red = "\033[91m"
-    purple = "033[35m"
+    brown = "\036[35m"
     white = "\033[0m"
 
 class ASTnode(object):
@@ -100,7 +100,7 @@ class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
     def __str__(self, level = 0):
-        return "\t" * level + colors.purple + str(self.value) + colors.white
+        return "\t" * level + colors.brown + str(self.value) + colors.white
 
 class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
