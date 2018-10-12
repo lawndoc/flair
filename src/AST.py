@@ -118,28 +118,28 @@ class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
     def __str__(self, level = 0):
-        rep = "\t" * level + self.value + "\n"
+        rep = "\t" * level + str(self.value) + "\n"
         return rep
 
 class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
     def __str__(self, level = 0):
-        rep = "\t" * level + self.value + "\n"
+        rep = "\t" * level + str(self.value) + "\n"
         return rep
 
 class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
     def __str__(self, level = 0):
-        rep = "\t" * level + self.value + "\n"
+        rep = "\t" * level + str(self.value) + "\n"
         return rep
 
 class Type(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
     def __str__(self, level = 0):
-        rep = "\t" * level + self.value + "\n"
+        rep = "\t" * level + str(self.value) + "\n"
         return rep
 
 class NegateExpr(ASTnode):
