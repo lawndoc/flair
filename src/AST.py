@@ -3,9 +3,9 @@
 class colors():
     blue = "\033[34m"
     green = "\033[92m"
-    yellow = "\33[33m"
+    yellow = "\033[33m"
     red = "\033[91m"
-    brown = "\036[35m"
+    brown = "\033[35m"
     white = "\033[0m"
 
 class ASTnode(object):
