@@ -260,7 +260,7 @@ class FunctionCall(ASTnode):
             self.actuals = semanticStack.pop()
         else:
             self.actuals = None
-        identifier = semanticStack.pop()
+        self.identifier = semanticStack.pop()
     def __str__(self, level = 0):
         rep = "\t" * level + "program: \n"
         rep += self.identifier.__str__(level+1)
