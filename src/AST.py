@@ -205,7 +205,7 @@ class Function(ASTnode):
         rep += self.type.__str__()
         rep += "\n" + "\t" * level + "begin\n"
         rep += self.body.__str__(level+1)
-        rep += "\n" + "\t" * level + "end;\n"
+        rep += "\t" * level + "end;\n"
         return rep
 
 class Body(ASTnode):
