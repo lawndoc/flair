@@ -100,7 +100,7 @@ class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
     def __str__(self, level = 0):
-        return "\t" * level + colors.brown + str(self.value) + colors.white
+        return "\t" * level + colors.purple + str(self.value) + colors.white
 
 class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
