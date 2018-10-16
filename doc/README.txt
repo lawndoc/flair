@@ -22,11 +22,20 @@ How To Run:
             argument for a flair program to scan
             (ex. python3 scantest.py /path/to/program.flr )
 
-    To test the parser, use one of these three ways:
+    To test the validity of a program with the parser, use one of these three ways:
         - call flairf from the command line, passing in an argument for a flair
             program to scan (ex. $ flairf /path/to/program.flr )
         - call parsetest.py from from the command line, passing in an argument
             for a flair program to scan (ex. $ parsetest.py /path/to/program.flr )
         - call parsetest.py with python3 from the command line, passing in an
+            argument for a flair program to scan
+            (ex. python3 parsetest.py /path/to/program.flr )
+    
+    To test the AST of a program with the parser, use one of these three ways:
+        - call flairp from the command line, passing in an argument for a flair
+            program to scan (ex. $ flairf /path/to/program.flr )
+        - call parsetest_ast.py from from the command line, passing in an argument
+            for a flair program to scan (ex. $ parsetest.py /path/to/program.flr )
+        - call parsetest_ast.py with python3 from the command line, passing in an
             argument for a flair program to scan
             (ex. python3 parsetest.py /path/to/program.flr )
