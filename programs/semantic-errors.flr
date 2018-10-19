@@ -1,0 +1,30 @@
+program KindOfAdd(n : integer, m : integer);
+    function add(n: integer, m: integer) : integer
+    begin
+        return if n < check(m) then
+            n + check(m)
+        else
+            false
+    end;
+    function check(m : integer) : boolean
+    begin
+        return if check(true) then
+            true
+        else
+            false
+    end;
+    function works(n : boolean, n : boolean ) : boolean
+    begin
+        return try(n)
+    end;
+    function works(n : integer, m : integer ) : integer
+        return o
+    end;
+    function print(n : boolean) : boolean
+    begin
+        return n
+    end;
+begin
+    print print(n);
+    return add(n, m, 1)
+end.
