@@ -39,48 +39,48 @@ class PlusExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
     def __str__(self, level = 0):
-        return "\t" * level + self.left.__str__() + colors.blue + " + "+ colors.white + self.right.__str__()
+        return "\t" * level + "(" + self.left.__str__() + colors.blue + " + "+ colors.white + self.right.__str__() + ")"
 
 class MinusExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
     def __str__(self, level = 0):
-        return "\t" * level + self.left.__str__() + colors.blue + " - " + colors.white + self.right.__str__()
+        return "\t" * level + "(" + self.left.__str__() + colors.blue + " - " + colors.white + self.right.__str__() + ")"
 
 class TimesExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
     def __str__(self, level = 0):
-        return "\t" * level + self.left.__str__() + colors.blue + " * " + colors.white + self.right.__str__()
+        return "\t" * level + "(" + self.left.__str__() + colors.blue + " * " + colors.white + self.right.__str__() + ")"
 
 class DivideExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
     def __str__(self, level = 0):
-        return "\t" * level + self.left.__str__() + colors.blue + " / " + colors.white + self.right.__str__()
+        return "\t" * level + "(" + self.left.__str__() + colors.blue + " / " + colors.white + self.right.__str__() + ")"
 
 class AndExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
     def __str__(self, level = 0):
-        return "\t" * level + self.left.__str__() + colors.blue + " and " + colors.white + self.right.__str__()
+        return "\t" * level + "(" + self.left.__str__() + colors.blue + " and " + colors.white + self.right.__str__() + ")"
 
 class OrExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
     def __str__(self, level = 0):
-        return "\t" * level + self.left.__str__() + colors.blue + " or " + colors.white + self.right.__str__()
+        return "\t" * level + "(" + self.left.__str__() + colors.blue + " or " + colors.white + self.right.__str__() + ")"
 
 class NotExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.expr = semanticStack.pop()
     def __str__(self, level = 0):
-        return "\t" * level + colors.blue + "not " + colors.white + self.expr.__str__()
+        return "\t" * level + "(" + colors.blue + "not " + colors.white + self.expr.__str__() + ")"
 
 class IfStatement(ASTnode):
     def __init__(self, last, semanticStack):
@@ -124,7 +124,7 @@ class NegateExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.factor = semanticStack.pop()
     def __str__(self, level = 0):
-        rep = "\t" * level + colors.blue + "- " + colors.white + self.factor.__str__()
+        rep = "\t" * level + "(" + colors.blue + "- " + colors.white + self.factor.__str__() + ")"
         return rep
 
 class Program(ASTnode):
