@@ -259,7 +259,7 @@ class IntegerLiteral(ASTnode):
         pass
     def setType(self, myType):
         if myType != "integer":
-            error_msg = "tried to assign {} to integer literal {}"
+            error_msg = "tried to assign {} type to integer literal {}"
             raise semanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
@@ -274,7 +274,7 @@ class BooleanLiteral(ASTnode):
         pass
     def setType(self, myType):
         if myType != "boolean":
-            error_msg = "tried to assign {} to boolean literal {}"
+            error_msg = "tried to assign {} type to boolean literal {}"
             raise semanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
@@ -369,7 +369,7 @@ class Formal(ASTnode):
     def getName(self):
         return self.identifier.getName()
     def getType(self):
-        return self.type
+        return self.type.getType()
 
 class Definitions(ASTnode):
     def __init__(self, last, semanticStack):
@@ -451,7 +451,10 @@ class Body(ASTnode):
         for ps in self.printStatements:
             ps.annotate(defs, ids)
         self.returnStatement.annotate(defs, ids)
-        self.setType(self.returnStatement.getType())
+        if any(ps.getType() == "error" for ps in self.printStatements):
+            self.setType("error")
+        else:
+            self.setType(self.returnStatement.getType())
     def setType(self, myType):
         self.type = myType
     def getType(self):
