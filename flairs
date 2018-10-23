@@ -4,4 +4,4 @@
 FILE_PATH=$1
 
 # call scantest.py and pass in path to flair program
-python3 ./tests/scantest.py $FILE_PATH
+python3 ./clients/scantest.py $FILE_PATH
