@@ -222,6 +222,8 @@ class IfStatement(ASTnode):
         self.elseExpr.annotate(defs, ids)
         if any(t.getType() == "error" for t in [self.ifExpr, self.thenExpr, self.elseExpr]):
             self.setType("error")
+        elif self.ifExpr.getType() != "boolean":
+            self.setType("error")
         elif self.thenExpr.getType() == self.elseExpr.getType():
             self.setType(self.thenExpr.getType())
         else:
