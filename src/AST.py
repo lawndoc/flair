@@ -4,6 +4,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.errors import semanticError
+from src.symbolTable import FunctionRecord, FormalRecord
 
 class colors():
     blue = "\033[34m"
@@ -330,9 +331,9 @@ class Program(ASTnode):
         defs = {}
         ids = {}
         for function in self.definitons:
-            defs[function.getName()] = function.getType()
+            defs[function.getName()] = FunctionRecord(function)
         for formal in self.formals:
-            ids[formal.getName()] = formal.getType()
+            ids[formal.getName()] = FormalRecord(formal)
         self.definitions.annotate(defs)
         self.body.annotate(defs, ids)
         self.setType(self.body.getType())
@@ -419,12 +420,11 @@ class Function(ASTnode):
         rep += "\t" * level + colors.green + "end" + colors.white + ";\n"
         return rep
     def annotate(self, defs):
-        ids = {}
-        for formal in self.formals:
-            ids[formal.getName()] = formal.getType()
-        self.body.annotate(defs, ids)
+        self.body.annotate(defs, defs[self.getName()].getFormals)
         if self.body.getType() != self.getType():
             self.setType("error")
+    def getFormals(self):
+        return self.formals
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):
@@ -497,6 +497,7 @@ class FunctionCall(ASTnode):
         self.actuals.annotate(defs, ids)
         try:
             self.setType(defs[self.getName()])
+            ## TODO: addCaller(<nameOfFunction>)
         except:
             self.setType("error")
     def getName(self):
