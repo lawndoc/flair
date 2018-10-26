@@ -9,7 +9,7 @@ from src import AST
 class Analyzer:
     def __init__(self, ast):
         self.ast = ast
-        self.ast.annotate()
+        self.symbolTable = self.ast.annotate()
 
     def analyze(self):
         pass

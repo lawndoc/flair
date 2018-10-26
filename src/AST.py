@@ -27,8 +27,9 @@ class PrintStatement(ASTnode):
         rep += self.expr.__str__(level+1)
         return rep
     def annotate(self, defs, ids, fName):
-        self.expr.annotate(defs, ids, fName)
+        defs = self.expr.annotate(defs, ids, fName)
         self.setType(self.expr.getType())
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -42,12 +43,13 @@ class LessThan(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " < " + colors.white + self.right.__str__()
     def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+        defs = self.right.annotate(defs, ids, fName)
+        defs = self.left.annotate(defs, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("boolean")
         else:
             self.setType("error | bad comparison operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -61,12 +63,13 @@ class EqualTo(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " = " + colors.white + self.right.__str__()
     def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+        defs = self.right.annotate(defs, ids, fName)
+        defs = self.left.annotate(defs, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("boolean")
         else:
             self.setType("error | bad comparison operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -80,12 +83,13 @@ class PlusExpr(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " + "+ colors.white + self.right.__str__() + ")"
     def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+        defs = self.right.annotate(defs, ids, fName)
+        defs = self.left.annotate(defs, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("error | bad arithmetic operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -99,12 +103,13 @@ class MinusExpr(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " - " + colors.white + self.right.__str__() + ")"
     def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+        defs = self.right.annotate(defs, ids, fName)
+        defs = self.left.annotate(defs, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("error | bad arithmetic operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -118,12 +123,13 @@ class TimesExpr(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " * " + colors.white + self.right.__str__() + ")"
     def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+        defs = self.right.annotate(defs, ids, fName)
+        defs = self.left.annotate(defs, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("error | bad arithmetic operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -137,12 +143,13 @@ class DivideExpr(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " / " + colors.white + self.right.__str__() + ")"
     def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+        defs = self.right.annotate(defs, ids, fName)
+        defs = self.left.annotate(defs, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("error | bad arithmetic operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -156,12 +163,13 @@ class AndExpr(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " and " + colors.white + self.right.__str__() + ")"
     def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+        defs = self.right.annotate(defs, ids, fName)
+        defs = self.left.annotate(defs, ids, fName)
         if self.right.getType() == "boolean" and self.left.getType() == "boolean":
             self.setType("boolean")
         else:
             self.setType("error | bad boolean operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -175,12 +183,13 @@ class OrExpr(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " or " + colors.white + self.right.__str__() + ")"
     def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+        defs = self.right.annotate(defs, ids, fName)
+        defs = self.left.annotate(defs, ids, fName)
         if self.right.getType() == "boolean" and self.left.getType() == "boolean":
             self.setType("boolean")
         else:
             self.setType("error | bad boolean operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -193,11 +202,12 @@ class NotExpr(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + "(" + colors.blue + "not " + colors.white + self.expr.__str__() + ")"
     def annotate(self, defs, ids, fName):
-        self.expr.annotate(defs, ids, fName)
+        defs = self.expr.annotate(defs, ids, fName)
         if self.expr.getType() == "boolean":
             self.setType("boolean")
         else:
             self.setType("error | bad boolean operation")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -218,9 +228,9 @@ class IfStatement(ASTnode):
         rep += self.elseExpr.__str__(level+1) + "\n"
         return rep
     def annotate(self, defs, ids, fName):
-        self.ifExpr.annotate(defs, ids, fName)
-        self.thenExpr.annotate(defs, ids, fName)
-        self.elseExpr.annotate(defs, ids, fName)
+        defs = self.ifExpr.annotate(defs, ids, fName)
+        defs = self.thenExpr.annotate(defs, ids, fName)
+        defs = self.elseExpr.annotate(defs, ids, fName)
         if any("error" in t.getType() for t in [self.ifExpr, self.thenExpr, self.elseExpr]):
             self.setType("error | inherited")
         elif self.ifExpr.getType() != "boolean":
@@ -229,6 +239,7 @@ class IfStatement(ASTnode):
             self.setType(self.thenExpr.getType())
         else:
             self.setType("error | inconsistent return type")
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -245,6 +256,7 @@ class Identifier(ASTnode):
             self.setType(ids[self.getName()].getType())
         except:
             self.setType("error | bad id call")
+        return defs
     def getName(self):
         return self.value
     def setType(self, myType):
@@ -259,7 +271,7 @@ class IntegerLiteral(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
     def annotate(self, defs, ids, fName):
-        pass
+        return defs
     def setType(self, myType):
         if myType != "integer":
             error_msg = "tried to assign {} type to integer literal {}"
@@ -274,7 +286,7 @@ class BooleanLiteral(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
     def annotate(self, defs, ids, fName):
-        pass
+        return defs
     def setType(self, myType):
         if myType != "boolean":
             error_msg = "tried to assign {} type to boolean literal {}"
@@ -298,8 +310,9 @@ class NegateExpr(ASTnode):
         rep = "\t" * level + "(" + colors.blue + "- " + colors.white + self.factor.__str__() + ")"
         return rep
     def annotate(self, defs, ids, fName):
-        self.factor.annotate(defs, ids, fName)
+        defs = self.factor.annotate(defs, ids, fName)
         self.setType(self.factor.getType())
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -334,9 +347,10 @@ class Program(ASTnode):
             defs[function.getName()] = FunctionRecord(function)
         for formal in self.formals:
             ids[formal.getName()] = FormalRecord(formal)
-        self.definitions.annotate(defs)
-        self.body.annotate(defs, ids, self.getName())
+        defs = self.definitions.annotate(defs)
+        defs = self.body.annotate(defs, ids, self.getName())
         self.setType(self.body.getType())
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -394,7 +408,8 @@ class Definitions(ASTnode):
         return rep
     def annotate(self, defs):
         for function in self.definitions:
-            function.annotate(defs)
+            defs = function.annotate(defs)
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -422,9 +437,10 @@ class Function(ASTnode):
         rep += "\t" * level + colors.green + "end" + colors.white + ";\n"
         return rep
     def annotate(self, defs):
-        self.body.annotate(defs, defs[self.getName()].getFormals(), self.getName())
+        defs = self.body.annotate(defs, defs[self.getName()].getFormals(), self.getName())
         if self.body.getType() != self.getType():
             self.setType("error | wrong return type")
+        return defs
     def getFormals(self):
         return self.formals
     def getName(self):
@@ -453,12 +469,13 @@ class Body(ASTnode):
         return rep
     def annotate(self, defs, ids, fName):
         for ps in self.printStatements:
-            ps.annotate(defs, ids, fName)
-        self.returnStatement.annotate(defs, ids, fName)
+            defs = ps.annotate(defs, ids, fName)
+        defs = self.returnStatement.annotate(defs, ids, fName)
         if any(ps.getType() == "error" for ps in self.printStatements):
             self.setType("error | inherited from print statement")
         else:
             self.setType(self.returnStatement.getType())
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -473,8 +490,9 @@ class ReturnStatement(ASTnode):
         rep += self.retStatement.__str__(level+1)
         return rep
     def annotate(self, defs, ids, fName):
-        self.retStatement.annotate(defs, ids, fName)
+        defs = self.retStatement.annotate(defs, ids, fName)
         self.setType(self.retStatement.getType())
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -496,15 +514,15 @@ class FunctionCall(ASTnode):
         rep += ")"
         return rep
     def annotate(self, defs, ids, fName):
-        self.actuals.annotate(defs, ids, fName)
+        defs = self.actuals.annotate(defs, ids, fName)
         try:
             self.setType(defs[self.getName()].getType())
             defs.addCaller(fName)
-            ## TODO: return defs
+            return defs
         except:
             self.setType("error | bad function call")
             defs[self.getName()].addCaller(fName)
-            ## TODO: return defs
+            return defs
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):
@@ -531,7 +549,8 @@ class Actuals(ASTnode):
         return rep
     def annotate(self, defs, ids, fName):
         for actual in self.actuals:
-            actual.annotate(defs, ids, fName)
+            defs = actual.annotate(defs, ids, fName)
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -545,8 +564,9 @@ class Actual(ASTnode):
         rep = self.expr.__str__()
         return rep
     def annotate(self, defs, ids, fName):
-        self.expr.annotate(defs, ids, fName)
+        defs = self.expr.annotate(defs, ids, fName)
         self.setType(self.expr.getType())
+        return defs
     def setType(self, myType):
         self.type = myType
     def getType(self):
