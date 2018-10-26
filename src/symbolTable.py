@@ -1,5 +1,17 @@
 #!/usr/bin/python3
 
+class SymbolTable():
+    def __init__(self):
+        self.table = {}
+        self.errors = False
+    def __getitem__(self, key):
+        return self.table[key]
+    def __setitem__(self, key, value):
+        self.table[key] = value
+    def newError(self):
+        self.errors = True
+    def hasError(self):
+        return self.errors
 
 class FormalRecord:
     def __init__(self, formalNode):

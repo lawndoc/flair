@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.errors import semanticError
-from src.symbolTable import FunctionRecord, FormalRecord
+from src.symbolTable import SymbolTable, FunctionRecord, FormalRecord
 
 class colors():
     blue = "\033[34m"
@@ -48,7 +48,9 @@ class LessThan(ASTnode):
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("boolean")
         else:
-            self.setType("error | bad comparison operation")
+            self.setType("boolean")
+            defs.newError()
+            print("Semantic error: non-integer < comparison in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -68,7 +70,9 @@ class EqualTo(ASTnode):
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("boolean")
         else:
-            self.setType("error | bad comparison operation")
+            self.setType("boolean")
+            defs.newError()
+            print("Semantic error: non-integer = comparison in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -88,7 +92,9 @@ class PlusExpr(ASTnode):
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
-            self.setType("error | bad arithmetic operation")
+            self.setType("integer")
+            defs.newError()
+            print("Semantic error: non-integer + operation in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -108,7 +114,9 @@ class MinusExpr(ASTnode):
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
-            self.setType("error | bad arithmetic operation")
+            self.setType("integer")
+            defs.newError()
+            print("Semantic error: non-integer - operation in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -128,7 +136,9 @@ class TimesExpr(ASTnode):
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
-            self.setType("error | bad arithmetic operation")
+            self.setType("integer")
+            defs.newError()
+            print("Semantic error: non-integer * operation in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -148,7 +158,9 @@ class DivideExpr(ASTnode):
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
-            self.setType("error | bad arithmetic operation")
+            self.setType("integer")
+            defs.newError()
+            print("Semantic error: non-integer / operation in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -168,7 +180,9 @@ class AndExpr(ASTnode):
         if self.right.getType() == "boolean" and self.left.getType() == "boolean":
             self.setType("boolean")
         else:
-            self.setType("error | bad boolean operation")
+            self.setType("boolean")
+            defs.newError()
+            print("Semantic error: non-boolean 'and' operation in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -188,7 +202,9 @@ class OrExpr(ASTnode):
         if self.right.getType() == "boolean" and self.left.getType() == "boolean":
             self.setType("boolean")
         else:
-            self.setType("error | bad boolean operation")
+            self.setType("boolean")
+            defs.newError()
+            print("Semantic error: non-boolean 'or' operation in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -206,7 +222,9 @@ class NotExpr(ASTnode):
         if self.expr.getType() == "boolean":
             self.setType("boolean")
         else:
-            self.setType("error | bad boolean operation")
+            self.setType("boolean")
+            defs.newError()
+            print("Semantic error: non-boolean 'not' operation in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -231,14 +249,15 @@ class IfStatement(ASTnode):
         defs = self.ifExpr.annotate(defs, ids, fName)
         defs = self.thenExpr.annotate(defs, ids, fName)
         defs = self.elseExpr.annotate(defs, ids, fName)
-        if any("error" in t.getType() for t in [self.ifExpr, self.thenExpr, self.elseExpr]):
-            self.setType("error | inherited")
-        elif self.ifExpr.getType() != "boolean":
-            self.setType("error | non-boolean if")
+        if self.ifExpr.getType() != "boolean":
+            defs.newError()
+            print("Semantic error: non-boolean 'if' check in function {}".format(fName))
         elif self.thenExpr.getType() == self.elseExpr.getType():
             self.setType(self.thenExpr.getType())
         else:
-            self.setType("error | inconsistent return type")
+            self.setType(defs[fName].getType())
+            defs.newError()
+            print("Semantic error: inconsistent return type under if-then-else in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -255,7 +274,8 @@ class Identifier(ASTnode):
         try:
             self.setType(ids[self.getName()].getType())
         except:
-            self.setType("error | bad id call")
+            self.setType("error")
+            print("Semantic error: reference to unknown identifier '{}' in function {}".format(self.value, fName))
         return defs
     def getName(self):
         return self.value
@@ -311,6 +331,7 @@ class NegateExpr(ASTnode):
         return rep
     def annotate(self, defs, ids, fName):
         defs = self.factor.annotate(defs, ids, fName)
+        ## TODO: double check use of this operator
         self.setType(self.factor.getType())
         return defs
     def setType(self, myType):
@@ -341,7 +362,7 @@ class Program(ASTnode):
         rep += colors.green + "end" + colors.white + ".\n"
         return rep
     def annotate(self):
-        defs = {}
+        defs = SymbolTable()
         ids = {}
         for function in self.definitons:
             defs[function.getName()] = FunctionRecord(function)
@@ -438,8 +459,11 @@ class Function(ASTnode):
         return rep
     def annotate(self, defs):
         defs = self.body.annotate(defs, defs[self.getName()].getFormals(), self.getName())
-        if self.body.getType() != self.getType():
-            self.setType("error | wrong return type")
+        if self.body.getType() == "error":
+            self.setType("error")
+        elif self.body.getType() != self.getType():
+            self.setType("error")
+            print("Semantic error: function {}'s return doesn't match the declared return type".format(self.getName()))
         return defs
     def getFormals(self):
         return self.formals
@@ -472,7 +496,7 @@ class Body(ASTnode):
             defs = ps.annotate(defs, ids, fName)
         defs = self.returnStatement.annotate(defs, ids, fName)
         if any(ps.getType() == "error" for ps in self.printStatements):
-            self.setType("error | inherited from print statement")
+            self.setType("error")
         else:
             self.setType(self.returnStatement.getType())
         return defs
@@ -520,9 +544,12 @@ class FunctionCall(ASTnode):
             defs.addCaller(fName)
             return defs
         except:
-            self.setType("error | bad function call")
+            self.setType("error")
+            print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
             defs[self.getName()].addCaller(fName)
             return defs
+            ## TODO: Could have SymbolTable keep track of boolean for whether or not there is an error
+            #        and have hard coded correct types for errors
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):

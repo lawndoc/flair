@@ -10,6 +10,10 @@ class Analyzer:
     def __init__(self, ast):
         self.ast = ast
         self.symbolTable = self.ast.annotate()
+        self.analyze()
 
     def analyze(self):
-        pass
+        if self.symbolTable.hasError():
+            exit()
+        else:
+            print("Program has no semantic errors.")
