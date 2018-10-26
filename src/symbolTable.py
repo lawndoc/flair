@@ -17,6 +17,11 @@ class FormalRecord:
     def __init__(self, formalNode):
         self.id = formalNode.getName()
         self.type = formalNode.getType()
+        self.called = False
+    def newCall(self):
+        self.called = True
+    def isCalled(self):
+        return self.called
     def getName(self):
         return self.id
     def getType(self):
@@ -28,6 +33,7 @@ class FunctionRecord:
         self.type = functionNode.getType()
         self.formals = {}
         for formal in functionNode.getFormals():
+            ## TODO: Make sure each identifier is only defined once
             self.formals[formal.getName()] = FormalRecord(formal)
         self.callers = []
     def addCaller(self, functionID):

@@ -10,6 +10,8 @@ class Analyzer:
     def __init__(self, ast):
         self.ast = ast
         self.symbolTable = self.ast.annotate()
+        ## TODO: Check for unused functions (warning)
+        ## TODO: Check for unused identifiers (warning)
         self.analyze()
 
     def analyze(self):
