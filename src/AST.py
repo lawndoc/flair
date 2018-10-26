@@ -255,7 +255,6 @@ class IfStatement(ASTnode):
         elif self.thenExpr.getType() == self.elseExpr.getType():
             self.setType(self.thenExpr.getType())
         else:
-            ## TODO: add case for unknown if --> (unknown type)
             self.setType("unknown")
             defs.newError()
             print("Semantic error: inconsistent return type under if-then-else in function {}".format(fName))
@@ -275,7 +274,6 @@ class Identifier(ASTnode):
         try:
             self.setType(ids[self.getName()].getType())
         except:
-            ## TODO: add case for unknown id --> (unknown type)
             self.setType("unknown")
             print("Semantic error: reference to unknown identifier '{}' in function {}".format(self.value, fName))
         return defs
@@ -376,6 +374,9 @@ class Program(ASTnode):
             ids[formal.getName()] = FormalRecord(formal)
         defs = self.definitions.annotate(defs)
         defs = self.body.annotate(defs, ids, self.getName())
+        if self.body.getType() == "unknown":
+            defs.newError()
+            print("Semantic error: The program body returns an unknown type due to an unidentified funciton or identifier".format(self.getName()))
         self.setType(self.body.getType())
         return defs
     def setType(self, myType):
@@ -465,7 +466,10 @@ class Function(ASTnode):
         return rep
     def annotate(self, defs):
         defs = self.body.annotate(defs, defs[self.getName()].getFormals(), self.getName())
-        if self.body.getType() != self.getType():
+        if self.body.getType() == "unknown":
+            defs.newError()
+            print("Semantic error: {} function returns an unknown type due to an unidentified funciton or identifier".format(self.getName()))
+        elif self.body.getType() != self.getType():
             defs.newError()
             print("Semantic error: {} function's returned value doesn't match the declared return type".format(self.getName()))
         return defs
@@ -545,7 +549,6 @@ class FunctionCall(ASTnode):
             defs.addCaller(fName)
             return defs
         except:
-            ## TODO: add case to handle unknown function --> (unknown type)
             self.setType("unknown")
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
             defs[self.getName()].addCaller(fName)
