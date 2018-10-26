@@ -40,7 +40,7 @@ class NonTerminal(Enum):
     Literal             = 21
     Print_Statement     = 22
 
-
+## TODO: Move parse table to another file and import
 parse_table = {
     (NonTerminal.Program, TokenType.program_keyword)     :   [TokenType.program_keyword,
                                                               TokenType.identifier,
