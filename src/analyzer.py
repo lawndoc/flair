@@ -9,12 +9,12 @@ from src import AST
 class Analyzer:
     def __init__(self, ast):
         self.ast = ast
-        self.symbolTable = self.ast.annotate()
-        ## TODO: Check for unused functions (warning)
+        self.symbolTable = self.ast.analyze()
+        ## TODO: Check for unused functions (warning) -- ignore program function
         ## TODO: Check for unused identifiers (warning)
-        self.analyze()
+        self.terminate()
 
-    def analyze(self):
+    def terminate(self):
         if self.symbolTable.hasError():
             exit()
         else:

@@ -32,9 +32,10 @@ class FunctionRecord:
         self.id = functionNode.getName()
         self.type = functionNode.getType()
         self.formals = {}
-        for formal in functionNode.getFormals():
-            ## TODO: Make sure each identifier is only defined once
-            self.formals[formal.getName()] = FormalRecord(formal)
+        if functionNode.getFormals():
+            for formal in functionNode.getFormals():
+                ## TODO: Make sure each identifier is only defined once
+                self.formals[formal.getName()] = FormalRecord(formal)
         self.callers = []
     def addCaller(self, functionID):
         self.callers.append(functionID)

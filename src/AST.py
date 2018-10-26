@@ -26,8 +26,8 @@ class PrintStatement(ASTnode):
         rep = "\t" * level + colors.green + "print\n" + colors.white
         rep += self.expr.__str__(level+1)
         return rep
-    def annotate(self, defs, ids, fName):
-        self.expr.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
     def setType(self, myType):
         self.type = myType
@@ -41,14 +41,14 @@ class LessThan(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " < " + colors.white + self.right.__str__()
-    def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.right.analyze(symbolTable, ids, fName)
+        self.left.analyze(symbolTable, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("boolean")
         else:
             self.setType("boolean")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-integer < comparison in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -62,14 +62,14 @@ class EqualTo(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " = " + colors.white + self.right.__str__()
-    def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.right.analyze(symbolTable, ids, fName)
+        self.left.analyze(symbolTable, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("boolean")
         else:
             self.setType("boolean")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-integer = comparison in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -83,14 +83,14 @@ class PlusExpr(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " + "+ colors.white + self.right.__str__() + ")"
-    def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.right.analyze(symbolTable, ids, fName)
+        self.left.analyze(symbolTable, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("integer")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-integer + operation in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -104,14 +104,14 @@ class MinusExpr(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " - " + colors.white + self.right.__str__() + ")"
-    def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.right.analyze(symbolTable, ids, fName)
+        self.left.analyze(symbolTable, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("integer")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-integer - operation in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -125,14 +125,14 @@ class TimesExpr(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " * " + colors.white + self.right.__str__() + ")"
-    def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.right.analyze(symbolTable, ids, fName)
+        self.left.analyze(symbolTable, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("integer")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-integer * operation in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -146,14 +146,14 @@ class DivideExpr(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " / " + colors.white + self.right.__str__() + ")"
-    def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.right.analyze(symbolTable, ids, fName)
+        self.left.analyze(symbolTable, ids, fName)
         if self.right.getType() == "integer" and self.left.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("integer")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-integer / operation in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -167,14 +167,14 @@ class AndExpr(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " and " + colors.white + self.right.__str__() + ")"
-    def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.right.analyze(symbolTable, ids, fName)
+        self.left.analyze(symbolTable, ids, fName)
         if self.right.getType() == "boolean" and self.left.getType() == "boolean":
             self.setType("boolean")
         else:
             self.setType("boolean")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-boolean 'and' operation in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -188,14 +188,14 @@ class OrExpr(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " or " + colors.white + self.right.__str__() + ")"
-    def annotate(self, defs, ids, fName):
-        self.right.annotate(defs, ids, fName)
-        self.left.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.right.analyze(symbolTable, ids, fName)
+        self.left.analyze(symbolTable, ids, fName)
         if self.right.getType() == "boolean" and self.left.getType() == "boolean":
             self.setType("boolean")
         else:
             self.setType("boolean")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-boolean 'or' operation in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -208,13 +208,13 @@ class NotExpr(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + "(" + colors.blue + "not " + colors.white + self.expr.__str__() + ")"
-    def annotate(self, defs, ids, fName):
-        self.expr.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.expr.analyze(symbolTable, ids, fName)
         if self.expr.getType() == "boolean":
             self.setType("boolean")
         else:
             self.setType("boolean")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-boolean 'not' operation in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -235,18 +235,18 @@ class IfStatement(ASTnode):
         rep += "\t" * level + colors.red + "else \n" + colors.white
         rep += self.elseExpr.__str__(level+1) + "\n"
         return rep
-    def annotate(self, defs, ids, fName):
-        self.ifExpr.annotate(defs, ids, fName)
-        self.thenExpr.annotate(defs, ids, fName)
-        self.elseExpr.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.ifExpr.analyze(symbolTable, ids, fName)
+        self.thenExpr.analyze(symbolTable, ids, fName)
+        self.elseExpr.analyze(symbolTable, ids, fName)
         if self.ifExpr.getType() != "boolean":
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: non-boolean 'if' check in function {}".format(fName))
         elif self.thenExpr.getType() == self.elseExpr.getType():
             self.setType(self.thenExpr.getType())
         else:
             self.setType("unknown")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: inconsistent return type under if-then-else in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -259,7 +259,7 @@ class Identifier(ASTnode):
         self.type = None
     def __str__(self, level = 0):
         return "\t" * level + colors.brown + str(self.value) + colors.white
-    def annotate(self, defs, ids, fName):
+    def analyze(self, symbolTable, ids, fName):
         try:
             self.setType(ids[self.getName()].getType())
             ids[self.getName()].newCall()
@@ -279,7 +279,7 @@ class IntegerLiteral(ASTnode):
         self.type = "integer"
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
-    def annotate(self, defs, ids, fName):
+    def analyze(self, symbolTable, ids, fName):
         pass
     def setType(self, myType):
         if myType != "integer":
@@ -294,7 +294,7 @@ class BooleanLiteral(ASTnode):
         self.type = "boolean"
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
-    def annotate(self, defs, ids, fName):
+    def analyze(self, symbolTable, ids, fName):
         pass
     def setType(self, myType):
         if myType != "boolean":
@@ -318,13 +318,13 @@ class NegateExpr(ASTnode):
     def __str__(self, level = 0):
         rep = "\t" * level + "(" + colors.blue + "- " + colors.white + self.factor.__str__() + ")"
         return rep
-    def annotate(self, defs, ids, fName):
-        self.factor.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.factor.analyze(symbolTable, ids, fName)
         if self.factor.getType() == "integer":
             self.setType("integer")
         else:
             self.setType("integer")
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: '-' negation applied to non-integer in function {}".format(fName))
     def setType(self, myType):
         self.type = myType
@@ -353,28 +353,31 @@ class Program(ASTnode):
         rep += self.body.__str__(level+1)
         rep += colors.green + "end" + colors.white + ".\n"
         return rep
-    def annotate(self):
-        defs = SymbolTable()
+    def analyze(self):
+        symbolTable = SymbolTable()
         ids = {}
         for function in self.definitons:
             ## TODO: Make sure each function is only defined once
-            defs[function.getName()] = FunctionRecord(function)
+            symbolTable[function.getName()] = FunctionRecord(function)
+        symbolTable[self.getName()] = FunctionRecord(self)
         ## TODO: Make sure there is no user defined function 'print'
         for formal in self.formals:
             ids[formal.getName()] = FormalRecord(formal)
-        self.definitions.annotate(defs)
-        self.body.annotate(defs, ids, self.getName())
+        self.definitions.analyze(symbolTable)
+        self.body.analyze(symbolTable, ids, self.getName())
         if self.body.getType() == "unknown":
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: The program body returns an unknown type due to an unidentified funciton or identifier".format(self.getName()))
         self.setType(self.body.getType())
-        return defs
+        return symbolTable
     def setType(self, myType):
         self.type = myType
     def getType(self):
         return self.type
     def getName(self):
         return self.identifier.getName()
+    def getFormals(self):
+        return self.formals
 
 class Formals(ASTnode):
     def __init__(self, last, semanticStack):
@@ -424,9 +427,9 @@ class Definitions(ASTnode):
         for function in self.definitions:
             rep += function.__str__(level+1)
         return rep
-    def annotate(self, defs):
+    def analyze(self, symbolTable):
         for function in self.definitions:
-            function.annotate(defs)
+            function.analyze(symbolTable)
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -453,13 +456,13 @@ class Function(ASTnode):
         rep += self.body.__str__(level+1)
         rep += "\t" * level + colors.green + "end" + colors.white + ";\n"
         return rep
-    def annotate(self, defs):
-        self.body.annotate(defs, defs[self.getName()].getFormals(), self.getName())
+    def analyze(self, symbolTable):
+        self.body.analyze(symbolTable, symbolTable[self.getName()].getFormals(), self.getName())
         if self.body.getType() == "unknown":
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: {} function returns an unknown type due to an unidentified funciton or identifier".format(self.getName()))
         elif self.body.getType() != self.getType():
-            defs.newError()
+            symbolTable.newError()
             print("Semantic error: {} function's returned value doesn't match the declared return type".format(self.getName()))
     def getFormals(self):
         return self.formals
@@ -487,10 +490,10 @@ class Body(ASTnode):
         rep += self.returnStatement.__str__(level)
         rep += "\n"
         return rep
-    def annotate(self, defs, ids, fName):
+    def analyze(self, symbolTable, ids, fName):
         for ps in self.printStatements:
-            ps.annotate(defs, ids, fName)
-        self.returnStatement.annotate(defs, ids, fName)
+            ps.analyze(symbolTable, ids, fName)
+        self.returnStatement.analyze(symbolTable, ids, fName)
         self.setType(self.returnStatement.getType())
     def setType(self, myType):
         self.type = myType
@@ -505,8 +508,8 @@ class ReturnStatement(ASTnode):
         rep = "\t" * level + colors.green + "return \n" + colors.white
         rep += self.retStatement.__str__(level+1)
         return rep
-    def annotate(self, defs, ids, fName):
-        self.retStatement.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.retStatement.analyze(symbolTable, ids, fName)
         self.setType(self.retStatement.getType())
     def setType(self, myType):
         self.type = myType
@@ -528,15 +531,15 @@ class FunctionCall(ASTnode):
             rep += self.actuals.__str__()
         rep += ")"
         return rep
-    def annotate(self, defs, ids, fName):
-        self.actuals.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.actuals.analyze(symbolTable, ids, fName)
         try:
-            self.setType(defs[self.getName()].getType())
-            defs.addCaller(fName)
+            self.setType(symbolTable[self.getName()].getType())
+            symbolTable.addCaller(fName)
         except:
             self.setType("unknown")
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
-            defs[self.getName()].addCaller(fName)
+            symbolTable[self.getName()].addCaller(fName)
         ## TODO: Make sure call passes in correct number of args and correct types
     def getName(self):
         return self.identifier.getName()
@@ -562,9 +565,9 @@ class Actuals(ASTnode):
             rep += ", "
         rep = rep[:-2]
         return rep
-    def annotate(self, defs, ids, fName):
+    def analyze(self, symbolTable, ids, fName):
         for actual in self.actuals:
-            actual.annotate(defs, ids, fName)
+            actual.analyze(symbolTable, ids, fName)
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -577,8 +580,8 @@ class Actual(ASTnode):
     def __str__(self, level=0):
         rep = self.expr.__str__()
         return rep
-    def annotate(self, defs, ids, fName):
-        self.expr.annotate(defs, ids, fName)
+    def analyze(self, symbolTable, ids, fName):
+        self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
     def setType(self, myType):
         self.type = myType
