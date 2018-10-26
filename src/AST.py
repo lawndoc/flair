@@ -255,7 +255,8 @@ class IfStatement(ASTnode):
         elif self.thenExpr.getType() == self.elseExpr.getType():
             self.setType(self.thenExpr.getType())
         else:
-            self.setType(defs[fName].getType())
+            ## TODO: add case for unknown if --> (unknown type)
+            self.setType("unknown")
             defs.newError()
             print("Semantic error: inconsistent return type under if-then-else in function {}".format(fName))
         return defs
@@ -274,7 +275,8 @@ class Identifier(ASTnode):
         try:
             self.setType(ids[self.getName()].getType())
         except:
-            self.setType("error")
+            ## TODO: add case for unknown id --> (unknown type)
+            self.setType("unknown")
             print("Semantic error: reference to unknown identifier '{}' in function {}".format(self.value, fName))
         return defs
     def getName(self):
@@ -331,8 +333,12 @@ class NegateExpr(ASTnode):
         return rep
     def annotate(self, defs, ids, fName):
         defs = self.factor.annotate(defs, ids, fName)
-        ## TODO: double check use of this operator
-        self.setType(self.factor.getType())
+        if self.factor.getType() == "integer":
+            self.setType("integer")
+        else:
+            self.setType("integer")
+            defs.newError()
+            print("Semantic error: '-' negation applied to non-integer in function {}".format(fName))
         return defs
     def setType(self, myType):
         self.type = myType
@@ -459,11 +465,9 @@ class Function(ASTnode):
         return rep
     def annotate(self, defs):
         defs = self.body.annotate(defs, defs[self.getName()].getFormals(), self.getName())
-        if self.body.getType() == "error":
-            self.setType("error")
-        elif self.body.getType() != self.getType():
-            self.setType("error")
-            print("Semantic error: function {}'s return doesn't match the declared return type".format(self.getName()))
+        if self.body.getType() != self.getType():
+            defs.newError()
+            print("Semantic error: {} function's returned value doesn't match the declared return type".format(self.getName()))
         return defs
     def getFormals(self):
         return self.formals
@@ -495,10 +499,7 @@ class Body(ASTnode):
         for ps in self.printStatements:
             defs = ps.annotate(defs, ids, fName)
         defs = self.returnStatement.annotate(defs, ids, fName)
-        if any(ps.getType() == "error" for ps in self.printStatements):
-            self.setType("error")
-        else:
-            self.setType(self.returnStatement.getType())
+        self.setType(self.returnStatement.getType())
         return defs
     def setType(self, myType):
         self.type = myType
@@ -544,12 +545,11 @@ class FunctionCall(ASTnode):
             defs.addCaller(fName)
             return defs
         except:
-            self.setType("error")
+            ## TODO: add case to handle unknown function --> (unknown type)
+            self.setType("unknown")
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
             defs[self.getName()].addCaller(fName)
             return defs
-            ## TODO: Could have SymbolTable keep track of boolean for whether or not there is an error
-            #        and have hard coded correct types for errors
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):
