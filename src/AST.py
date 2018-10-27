@@ -265,6 +265,7 @@ class Identifier(ASTnode):
             ids[self.getName()].newCall()
         except:
             self.setType("unknown")
+            symbolTable.newError()
             print("Semantic error: reference to unknown identifier '{}' in function {}".format(self.value, fName))
     def getName(self):
         return self.value
@@ -549,6 +550,7 @@ class FunctionCall(ASTnode):
             symbolTable.addCaller(fName)
         except:
             self.setType("unknown")
+            symbolTable.newError()
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
             symbolTable[self.getName()].addCaller(fName)
         # Make sure call passes in correct number of args
