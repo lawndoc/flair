@@ -545,8 +545,9 @@ class FunctionCall(ASTnode):
         rep += ")"
         return rep
     def analyze(self, symbolTable, ids, fName):
-        # Analyze function call arguments and annotate symbolTable
-        self.actuals.analyze(symbolTable, ids, fName)
+        # Analyze function call arguments (if any) and annotate symbolTable
+        if self.actuals:
+            self.actuals.analyze(symbolTable, ids, fName)
         # Make sure function that is being called exists
         try:
             self.setType(symbolTable[self.getName()].getType())
@@ -555,16 +556,22 @@ class FunctionCall(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
-        # Make sure call passes in correct number of args
-        if len(self.actuals) == len(symbolTable[self.getName()].getFormals()):
-            # Make sure args are correct types
-            for a, f in zip(self.actuals, symbolTable[self.getName()].getFormals().values()):
-                if a.getType() != f.getType():
-                    symbolTable.newError()
-                    print("Semantic error: in in function {}, in call to function {}, argument {} is not of the correct type".format(fName, self.getName(), a.getName()))
+        # Make sure call passes in correct number of args (if any)
+        if self.actuals:
+            if len(self.actuals) == len(symbolTable[self.getName()].getFormals()):
+                # Make sure args are correct types
+                for a, f in zip(self.actuals, symbolTable[self.getName()].getFormals().values()):
+                    if a.getType() != f.getType():
+                        symbolTable.newError()
+                        print("Semantic error: in in function {}, in call to function {}, argument {} is not of the correct type".format(fName, self.getName(), a.getName()))
+            else:
+                symbolTable.newError()
+                print("Semantic error: in function {}, the call to function {} does not pass in the correct number of arguments".format(fName, self.getName()))
         else:
-            symbolTable.newError()
-            print("Semantic error: in function {}, the call to function {} does not pass in the correct number of arguments".format(fName, self.getName()))
+            if len(symbolTable[self.getName()].getFormals()) > 0:
+                symbolTable.newError()
+                print("Semantic error: in function {}, the call to function {} does not pass in the correct number of arguments".format(fName, self.getName()))
+
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):
