@@ -27,6 +27,7 @@ class PrintStatement(ASTnode):
         rep += self.expr.__str__(level+1)
         return rep
     def analyze(self, symbolTable, ids, fName):
+        # Analyze expression to be printed and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
     def setType(self, myType):
@@ -38,16 +39,15 @@ class LessThan(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
-        self.type = None
+        self.type = "boolean"
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " < " + colors.white + self.right.__str__()
     def analyze(self, symbolTable, ids, fName):
+        # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        if self.right.getType() == "integer" and self.left.getType() == "integer":
-            self.setType("boolean")
-        else:
-            self.setType("boolean")
+        # Make sure both sides of the comparison are integer expressions
+        if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer < comparison in function {}".format(fName))
     def setType(self, myType):
@@ -59,16 +59,15 @@ class EqualTo(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
-        self.type = None
+        self.type = "boolean"
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " = " + colors.white + self.right.__str__()
     def analyze(self, symbolTable, ids, fName):
+        # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        if self.right.getType() == "integer" and self.left.getType() == "integer":
-            self.setType("boolean")
-        else:
-            self.setType("boolean")
+        # Make sure both sides of the comparison are integer expressions
+        if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer = comparison in function {}".format(fName))
     def setType(self, myType):
@@ -80,16 +79,15 @@ class PlusExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
-        self.type = None
+        self.type = "integer"
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " + "+ colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
+        # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        if self.right.getType() == "integer" and self.left.getType() == "integer":
-            self.setType("integer")
-        else:
-            self.setType("integer")
+        # Make sure both sides of the addition are integer expressions
+        if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer + operation in function {}".format(fName))
     def setType(self, myType):
@@ -101,16 +99,15 @@ class MinusExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
-        self.type = None
+        self.type = "integer"
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " - " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
+        # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        if self.right.getType() == "integer" and self.left.getType() == "integer":
-            self.setType("integer")
-        else:
-            self.setType("integer")
+        # Make sure both sides of the subraction are integer expressions
+        if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer - operation in function {}".format(fName))
     def setType(self, myType):
@@ -122,16 +119,15 @@ class TimesExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
-        self.type = None
+        self.type = "integer"
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " * " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
+        # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        if self.right.getType() == "integer" and self.left.getType() == "integer":
-            self.setType("integer")
-        else:
-            self.setType("integer")
+        # Make sure both sides of the multiply are integer expressions
+        if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer * operation in function {}".format(fName))
     def setType(self, myType):
@@ -143,16 +139,15 @@ class DivideExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
-        self.type = None
+        self.type = "integer"
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " / " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
+        # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        if self.right.getType() == "integer" and self.left.getType() == "integer":
-            self.setType("integer")
-        else:
-            self.setType("integer")
+        # Make sure both sides of the divide are integer expressions
+        if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer / operation in function {}".format(fName))
     def setType(self, myType):
@@ -164,16 +159,15 @@ class AndExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
-        self.type = None
+        self.type = "boolean"
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " and " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
+        # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        if self.right.getType() == "boolean" and self.left.getType() == "boolean":
-            self.setType("boolean")
-        else:
-            self.setType("boolean")
+        # Make sure things being and'd are boolean expressions
+        if not (self.right.getType() == "boolean" and self.left.getType() == "boolean"):
             symbolTable.newError()
             print("Semantic error: non-boolean 'and' operation in function {}".format(fName))
     def setType(self, myType):
@@ -185,16 +179,15 @@ class OrExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
-        self.type = None
+        self.type = "boolean"
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " or " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
+        # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        if self.right.getType() == "boolean" and self.left.getType() == "boolean":
-            self.setType("boolean")
-        else:
-            self.setType("boolean")
+        # Make sure things being or'd are boolean expressions
+        if not (self.right.getType() == "boolean" and self.left.getType() == "boolean"):
             symbolTable.newError()
             print("Semantic error: non-boolean 'or' operation in function {}".format(fName))
     def setType(self, myType):
@@ -205,15 +198,14 @@ class OrExpr(ASTnode):
 class NotExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.expr = semanticStack.pop()
-        self.type = None
+        self.type = "boolean"
     def __str__(self, level = 0):
         return "\t" * level + "(" + colors.blue + "not " + colors.white + self.expr.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
+        # Analyze boolean expression to be negated and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
-        if self.expr.getType() == "boolean":
-            self.setType("boolean")
-        else:
-            self.setType("boolean")
+        # Make sure thing being negated is a boolean expression
+        if self.expr.getType() != "boolean":
             symbolTable.newError()
             print("Semantic error: non-boolean 'not' operation in function {}".format(fName))
     def setType(self, myType):
@@ -236,13 +228,16 @@ class IfStatement(ASTnode):
         rep += self.elseExpr.__str__(level+1) + "\n"
         return rep
     def analyze(self, symbolTable, ids, fName):
+        # Analyze if, then, and else expressions and annotate symbolTable
         self.ifExpr.analyze(symbolTable, ids, fName)
         self.thenExpr.analyze(symbolTable, ids, fName)
         self.elseExpr.analyze(symbolTable, ids, fName)
+        # Make sure the if check is a boolean expression
         if self.ifExpr.getType() != "boolean":
             symbolTable.newError()
             print("Semantic error: non-boolean 'if' check in function {}".format(fName))
-        elif self.thenExpr.getType() == self.elseExpr.getType():
+        # Make sure the then and else expressions return the same type
+        if self.thenExpr.getType() == self.elseExpr.getType():
             self.setType(self.thenExpr.getType())
         else:
             self.setType("unknown")
@@ -260,6 +255,7 @@ class Identifier(ASTnode):
     def __str__(self, level = 0):
         return "\t" * level + colors.brown + str(self.value) + colors.white
     def analyze(self, symbolTable, ids, fName):
+        # Make sure identifier references an argument passed into the current function
         try:
             self.setType(ids[self.getName()].getType())
             ids[self.getName()].newCall()
@@ -315,16 +311,15 @@ class Type(ASTnode):
 class NegateExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.factor = semanticStack.pop()
-        self.type = None
+        self.type = "integer"
     def __str__(self, level = 0):
         rep = "\t" * level + "(" + colors.blue + "- " + colors.white + self.factor.__str__() + ")"
         return rep
     def analyze(self, symbolTable, ids, fName):
+        # Analyze integer or factor to be negated and annotate symbolTable
         self.factor.analyze(symbolTable, ids, fName)
-        if self.factor.getType() == "integer":
-            self.setType("integer")
-        else:
-            self.setType("integer")
+        # Make sure thing being negated is integer type
+        if self.factor.getType() != "integer":
             symbolTable.newError()
             print("Semantic error: '-' negation applied to non-integer in function {}".format(fName))
     def setType(self, myType):
@@ -357,8 +352,9 @@ class Program(ASTnode):
     def analyze(self):
         symbolTable = SymbolTable()
         ids = {}
+        # Add all function records to symbolTable
         for function in self.definitons:
-            # Make sure each function is only defined once
+            # Make sure function is only defined once
             if function.getName() in symbolTable:
                 symbolTable.newError()
                 print("Semantic error: function {} is defined more than once".format(function.getName()))
@@ -366,20 +362,19 @@ class Program(ASTnode):
             # Make sure each formal is only defined once (handled on creation of FunctionRecord)
             if symbolTable[function.getName()].hasFormalError():
                 symbolTable.newError()
-        # Add program function to symbolTable
+        # Add program to symbolTable as a function record
         symbolTable[self.getName()] = FunctionRecord(self)
         # Make sure there is no user defined function 'print'
         if "print" in symbolTable:
             symbolTable.newError()
             print("Semantic error: cannot define a function called 'print'")
-        # Pass program's formals to 'ids' for program body
+        # Pass program's formals to 'ids' for program body analysis
         for formal in self.formals:
             ids[formal.getName()] = FormalRecord(formal)
+        # Analyze each function and annotate symbolTable
         self.definitions.analyze(symbolTable)
+        # Analyze program body and annotate symbolTable
         self.body.analyze(symbolTable, ids, self.getName())
-        if self.body.getType() == "unknown":
-            symbolTable.newError()
-            print("Semantic error: The program body returns an unknown type due to an unidentified funciton or identifier".format(self.getName()))
         self.setType(self.body.getType())
         return symbolTable
     def setType(self, myType):
@@ -469,10 +464,13 @@ class Function(ASTnode):
         rep += "\t" * level + colors.green + "end" + colors.white + ";\n"
         return rep
     def analyze(self, symbolTable):
+        # Analyze function body and annotate symbolTable
         self.body.analyze(symbolTable, symbolTable[self.getName()].getFormals(), self.getName())
+        # Print message if return type doesn't match because of unknown return type
         if self.body.getType() == "unknown":
             symbolTable.newError()
             print("Semantic error: {} function returns an unknown type due to an unidentified funciton or identifier".format(self.getName()))
+        # Make sure function returns the declared type
         elif self.body.getType() != self.getType():
             symbolTable.newError()
             print("Semantic error: {} function's returned value doesn't match the declared return type".format(self.getName()))
@@ -503,8 +501,10 @@ class Body(ASTnode):
         rep += "\n"
         return rep
     def analyze(self, symbolTable, ids, fName):
+        # Analyze each print statement and annotate symbolTable
         for ps in self.printStatements:
             ps.analyze(symbolTable, ids, fName)
+        # Analyze return statement and annotate symbolTable
         self.returnStatement.analyze(symbolTable, ids, fName)
         self.setType(self.returnStatement.getType())
     def setType(self, myType):
@@ -521,6 +521,7 @@ class ReturnStatement(ASTnode):
         rep += self.retStatement.__str__(level+1)
         return rep
     def analyze(self, symbolTable, ids, fName):
+        # Analyze expression to be returned and annotate symbolTable
         self.retStatement.analyze(symbolTable, ids, fName)
         self.setType(self.retStatement.getType())
     def setType(self, myType):
@@ -544,7 +545,9 @@ class FunctionCall(ASTnode):
         rep += ")"
         return rep
     def analyze(self, symbolTable, ids, fName):
+        # Analyze function call arguments and annotate symbolTable
         self.actuals.analyze(symbolTable, ids, fName)
+        # Make sure function that is being called exists
         try:
             self.setType(symbolTable[self.getName()].getType())
             symbolTable.addCaller(fName)
@@ -552,7 +555,6 @@ class FunctionCall(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
-            symbolTable[self.getName()].addCaller(fName)
         # Make sure call passes in correct number of args
         if len(self.actuals) == len(symbolTable[self.getName()].getFormals()):
             # Make sure args are correct types
@@ -605,6 +607,7 @@ class Actual(ASTnode):
         rep = self.expr.__str__()
         return rep
     def analyze(self, symbolTable, ids, fName):
+        # Analyze expression passed into function as an argument and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
     def setType(self, myType):
