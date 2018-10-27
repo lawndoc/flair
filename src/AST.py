@@ -551,7 +551,16 @@ class FunctionCall(ASTnode):
             self.setType("unknown")
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
             symbolTable[self.getName()].addCaller(fName)
-        ## TODO: Make sure call passes in correct number of args and correct types
+        # Make sure call passes in correct number of args
+        if len(self.actuals) == len(symbolTable[self.getName()].getFormals()):
+            # Make sure args are correct types
+            for a, f in zip(self.actuals, symbolTable[self.getName()].getFormals().values()):
+                if a.getType() != f.getType():
+                    symbolTable.newError()
+                    print("Semantic error: in in function {}, in call to function {}, argument {} is not of the correct type".format(fName, self.getName(), a.getName()))
+        else:
+            symbolTable.newError()
+            print("Semantic error: in function {}, the call to function {} does not pass in the correct number of arguments".format(fName, self.getName()))
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):
@@ -576,6 +585,8 @@ class Actuals(ASTnode):
             rep += ", "
         rep = rep[:-2]
         return rep
+    def __len__(self):
+        return len(self.actuals)
     def analyze(self, symbolTable, ids, fName):
         for actual in self.actuals:
             actual.analyze(symbolTable, ids, fName)
