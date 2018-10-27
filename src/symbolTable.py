@@ -4,10 +4,16 @@ class SymbolTable():
     def __init__(self):
         self.table = {}
         self.errors = False
+    def __iter__(self):
+        for f in self.table:
+            yield f
+        raise StopIteration
     def __getitem__(self, key):
         return self.table[key]
     def __setitem__(self, key, value):
         self.table[key] = value
+    def __contains__(self, key):
+        return any(f.getName() == key for f in self.table)
     def newError(self):
         self.errors = True
     def hasError(self):
@@ -32,16 +38,24 @@ class FunctionRecord:
         self.id = functionNode.getName()
         self.type = functionNode.getType()
         self.formals = {}
+        self.formalError = False
         if functionNode.getFormals():
             for formal in functionNode.getFormals():
-                ## TODO: Make sure each identifier is only defined once
+                # Make sure each identifier is only defined once
+                if formal.getName() in self.formals:
+                    self.formalError = True
+                    print("Semantic error: identifier {} is defined more than once in function {}".format(formal.getName(), self.id))
                 self.formals[formal.getName()] = FormalRecord(formal)
         self.callers = []
     def addCaller(self, functionID):
         self.callers.append(functionID)
+    def getCallers(self):
+        return self.callers
     def getName(self):
         return self.id
     def getType(self):
         return self.type
     def getFormals(self):
         return self.formals
+    def hasFormalError(self):
+        return self.formalError

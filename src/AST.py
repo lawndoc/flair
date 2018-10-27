@@ -357,10 +357,21 @@ class Program(ASTnode):
         symbolTable = SymbolTable()
         ids = {}
         for function in self.definitons:
-            ## TODO: Make sure each function is only defined once
+            # Make sure each function is only defined once
+            if function.getName() in symbolTable:
+                symbolTable.newError()
+                print("Semantic error: function {} is defined more than once".format(function.getName()))
             symbolTable[function.getName()] = FunctionRecord(function)
+            # Make sure each formal is only defined once (handled on creation of FunctionRecord)
+            if symbolTable[function.getName()].hasFormalError():
+                symbolTable.newError()
+        # Add program function to symbolTable
         symbolTable[self.getName()] = FunctionRecord(self)
-        ## TODO: Make sure there is no user defined function 'print'
+        # Make sure there is no user defined function 'print'
+        if "print" in symbolTable:
+            symbolTable.newError()
+            print("Semantic error: cannot define a function called 'print'")
+        # Pass program's formals to 'ids' for program body
         for formal in self.formals:
             ids[formal.getName()] = FormalRecord(formal)
         self.definitions.analyze(symbolTable)

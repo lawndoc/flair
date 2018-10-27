@@ -3,16 +3,26 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from src.errors import *
 from src import AST
 
 class Analyzer:
     def __init__(self, ast):
         self.ast = ast
         self.symbolTable = self.ast.analyze()
-        ## TODO: Check for unused functions (warning) -- ignore program function
-        ## TODO: Check for unused identifiers (warning)
+        self.checkWarnings()
         self.terminate()
+
+    def checkWarnings(self):
+        # Check for unused functions (warning) -- ignore program function
+        for function in self.symbolTable:
+            if function.getName() == self.ast.getName():
+                continue
+            if not function.getCallers():
+                print("Warning: function {} is never called".format(function.getName()))
+            # Check for unused identifiers (warning)
+            for formal in function.getFormals():
+                if not formal.isCalled():
+                    print("Warning: identifier {} in function {} is never called".format(formal.getName(), function.getName()))
 
     def terminate(self):
         if self.symbolTable.hasError():
