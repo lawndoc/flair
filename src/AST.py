@@ -3,7 +3,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from src.errors import semanticError
+from src.errors import SemanticError
 from src.symbolTable import SymbolTable, FunctionRecord, FormalRecord
 
 class colors():
@@ -281,7 +281,7 @@ class IntegerLiteral(ASTnode):
     def setType(self, myType):
         if myType != "integer":
             error_msg = "tried to assign {} type to integer literal {}"
-            raise semanticError(error_msg.format(myType, self.value))
+            raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
 
@@ -296,7 +296,7 @@ class BooleanLiteral(ASTnode):
     def setType(self, myType):
         if myType != "boolean":
             error_msg = "tried to assign {} type to boolean literal {}"
-            raise semanticError(error_msg.format(myType, self.value))
+            raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
 
