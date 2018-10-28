@@ -18,6 +18,7 @@ program KindOfAdd(n : integer, m : integer);
         return try(n)
     end;
     function works(n : integer, m : integer ) : integer
+    begin
         return o
     end;
     function print(n : boolean) : boolean
