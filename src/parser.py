@@ -64,7 +64,7 @@ class Parser:
                             self.parseStack.push(y)
                 else:
                     # If print is declared as a function identifier, recast print_statement token as identifier token
-                    if not (A == NonTerminal.Expr and t == TokenType.print_statement):
+                    if not ((A == NonTerminal.Expr or A == NonTerminal.Term or A == NonTerminal.Factor) and t == TokenType.print_statement):
                         error_msg = "Parsing Error: No transition for {} from {}"
                         raise ParseError(error_msg.format(A,t))
                     else:
