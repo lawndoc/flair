@@ -15,7 +15,10 @@ class SymbolTable():
     def __contains__(self, key):
         return any(f == key for f in self.table)
     def __str__(self):
-        return str(self.table)
+        rep = ""
+        for function in self.table.values():
+            rep += str(function)
+        return rep
     def values(self):
         for f in self.table.values():
             yield f
@@ -54,9 +57,13 @@ class FunctionRecord:
                 self.formals[formal.getName()] = FormalRecord(formal)
         self.callers = []
     def __str__(self):
-        rep = ""
+        rep = "Function '" + self.id + "'\n"
+        rep += "formals:\n"
         for name, type in zip(self.formals, self.formals.values()):
             rep += name + " " + type + "\n"
+        rep += "callers:\n"
+        for caller in self.callers:
+            rep += caller + "\n"
         return rep
     def addCaller(self, functionID):
         self.callers.append(functionID)
