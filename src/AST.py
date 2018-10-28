@@ -353,7 +353,7 @@ class Program(ASTnode):
         symbolTable = SymbolTable()
         ids = {}
         # Add all function records to symbolTable
-        for function in self.definitons:
+        for function in self.definitions:
             # Make sure function is only defined once
             if function.getName() in symbolTable:
                 symbolTable.newError()
@@ -426,7 +426,7 @@ class Definitions(ASTnode):
         self.definitions.reverse()
         self.type = None
     def __iter__(self):
-        for function in self.definitons:
+        for function in self.definitions:
             yield function
         raise StopIteration
     def __str__(self, level = 0):
@@ -469,7 +469,7 @@ class Function(ASTnode):
         # Print message if return type doesn't match because of unknown return type
         if self.body.getType() == "unknown":
             symbolTable.newError()
-            print("Semantic error: {} function returns an unknown type due to an unidentified funciton or identifier".format(self.getName()))
+            print("Semantic error: {} function returns an unknown type due to an unidentified function or identifier".format(self.getName()))
         # Make sure function returns the declared type
         elif self.body.getType() != self.getType():
             symbolTable.newError()
