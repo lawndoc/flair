@@ -14,6 +14,9 @@ class SymbolTable():
         self.table[key] = value
     def __contains__(self, key):
         return any(f == key for f in self.table)
+    def __str__(self):
+        for function in self.table.values():
+            yield str(function)
     def values(self):
         for f in self.table.values():
             yield f
@@ -51,6 +54,11 @@ class FunctionRecord:
                     print("Semantic error: identifier {} is defined more than once in function {}".format(formal.getName(), self.id))
                 self.formals[formal.getName()] = FormalRecord(formal)
         self.callers = []
+    def __str__(self):
+        yield self.id + "\n"
+        for name, type in zip(self.formals, self.formals.values()):
+            yield name, type, "\n"
+        raise StopIteration
     def addCaller(self, functionID):
         self.callers.append(functionID)
     def getCallers(self):

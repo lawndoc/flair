@@ -364,6 +364,7 @@ class Program(ASTnode):
                 symbolTable.newError()
         # Add program to symbolTable as a function record
         symbolTable[self.getName()] = FunctionRecord(self)
+        print(str(symbolTable))
         # Make sure there is no user defined function 'print'
         if "print" in symbolTable:
             symbolTable.newError()
@@ -466,7 +467,6 @@ class Function(ASTnode):
     def analyze(self, symbolTable):
         # Analyze function body and annotate symbolTable
         self.body.analyze(symbolTable, symbolTable[self.getName()].getFormals(), self.getName())
-        print(self.getName(), symbolTable.hasError())
         # Print message if return type doesn't match because of unknown return type
         if self.body.getType() == "unknown":
             symbolTable.newError()
@@ -556,7 +556,6 @@ class FunctionCall(ASTnode):
         except:
             self.setType("unknown")
             symbolTable.newError()
-            print(symbolTable.hasError())
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
         # Make sure call passes in correct number of args (if any)
         if self.actuals:
