@@ -471,12 +471,8 @@ class Function(ASTnode):
     def analyze(self, symbolTable):
         # Analyze function body and annotate symbolTable
         self.body.analyze(symbolTable, symbolTable[self.getName()].getFormals(), self.getName())
-        # Print message if return type doesn't match because of unknown return type
-        if self.body.getType() == "unknown":
-            symbolTable.newError()
-            print("Semantic error: {} function returns an unknown type due to an unidentified function or identifier".format(self.getName()))
         # Make sure function returns the declared type
-        elif self.body.getType() != self.getType():
+        if self.body.getType() != self.getType():
             symbolTable.newError()
             print("Semantic error: {} function's returned value doesn't match the declared return type".format(self.getName()))
     def getFormals(self):
