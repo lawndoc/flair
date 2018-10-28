@@ -59,9 +59,9 @@ class FunctionRecord:
         self.callers = []
     def __str__(self):
         if self.isProgram():
-            rep = "\tProgram '" + self.id + "'\n"
+            rep = " Program '" + self.id + "'\n"
         else:
-            rep = "\tFunction '" + self.id + "'\n"
+            rep = " Function '" + self.id + "'\n"
         if not self.isProgram():
             rep += "> type: " + self.type + "\n"
         rep += "> formals:\n"
