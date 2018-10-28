@@ -59,8 +59,8 @@ class FunctionRecord:
     def __str__(self):
         rep = "Function '" + self.id + "'\n"
         rep += "formals:\n"
-        for name, type in zip(self.formals, self.formals.values()):
-            rep += name + " " + type + "\n"
+        for id, record in zip(self.formals, self.formals.values()):
+            rep += id + " " + record.getType() + "\n"
         rep += "callers:\n"
         for caller in self.callers:
             rep += caller + "\n"
