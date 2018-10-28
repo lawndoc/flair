@@ -6,10 +6,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.errors import SemanticError
 from src.symbolTable import SymbolTable, FunctionRecord, FormalRecord
 
-def excepthook(type, value, traceback):
-    print(str(value))
-
-sys.excepthook = excepthook
+# def excepthook(type, value, traceback):
+#     print(str(value))
+#
+# sys.excepthook = excepthook
 
 class colors():
     blue = "\033[34m"
