@@ -126,6 +126,8 @@ class TimesExpr(ASTnode):
         # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
+        print(self.right.getType())
+        print(self.left.getType())
         # Make sure both sides of the multiply are integer expressions
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
@@ -551,6 +553,7 @@ class FunctionCall(ASTnode):
         # Make sure function that is being called exists
         try:
             self.setType(symbolTable[self.getName()].getType())
+            print(self.getType())
             symbolTable[self.getName()].addCaller(fName)
         except:
             self.setType("unknown")
