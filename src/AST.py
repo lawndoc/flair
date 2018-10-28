@@ -447,7 +447,7 @@ class Definitions(ASTnode):
 class Function(ASTnode):
     def __init__(self, last, semanticStack):
         self.body = semanticStack.pop()
-        self.type = semanticStack.pop()
+        self.type = semanticStack.pop().getType()
         if isinstance(semanticStack.peek(), Formals):
             self.formals = semanticStack.pop()
         else:
