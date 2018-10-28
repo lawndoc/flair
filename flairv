@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# pass in path to flair program as an argument
+FILE_PATH=$1
+
+# call parsetest.py and pass in path to flair program
+python3 ./clients/analyzertest.py $FILE_PATH
