@@ -6,6 +6,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.errors import SemanticError
 from src.symbolTable import SymbolTable, FunctionRecord, FormalRecord
 
+def excepthook(type, value, traceback):
+    print(str(value))
+
+sys.excepthook = excepthook
+
 class colors():
     blue = "\033[34m"
     green = "\033[92m"
@@ -126,8 +131,6 @@ class TimesExpr(ASTnode):
         # Analyze left and right expressions and annotate symbolTable
         self.right.analyze(symbolTable, ids, fName)
         self.left.analyze(symbolTable, ids, fName)
-        print(self.right.getType())
-        print(self.left.getType())
         # Make sure both sides of the multiply are integer expressions
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
