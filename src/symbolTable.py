@@ -13,7 +13,7 @@ class SymbolTable():
     def __setitem__(self, key, value):
         self.table[key] = value
     def __contains__(self, key):
-        return any(f.getName() == key for f in self.table)
+        return any(f == key for f in self.table)
     def newError(self):
         self.errors = True
     def hasError(self):
