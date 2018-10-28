@@ -418,7 +418,7 @@ class Formal(ASTnode):
     def getName(self):
         return self.identifier.getName()
     def getType(self):
-        return self.type.getType()
+        return self.type
 
 class Definitions(ASTnode):
     def __init__(self, last, semanticStack):
