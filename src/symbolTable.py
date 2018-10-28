@@ -59,14 +59,14 @@ class FunctionRecord:
         self.callers = []
     def __str__(self):
         if self.isProgram():
-            rep = "Program '" + self.id + "'\n"
+            rep = "\tProgram '" + self.id + "'\n"
         else:
-            rep = "Function '" + self.id + "'\n"
+            rep = "\tFunction '" + self.id + "'\n"
         if not self.isProgram():
             rep += "> type: " + self.type + "\n"
         rep += "> formals:\n"
         for id, record in zip(self.formals, self.formals.values()):
-            rep += ">\t" + id + " " + record.getType() + "\n"
+            rep += ">\t" + id + " : " + record.getType() + "\n"
         rep += "> callers:\n"
         for caller in self.callers:
             rep += ">\t" + caller + "\n"
