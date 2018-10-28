@@ -33,3 +33,6 @@ class Analyzer:
             exit()
         else:
             print("Program has no semantic errors.")
+
+    def getSymbolTable(self):
+        return self.symbolTable

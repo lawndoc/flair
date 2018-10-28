@@ -27,3 +27,5 @@ with open(FILE_PATH, "r") as flr:
 scanner = Scanner(flairProgram)
 parser = Parser(scanner)
 analyzer = Analyzer(parser.parse())
+symbolTable = analyzer.getSymbolTable()
+print("Symbol Table:\n" + str(symbolTable))
