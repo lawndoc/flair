@@ -561,6 +561,7 @@ class FunctionCall(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
+            return
         # Make sure call passes in correct number of args (if any)
         if self.actuals:
             if len(self.actuals) == len(symbolTable[self.getName()].getFormals()):
