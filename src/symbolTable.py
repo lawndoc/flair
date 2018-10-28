@@ -50,7 +50,7 @@ class FunctionRecord:
                 # Make sure each identifier is only defined once
                 if formal.getName() in self.formals:
                     self.formalError = True
-                    print("Semantic error: identifier {} is defined more than once in function {}".format(formal.getName(), self.id))
+                    print("Semantic error: identifier '{}' is defined more than once in function '{}'".format(formal.getName(), self.id))
                 self.formals[formal.getName()] = FormalRecord(formal)
         self.callers = []
     def __str__(self):

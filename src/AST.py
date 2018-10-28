@@ -54,7 +54,7 @@ class LessThan(ASTnode):
         # Make sure both sides of the comparison are integer expressions
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
-            print("Semantic error: non-integer < comparison in function {}".format(fName))
+            print("Semantic error: non-integer < comparison in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -74,7 +74,7 @@ class EqualTo(ASTnode):
         # Make sure both sides of the comparison are integer expressions
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
-            print("Semantic error: non-integer = comparison in function {}".format(fName))
+            print("Semantic error: non-integer = comparison in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -94,7 +94,7 @@ class PlusExpr(ASTnode):
         # Make sure both sides of the addition are integer expressions
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
-            print("Semantic error: non-integer + operation in function {}".format(fName))
+            print("Semantic error: non-integer + operation in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -114,7 +114,7 @@ class MinusExpr(ASTnode):
         # Make sure both sides of the subraction are integer expressions
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
-            print("Semantic error: non-integer - operation in function {}".format(fName))
+            print("Semantic error: non-integer - operation in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -134,7 +134,7 @@ class TimesExpr(ASTnode):
         # Make sure both sides of the multiply are integer expressions
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
-            print("Semantic error: non-integer * operation in function {}".format(fName))
+            print("Semantic error: non-integer * operation in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -154,7 +154,7 @@ class DivideExpr(ASTnode):
         # Make sure both sides of the divide are integer expressions
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
-            print("Semantic error: non-integer / operation in function {}".format(fName))
+            print("Semantic error: non-integer / operation in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -174,7 +174,7 @@ class AndExpr(ASTnode):
         # Make sure things being and'd are boolean expressions
         if not (self.right.getType() == "boolean" and self.left.getType() == "boolean"):
             symbolTable.newError()
-            print("Semantic error: non-boolean 'and' operation in function {}".format(fName))
+            print("Semantic error: non-boolean 'and' operation in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -194,7 +194,7 @@ class OrExpr(ASTnode):
         # Make sure things being or'd are boolean expressions
         if not (self.right.getType() == "boolean" and self.left.getType() == "boolean"):
             symbolTable.newError()
-            print("Semantic error: non-boolean 'or' operation in function {}".format(fName))
+            print("Semantic error: non-boolean 'or' operation in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -212,7 +212,7 @@ class NotExpr(ASTnode):
         # Make sure thing being negated is a boolean expression
         if self.expr.getType() != "boolean":
             symbolTable.newError()
-            print("Semantic error: non-boolean 'not' operation in function {}".format(fName))
+            print("Semantic error: non-boolean 'not' operation in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -240,14 +240,14 @@ class IfStatement(ASTnode):
         # Make sure the if check is a boolean expression
         if self.ifExpr.getType() != "boolean":
             symbolTable.newError()
-            print("Semantic error: non-boolean 'if' check in function {}".format(fName))
+            print("Semantic error: non-boolean 'if' check in function '{}'".format(fName))
         # Make sure the then and else expressions return the same type
         if self.thenExpr.getType() == self.elseExpr.getType():
             self.setType(self.thenExpr.getType())
         else:
             self.setType("unknown")
             symbolTable.newError()
-            print("Semantic error: inconsistent return type under if-then-else in function {}".format(fName))
+            print("Semantic error: inconsistent return type under if-then-else in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -267,7 +267,7 @@ class Identifier(ASTnode):
         except:
             self.setType("unknown")
             symbolTable.newError()
-            print("Semantic error: reference to unknown identifier '{}' in function {}".format(self.value, fName))
+            print("Semantic error: reference to unknown identifier '{}' in function '{}'".format(self.value, fName))
     def getName(self):
         return self.value
     def setType(self, myType):
@@ -285,7 +285,7 @@ class IntegerLiteral(ASTnode):
         pass
     def setType(self, myType):
         if myType != "integer":
-            error_msg = "tried to assign {} type to integer literal {}"
+            error_msg = "tried to assign {} type to integer literal '{}'"
             raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
@@ -300,7 +300,7 @@ class BooleanLiteral(ASTnode):
         pass
     def setType(self, myType):
         if myType != "boolean":
-            error_msg = "tried to assign {} type to boolean literal {}"
+            error_msg = "tried to assign {} type to boolean literal '{}'"
             raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
@@ -326,7 +326,7 @@ class NegateExpr(ASTnode):
         # Make sure thing being negated is integer type
         if self.factor.getType() != "integer":
             symbolTable.newError()
-            print("Semantic error: '-' negation applied to non-integer in function {}".format(fName))
+            print("Semantic error: '-' negation applied to non-integer in function '{}'".format(fName))
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -362,7 +362,7 @@ class Program(ASTnode):
             # Make sure function is only defined once
             if function.getName() in symbolTable:
                 symbolTable.newError()
-                print("Semantic error: function {} is defined more than once".format(function.getName()))
+                print("Semantic error: function '{}' is defined more than once".format(function.getName()))
             symbolTable[function.getName()] = FunctionRecord(function)
             # Make sure each formal is only defined once (handled on creation of FunctionRecord)
             if symbolTable[function.getName()].hasFormalError():
@@ -474,7 +474,7 @@ class Function(ASTnode):
         # Make sure function returns the declared type
         if self.body.getType() != self.getType():
             symbolTable.newError()
-            print("Semantic error: {} function's returned value doesn't match the declared return type".format(self.getName()))
+            print("Semantic error: '{}' function's returned value doesn't match the declared return type".format(self.getName()))
     def getFormals(self):
         return self.formals
     def getName(self):
@@ -556,7 +556,7 @@ class FunctionCall(ASTnode):
         except:
             self.setType("unknown")
             symbolTable.newError()
-            print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
+            print("Semantic error: call to unknown function '{}' in body of function '{}'".format(self.getName(), fName))
             return
         # Make sure call passes in correct number of args (if any)
         if self.actuals:
@@ -565,14 +565,14 @@ class FunctionCall(ASTnode):
                 for a, f in zip(self.actuals, symbolTable[self.getName()].getFormals().values()):
                     if a.getType() != f.getType():
                         symbolTable.newError()
-                        print("Semantic error: in in function {}, in call to function {}, an argument is not of the correct type".format(fName, self.getName()))
+                        print("Semantic error: in function '{}', in call to function '{}', an argument is not of the correct type".format(fName, self.getName()))
             else:
                 symbolTable.newError()
-                print("Semantic error: in function {}, the call to function {} does not pass in the correct number of arguments".format(fName, self.getName()))
+                print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
         else:
             if len(symbolTable[self.getName()].getFormals()) > 0:
                 symbolTable.newError()
-                print("Semantic error: in function {}, the call to function {} does not pass in the correct number of arguments".format(fName, self.getName()))
+                print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
 
     def getName(self):
         return self.identifier.getName()
