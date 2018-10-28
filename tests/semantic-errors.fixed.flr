@@ -1,0 +1,22 @@
+program KindOfAdd(n : integer, m : integer);
+    function add(n: integer, m: integer) : integer
+    begin
+        return if check(m) then
+            n + m
+        else
+            2
+    end;
+    function check(m : integer) : boolean
+    begin
+        return if works(true) then
+            true
+        else
+            false
+    end;
+    function works(n : boolean) : boolean
+    begin
+        return n
+    end;
+begin
+    return add(n, m)
+end.
