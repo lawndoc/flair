@@ -369,6 +369,7 @@ class Program(ASTnode):
                 symbolTable.newError()
         # Add program to symbolTable as a function record
         symbolTable[self.getName()] = FunctionRecord(self)
+        symbolTable[self.getName()].setAsProgram()
         # Make sure there is no user defined function 'print'
         if "print" in symbolTable:
             symbolTable.newError()

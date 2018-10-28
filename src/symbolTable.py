@@ -48,6 +48,7 @@ class FunctionRecord:
         self.type = functionNode.getType()
         self.formals = {}
         self.formalError = False
+        self.programFunction = False
         if functionNode.getFormals():
             for formal in functionNode.getFormals():
                 # Make sure each identifier is only defined once
@@ -57,7 +58,10 @@ class FunctionRecord:
                 self.formals[formal.getName()] = FormalRecord(formal)
         self.callers = []
     def __str__(self):
-        rep = "Function '" + self.id + "'\n"
+        if self.isProgram():
+            rep = "Program '" + self.id + "'\n"
+        else:
+            rep = "Function '" + self.id + "'\n"
         rep += "> formals:\n"
         for id, record in zip(self.formals, self.formals.values()):
             rep += ">\t" + id + " " + record.getType() + "\n"
@@ -77,3 +81,7 @@ class FunctionRecord:
         return self.formals
     def hasFormalError(self):
         return self.formalError
+    def setAsProgram(self):
+        self.programFunction = True
+    def isProgram(self):
+        return self.programFunction
