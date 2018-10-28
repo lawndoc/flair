@@ -21,9 +21,9 @@ program KindOfAdd(n : integer, m : integer);
     begin
         return o
     end;
-    function print(n : boolean) : boolean
+    function print(n : integer) : integer
     begin
-        return print()
+        return n - print()
     end;
 begin
     return add(n, m, 1)
