@@ -46,6 +46,11 @@ class LinkedStack(object):
         else:
             return None
 
+    def replaceNext(self, new):
+        if self._top:
+            self.pop()
+            self.push(new)
+
     def __len__(self):
         """Returns the number of items in the stack."""
         return self._size

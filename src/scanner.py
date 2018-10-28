@@ -60,6 +60,12 @@ class Scanner:
             return "EOF"
         return self.tokens[self.tokenIndex]
 
+    def replaceNext(self, new):
+        if self.tokenIndex >= len(self.tokens):
+            pass
+        else:
+            self.tokens[self.tokenIndex] = new
+
     def scan(self):
         program = self.program
         tokens = []

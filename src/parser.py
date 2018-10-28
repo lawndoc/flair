@@ -3,7 +3,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from src.token import TokenType
+from src.token import TokenType, Token
 from src.linkedStack import LinkedStack
 from src.errors import ParseError
 from src import AST
@@ -46,8 +46,12 @@ class Parser:
                     self.parseStack.pop()
                     self.scanner.next()
                 else:
-                    error_msg = "Parsing error: Expected {} but found {}"
-                    raise ParseError(error_msg.format(A,t))
+                    # If print is declared as a function identifier, recast print_statement token as identifier token
+                    if not (isinstance(A, TokenType.identifier) and isinstance(t, TokenType.print_statement)):
+                        error_msg = "Parsing error: Expected {} but found {}"
+                        raise ParseError(error_msg.format(A,t))
+                    else:
+                        self.scanner.replaceNext(Token(TokenType.identifier, "print"))
             elif isinstance(A, NonTerminal):
                 if (A,t) in parse_table:
                     self.parseStack.pop()
