@@ -556,7 +556,6 @@ class FunctionCall(ASTnode):
         # Make sure function that is being called exists
         try:
             self.setType(symbolTable[self.getName()].getType())
-            print(self.getType())
             symbolTable[self.getName()].addCaller(fName)
         except:
             self.setType("unknown")
