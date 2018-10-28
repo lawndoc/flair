@@ -1,5 +1,13 @@
 Malwareswaldo: C.J. May, Nick Sanford
 
+New to Project 4:
+    - made semantic-errors.flr (orig and fixed) found in tests/
+    - output of errors/warnings for semantic-errors.flr found in
+        doc/semantic-errors.txt
+    - made src/analyzer.py but most of the heavy lifting goes on
+        in src/AST.py with the analyze function for each node
+    - made analyzertest.py client in clients/ called by flairv
+
 Known Bugs:
 
 Features Not Implemented:
@@ -11,31 +19,44 @@ Optimizations:
         letters and popping off letters from that list as they were read. This
         reduces the number of if/elif checks and the length of the overall
         scanner file.
+    - Analyzer: The analyze function for the AST nodes annotates node types and
+        builds the symbol table simultaneously. This way the AST only needs to be
+        traversed once for analysis, and each node is only visited once (except
+        for function nodes while building the initial symbol table).
 
 How To Run:
     To test the scanner, use one of these three ways:
         - call flairs from the command line, passing in an argument for a flair
-            program to scan (ex. $ flairs /path/to/program.flr )
+            program (ex. $ flairs /path/to/program.flr )
         - call scantest.py from from the command line, passing in an argument
-            for a flair program to scan (ex. $ scantest.py /path/to/program.flr )
+            for a flair program (ex. $ scantest.py /path/to/program.flr )
         - call scantest.py with python3 from the command line, passing in an
-            argument for a flair program to scan
+            argument for a flair program
             (ex. python3 scantest.py /path/to/program.flr )
 
     To test the validity of a program with the parser, use one of these three ways:
         - call flairf from the command line, passing in an argument for a flair
-            program to scan (ex. $ flairf /path/to/program.flr )
+            program (ex. $ flairf /path/to/program.flr )
         - call parsetest.py from from the command line, passing in an argument
-            for a flair program to scan (ex. $ parsetest.py /path/to/program.flr )
+            for a flair program (ex. $ parsetest.py /path/to/program.flr )
         - call parsetest.py with python3 from the command line, passing in an
-            argument for a flair program to scan
+            argument for a flair program
             (ex. python3 parsetest.py /path/to/program.flr )
-    
+
     To test the AST of a program with the parser, use one of these three ways:
         - call flairp from the command line, passing in an argument for a flair
-            program to scan (ex. $ flairf /path/to/program.flr )
+            program (ex. $ flairp /path/to/program.flr )
         - call parsetest_ast.py from from the command line, passing in an argument
-            for a flair program to scan (ex. $ parsetest.py /path/to/program.flr )
+            for a flair program (ex. $ parsetest_ast.py /path/to/program.flr )
         - call parsetest_ast.py with python3 from the command line, passing in an
-            argument for a flair program to scan
-            (ex. python3 parsetest.py /path/to/program.flr )
+            argument for a flair program
+            (ex. python3 parsetest_ast.py /path/to/program.flr )
+
+    To do semantic analysis on a program with the analyzer, use one of these three ways:
+        - call flairv from the command line, passing in an argument for a flair
+            program (ex. $ flairv /path/to/program.flr )
+        - call analyzertest.py from from the command line, passing in an argument
+            for a flair program (ex. $ analyzertest.py /path/to/program.flr )
+        - call analyzertest.py with python3 from the command line, passing in an
+            argument for a flair program
+            (ex. python3 analyzertest.py /path/to/program.flr )
