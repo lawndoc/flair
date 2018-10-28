@@ -408,7 +408,7 @@ class Formals(ASTnode):
 
 class Formal(ASTnode):
     def __init__(self, last, semanticStack):
-        self.type = semanticStack.pop()
+        self.type = semanticStack.pop().getType()
         self.identifier = semanticStack.pop()
     def __str__(self, level = 0):
         rep = self.identifier.__str__()
