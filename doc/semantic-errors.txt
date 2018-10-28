@@ -1,0 +1,23 @@
+Semantic error: identifier 'n' is defined more than once in function 'works'
+Semantic error: function 'works' is defined more than once
+Semantic error: cannot define a function called 'print'
+Semantic error: non-integer < comparison in function 'add'
+Semantic error: non-integer + operation in function 'add'
+Semantic error: non-boolean 'or' operation in function 'add'
+Semantic error: inconsistent return type under if-then-else in function 'add'
+Semantic error: 'add' function's returned value doesn't match the declared return type
+Semantic error: in function 'check', in call to function 'check', an argument is not of the correct type
+Semantic error: non-integer * operation in function 'check'
+Semantic error: non-integer / operation in function 'check'
+Semantic error: 'check' function's returned value doesn't match the declared return type
+Semantic error: call to unknown function 'try' in body of function 'works'
+Semantic error: 'works' function's returned value doesn't match the declared return type
+Semantic error: reference to unknown identifier 'o' in function 'works'
+Semantic error: 'works' function's returned value doesn't match the declared return type
+Semantic error: in function 'print', the call to function 'print' does not pass in the correct number of arguments
+Semantic error: non-integer - operation in function 'print'
+Semantic error: 'print' function's returned value doesn't match the declared return type
+Semantic error: in function 'KindOfAdd', the call to function 'add' does not pass in the correct number of arguments
+Warning: identifier m in function check is never called
+Warning: function works is never called
+Warning: identifier m in function works is never called
