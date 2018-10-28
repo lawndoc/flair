@@ -47,7 +47,7 @@ class Parser:
                     self.scanner.next()
                 else:
                     # If print is declared as a function identifier, recast print_statement token as identifier token
-                    if not (A == TokenType.identifier and t == TokenType.print_statement):
+                    if not ((A == TokenType.identifier and t == TokenType.print_statement) or (A == NonTerminal.Expr and t == TokenType.print_statement)):
                         error_msg = "Parsing error: Expected {} but found {}"
                         raise ParseError(error_msg.format(A,t))
                     else:
