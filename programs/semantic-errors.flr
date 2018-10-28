@@ -25,6 +25,5 @@ program KindOfAdd(n : integer, m : integer);
         return n
     end;
 begin
-    print print(n);
     return add(n, m, 1)
 end.
