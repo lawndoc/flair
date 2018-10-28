@@ -4,14 +4,14 @@ program KindOfAdd(n : integer, m : integer);
         return if n < check(m) then
             n + check(m)
         else
-            false
+            false or 2
     end;
     function check(m : integer) : boolean
     begin
         return if check(true) then
-            true
+            true * 2
         else
-            false
+            false / 5
     end;
     function works(n : boolean, n : boolean ) : boolean
     begin
@@ -23,7 +23,7 @@ program KindOfAdd(n : integer, m : integer);
     end;
     function print(n : boolean) : boolean
     begin
-        return n
+        return print()
     end;
 begin
     return add(n, m, 1)
