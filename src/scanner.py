@@ -153,6 +153,9 @@ class Scanner:
                     elif program[pos] == 'p':
                         accum += program[pos]
                         state = State.pr_state
+                    elif program[pos] == "o":
+                        accum += program [pos]
+                        state = State.or_state
                     else:
                         accum += program[pos]
                         state = State.identifier_state
