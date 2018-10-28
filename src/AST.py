@@ -563,7 +563,7 @@ class FunctionCall(ASTnode):
                 for a, f in zip(self.actuals, symbolTable[self.getName()].getFormals().values()):
                     if a.getType() != f.getType():
                         symbolTable.newError()
-                        print("Semantic error: in in function {}, in call to function {}, argument {} is not of the correct type".format(fName, self.getName(), a.getName()))
+                        print("Semantic error: in in function {}, in call to function {}, an argument is not of the correct type".format(fName, self.getName()))
             else:
                 symbolTable.newError()
                 print("Semantic error: in function {}, the call to function {} does not pass in the correct number of arguments".format(fName, self.getName()))
