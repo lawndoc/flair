@@ -47,7 +47,7 @@ class Parser:
                     self.scanner.next()
                 else:
                     # If print is declared as a function identifier, recast print_statement token as identifier token
-                    if not ((A == TokenType.identifier and t == TokenType.print_statement) or (A == NonTerminal.Expr and t == TokenType.print_statement)):
+                    if not (A == TokenType.identifier and t == TokenType.print_statement):
                         error_msg = "Parsing error: Expected {} but found {}"
                         raise ParseError(error_msg.format(A,t))
                     else:
@@ -63,8 +63,12 @@ class Parser:
                         for y in reversedRule:
                             self.parseStack.push(y)
                 else:
-                    error_msg = "Parsing Error: No transition for {} from {}"
-                    raise ParseError(error_msg.format(A,t))
+                    # If print is declared as a function identifier, recast print_statement token as identifier token
+                    if not (A == NonTerminal.Expr and t == TokenType.print_statement):
+                        error_msg = "Parsing Error: No transition for {} from {}"
+                        raise ParseError(error_msg.format(A,t))
+                    else:
+                        self.scanner.replaceNext(Token(TokenType.identifier, "print"))
             elif issubclass(A, AST.ASTnode):
                 self.parseStack.pop()
                 self.semanticStack.push(A(self.last, self.semanticStack))
