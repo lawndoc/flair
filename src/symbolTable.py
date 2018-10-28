@@ -5,7 +5,7 @@ class SymbolTable():
         self.table = {}
         self.errors = False
     def __iter__(self):
-        for f in self.table.values():
+        for f in self.table:
             yield f
         raise StopIteration
     def __getitem__(self, key):
@@ -14,6 +14,10 @@ class SymbolTable():
         self.table[key] = value
     def __contains__(self, key):
         return any(f == key for f in self.table)
+    def values(self):
+        for f in self.table.values():
+            yield f
+        raise StopIteration
     def newError(self):
         self.errors = True
     def hasError(self):

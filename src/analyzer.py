@@ -14,7 +14,7 @@ class Analyzer:
 
     def checkWarnings(self):
         # Check for unused functions (warning) -- ignore program function
-        for function in self.symbolTable:
+        for function in self.symbolTable.values():
             if function.getName() == self.ast.getName():
                 continue
             if not function.getCallers():
