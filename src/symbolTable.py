@@ -58,12 +58,12 @@ class FunctionRecord:
         self.callers = []
     def __str__(self):
         rep = "Function '" + self.id + "'\n"
-        rep += "formals:\n"
+        rep += "> formals:\n"
         for id, record in zip(self.formals, self.formals.values()):
-            rep += id + " " + record.getType() + "\n"
-        rep += "callers:\n"
+            rep += ">\t" + id + " " + record.getType() + "\n"
+        rep += "> callers:\n"
         for caller in self.callers:
-            rep += caller + "\n"
+            rep += ">\t" + caller + "\n"
         return rep
     def addCaller(self, functionID):
         self.callers.append(functionID)
