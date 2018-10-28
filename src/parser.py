@@ -34,11 +34,11 @@ class Parser:
             else:
                 t = self.scanner.peek().getType()
                 tVal = self.scanner.peek().getValue()
-            print("\nSemantic Stack:")
-            for node in self.semanticStack:
-                print(type(node))
-            print("Top of Parse Stack:", A)
-            print("Next token:", t, "(", tVal, ")")
+            # print("\nSemantic Stack:")
+            # for node in self.semanticStack:
+            #     print(type(node))
+            # print("Top of Parse Stack:", A)
+            # print("Next token:", t, "(", tVal, ")")
 
             if isinstance(A, TokenType):
                 if A == t:
