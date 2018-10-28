@@ -1,12 +1,12 @@
 program KindOfAdd(n : integer, m : integer);
     function add(n: integer, m: integer) : integer
     begin
-        return if check(m) then
+        return if check() then
             n + m
         else
             2
     end;
-    function check(m : integer) : boolean
+    function check() : boolean
     begin
         return if works(true) then
             true
