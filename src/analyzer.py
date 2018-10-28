@@ -20,7 +20,7 @@ class Analyzer:
             if not function.getCallers():
                 print("Warning: function {} is never called".format(function.getName()))
             # Check for unused identifiers (warning)
-            for formal in function.getFormals():
+            for formal in function.getFormals().values():
                 if not formal.isCalled():
                     print("Warning: identifier {} in function {} is never called".format(formal.getName(), function.getName()))
 
