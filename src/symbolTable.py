@@ -63,7 +63,7 @@ class FunctionRecord:
         else:
             rep = "Function '" + self.id + "'\n"
         if not self.isProgram():
-            rep += "> type: " + self.type
+            rep += "> type: " + self.type + "\n"
         rep += "> formals:\n"
         for id, record in zip(self.formals, self.formals.values()):
             rep += ">\t" + id + " " + record.getType() + "\n"
