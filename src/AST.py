@@ -364,7 +364,6 @@ class Program(ASTnode):
                 symbolTable.newError()
         # Add program to symbolTable as a function record
         symbolTable[self.getName()] = FunctionRecord(self)
-        print(str(symbolTable))
         # Make sure there is no user defined function 'print'
         if "print" in symbolTable:
             symbolTable.newError()
@@ -550,13 +549,13 @@ class FunctionCall(ASTnode):
         if self.actuals:
             self.actuals.analyze(symbolTable, ids, fName)
         # Make sure function that is being called exists
-        try:
-            self.setType(symbolTable[self.getName()].getType())
-            symbolTable.addCaller(fName)
-        except:
-            self.setType("unknown")
-            symbolTable.newError()
-            print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
+        # try:
+        self.setType(symbolTable[self.getName()].getType())
+        symbolTable.addCaller(fName)
+        # except:
+        #     self.setType("unknown")
+        #     symbolTable.newError()
+        #     print("Semantic error: call to unknown function {} in body of function {}".format(self.getName(), fName))
         # Make sure call passes in correct number of args (if any)
         if self.actuals:
             if len(self.actuals) == len(symbolTable[self.getName()].getFormals()):
