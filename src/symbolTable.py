@@ -5,7 +5,7 @@ class SymbolTable():
         self.table = {}
         self.errors = False
     def __iter__(self):
-        for f in self.table:
+        for f in self.table.values():
             yield f
         raise StopIteration
     def __getitem__(self, key):
