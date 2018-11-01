@@ -402,9 +402,9 @@ class Program(ASTnode):
         def eol(comment = ""):
             return "\t# "+ comment + "\n"
         code =  "0: LDA 6,1(7)" + eol("store return address for {}".format(self.getName()))
-        code += "1: LDA 7,<main>(0)" + eol("jump to {}".format(self.getName())) # returned value in r4
+        code += "1: LDA 7,<{}>(0)".format(self.getName()) + eol("jump to {}".format(self.getName())) # returned value in r4
         code += "2: LDA 6,1(7)" + eol("store return address for PRINT")
-        code += "3: LDA 7,<print>(0)" + eol("jump to PRINT")
+        code += "3: LDA 7,5(0)" + eol("jump to PRINT") # note: print address hard-coded
         code += "4: HALT 0,0,0" + eol()
         code += "*\n*PRINT\n*\n" + eol("print value in r5")
         code += "5: OUT 5,0,0" + eol()
@@ -415,6 +415,14 @@ class Program(ASTnode):
         code = self.body.genCode(symbolTable, code)
         # TODO: this is where we will call each definition's genCode()
 
+        # done generating code. replace function address placeholders
+        for function in symbolTable:
+            placeholder = "<{}>".format(function)
+            phLen = len(placeholder)
+            while placeholder in code:
+                code = code[:code.index(placeholder)] + \
+                       symbolTable[function].getAddress() + \
+                       code[code.index(placeholder)+phLen:]
         return code
 
 

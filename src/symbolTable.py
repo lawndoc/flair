@@ -99,4 +99,4 @@ class FunctionRecord:
     def setAddress(self, addr):
         self.codeAddress = addr
     def getAddress(self):
-        return self.codeAddress
+        return str(self.codeAddress)
