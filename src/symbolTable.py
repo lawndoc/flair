@@ -9,7 +9,6 @@ class SymbolTable():
         if self.table:
             for f in self.table:
                 yield f
-            raise StopIteration
         else:
             return None
     def __getitem__(self, key):
