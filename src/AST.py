@@ -375,8 +375,9 @@ class Program(ASTnode):
             symbolTable.newError()
             print("Semantic error: cannot define a function called 'print'")
         # Pass program's formals to 'ids' for program body analysis
-        for formal in self.formals:
-            ids[formal.getName()] = FormalRecord(formal)
+        if self.formals:
+            for formal in self.formals:
+                ids[formal.getName()] = FormalRecord(formal)
         # Analyze each function and annotate symbolTable
         self.definitions.analyze(symbolTable)
         # Analyze program body and annotate symbolTable
