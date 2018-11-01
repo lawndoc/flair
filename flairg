@@ -4,4 +4,4 @@
 FILE_PATH=$1
 
 # call parsetest.py and pass in path to flair program
-python3 ./clients/generator.py $FILE_PATH
+python3 ./clients/generatortest.py $FILE_PATH
