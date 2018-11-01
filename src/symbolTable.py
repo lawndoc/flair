@@ -6,9 +6,12 @@ class SymbolTable():
         self.errors = False
         self.lineNum = 0
     def __iter__(self):
-        for f in self.table:
-            yield f
-        raise StopIteration
+        if self.table:
+            for f in self.table:
+                yield f
+            raise StopIteration
+        else:
+            return None
     def __getitem__(self, key):
         return self.table[key]
     def __setitem__(self, key, value):
