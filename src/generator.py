@@ -15,5 +15,5 @@ class Generator:
         self.symbolTable = symbolTable
 
     def generateCode(self):
-        code = self.ast.genCode()
+        code = self.ast.genCode(self.symbolTable)
         return code
