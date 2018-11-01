@@ -406,7 +406,7 @@ class Program(ASTnode):
         code += "2: LDA 6,1(7)" + eol("store return address for PRINT")
         code += "3: LDA 7,5(0)" + eol("jump to PRINT") # note: print address hard-coded
         code += "4: HALT 0,0,0" + eol()
-        code += "*\n*PRINT\n*\n" + eol("print value in r5")
+        code += "*\n*PRINT\n*\n" # note: hard-coded print value in r5
         code += "5: OUT 5,0,0" + eol()
         code += "6: LDA 7,0(6)" + eol("return to call")
         code += "*\n*{}\n*\n".format(self.getName())
