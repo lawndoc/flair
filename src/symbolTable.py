@@ -25,7 +25,6 @@ class SymbolTable():
     def values(self):
         for f in self.table.values():
             yield f
-        raise StopIteration
     def newError(self):
         self.errors = True
     def hasError(self):

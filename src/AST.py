@@ -427,7 +427,7 @@ class Formals(ASTnode):
     def __iter__(self):
         for formal in self.formals:
             yield formal
-        raise StopIteration
+        # raise StopIteration
     def __str__(self, level = 0):
         rep = ""
         for formal in self.formals:
@@ -460,7 +460,7 @@ class Definitions(ASTnode):
     def __iter__(self):
         for function in self.definitions:
             yield function
-        raise StopIteration
+        # raise StopIteration
     def __str__(self, level = 0):
         rep = ""
         for function in self.definitions:
@@ -636,7 +636,7 @@ class Actuals(ASTnode):
     def __iter__(self):
         for actual in self.actuals:
             yield actual
-        raise StopIteration
+        # raise StopIteration
     def __str__(self, level = 0):
         rep = ""
         for actual in self.actuals:
