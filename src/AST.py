@@ -289,6 +289,11 @@ class IntegerLiteral(ASTnode):
             raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
+    def genCode(self, symbolTable, code):
+        def eol(comment = ""):
+            return "\t# "+ comment + "\n"
+        code += symbolTable.nextLine() + ": LDC 5,{}(0)".format(self.value) + eol("load {} into r5".format(self.value))
+        return code
 
 class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
@@ -358,15 +363,16 @@ class Program(ASTnode):
         symbolTable = SymbolTable()
         ids = {}
         # Add all function records to symbolTable
-        for function in self.definitions:
-            # Make sure function is only defined once
-            if function.getName() in symbolTable:
-                symbolTable.newError()
-                print("Semantic error: function '{}' is defined more than once".format(function.getName()))
-            symbolTable[function.getName()] = FunctionRecord(function)
-            # Make sure each formal is only defined once (handled on creation of FunctionRecord)
-            if symbolTable[function.getName()].hasFormalError():
-                symbolTable.newError()
+        if self.definitions.hasDefinitions():
+            for function in self.definitions:
+                # Make sure function is only defined once
+                if function.getName() in symbolTable:
+                    symbolTable.newError()
+                    print("Semantic error: function '{}' is defined more than once".format(function.getName()))
+                symbolTable[function.getName()] = FunctionRecord(function)
+                # Make sure each formal is only defined once (handled on creation of FunctionRecord)
+                if symbolTable[function.getName()].hasFormalError():
+                    symbolTable.newError()
         # Add program to symbolTable as a function record
         symbolTable[self.getName()] = FunctionRecord(self)
         symbolTable[self.getName()].setAsProgram()
@@ -392,6 +398,25 @@ class Program(ASTnode):
         return self.identifier.getName()
     def getFormals(self):
         return self.formals
+    def genCode(self, symbolTable):
+        def eol(comment = ""):
+            return "\t# "+ comment + "\n"
+        code =  "0: LDA 6,1(7)" + eol("store return address for {}".format(self.getName()))
+        code += "1: LDA 7,<main>(0)" + eol("jump to {}".format(self.getName())) # returned value in r4
+        code += "2: LDA 6,1(7)" + eol("store return address for PRINT")
+        code += "3: LDA 7,<print>(0)" + eol("jump to PRINT")
+        code += "4: HALT 0,0,0" + eol()
+        code += "*\n*PRINT\n*\n" + eol("print value in r5")
+        code += "5: OUT 5,0,0" + eol()
+        code += "6: LDA 7,0(6)" + eol("return to call")
+        code += "*\n*{}\n*\n".format(self.getName())
+        symbolTable[self.getName()].setAddress(7)
+        symbolTable.setLineNum(7)
+        code = self.body.genCode(symbolTable, code)
+        # TODO: this is where we will call each definition's genCode()
+
+        return code
+
 
 class Formals(ASTnode):
     def __init__(self, last, semanticStack):
@@ -444,6 +469,11 @@ class Definitions(ASTnode):
     def analyze(self, symbolTable):
         for function in self.definitions:
             function.analyze(symbolTable)
+    def hasDefinitions(self):
+        if self.definitions:
+            return True
+        else:
+            return False
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -514,6 +544,12 @@ class Body(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def genCode(self, symbolTable, code):
+        for ps in self.printStatements:
+            code = ps.genCode(symbolTable, code)
+        code = self.returnStatement.genCode(symbolTable, code)
+        return code
+
 
 class ReturnStatement(ASTnode):
     def __init__(self, last, semanticStack):
@@ -531,6 +567,14 @@ class ReturnStatement(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def genCode(self, symbolTable, code):
+        def eol(comment = ""):
+            return "\t# "+ comment + "\n"
+        code = self.retStatement.genCode(symbolTable, code) # load constant into r5
+        code += symbolTable.nextLine() + ": ADD 4,0,5" + eol("move return value to r4")
+        # TODO: get return address from Activation Record and store in r6
+        code += symbolTable.nextLine() + ": LDA 7,0(6)" + eol("load return address into r7")
+        return code
 
 class FunctionCall(ASTnode):
     def __init__(self, last, semanticStack):

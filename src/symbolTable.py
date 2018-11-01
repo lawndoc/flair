@@ -4,6 +4,7 @@ class SymbolTable():
     def __init__(self):
         self.table = {}
         self.errors = False
+        self.lineNum = 0
     def __iter__(self):
         for f in self.table:
             yield f
@@ -27,7 +28,13 @@ class SymbolTable():
         self.errors = True
     def hasError(self):
         return self.errors
-
+    def setLineNum(self, num):
+        self.lineNum = num
+    def getLineNum(self):
+        return self.lineNum
+    def nextLine(self):
+        self.lineNum += 1
+        return str(self.lineNum - 1)
 class FormalRecord:
     def __init__(self, formalNode):
         self.id = formalNode.getName()
@@ -57,6 +64,7 @@ class FunctionRecord:
                     print("Semantic error: identifier '{}' is defined more than once in function '{}'".format(formal.getName(), self.id))
                 self.formals[formal.getName()] = FormalRecord(formal)
         self.callers = []
+        self.codeAddress = 0
     def __str__(self):
         if self.isProgram():
             rep = " Program '" + self.id + "'\n"
@@ -87,3 +95,7 @@ class FunctionRecord:
         self.programFunction = True
     def isProgram(self):
         return self.programFunction
+    def setAddress(self, addr):
+        self.codeAddress = addr
+    def getAddress(self):
+        return self.codeAddress
