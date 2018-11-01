@@ -39,6 +39,6 @@ else:
 if "." in fileName:
     fileName = fileName[:fileName.rindex(".")]
 fileName += ".tm"
-with open(fileName, 'a+') as f:
+with open(fileName, 'w+') as f:
     f.write(code)
 print("TM code saved to file {}".format(fileName))
