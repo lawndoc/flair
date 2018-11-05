@@ -1,0 +1,101 @@
+{
+   Eugene Wallingford
+   original 4550 version: October 21, 2010
+   ported to Flair      : October 29, 2018
+   http://www.cs.uni.edu/~wallingf/blog/
+         archives/monthly/2010-10.html#e2010-10-25T16_50_29.htm
+}
+
+program main(xNum : integer, xDen : integer, N : integer);
+
+  function fareyNum(xNum : integer, xDen : integer, N : integer) : integer
+  begin
+    return fareySelectNum(N,
+                   whileLoopFor(1, xNum, xDen, N, 0, 1, 1, 1),
+                   whileLoopFor(2, xNum, xDen, N, 0, 1, 1, 1),
+                   whileLoopFor(3, xNum, xDen, N, 0, 1, 1, 1),
+                   whileLoopFor(4, xNum, xDen, N, 0, 1, 1, 1))
+  end;
+
+  function fareyDen(xNum : integer, xDen : integer, N : integer) : integer
+  begin
+    return fareySelectDen(N,
+                   whileLoopFor(1, xNum, xDen, N, 0, 1, 1, 1),
+                   whileLoopFor(2, xNum, xDen, N, 0, 1, 1, 1),
+                   whileLoopFor(3, xNum, xDen, N, 0, 1, 1, 1),
+                   whileLoopFor(4, xNum, xDen, N, 0, 1, 1, 1))
+  end;
+
+  function fareySelectNum(N : integer,
+                          a : integer, b : integer,
+                          c : integer, d : integer) : integer
+  begin
+    return if greater(b, N)
+              then c
+              else a
+  end;
+
+  function fareySelectDen(N : integer,
+                          a : integer, b : integer,
+                          c : integer, d : integer) : integer
+  begin
+    return if greater(b, N)
+              then d
+              else b
+  end;
+
+  function whileLoopFor(selector : integer,
+                        xNum : integer, xDen : integer,
+                        N : integer,
+                        a : integer, b : integer,
+                        c : integer, d : integer) : integer
+  begin
+    return
+      if greater(b, N) or greater(d, N)
+         then if selector = 1
+                 then a
+                 else if selector = 2
+                         then b
+                         else if selector = 3
+                                 then c
+                                 else d
+         else if fractionEqual(xNum, xDen, a+c, b+d)
+                 then if selector = 1
+                         then a+c
+                         else if selector = 2
+                                 then b+d
+                                 else if selector = 3
+                                         then a+c
+                                         else b+d
+                 else if fractionGreater(xNum, xDen, a+c, b+d)
+                         then whileLoopFor(selector,
+                                           xNum, xDen,
+                                           N,
+                                           a+c, b+d, c, d)
+                         else whileLoopFor(selector,
+                                           xNum, xDen,
+                                           N,
+                                           a, b, a+c, b+d)
+  end;
+
+  function fractionEqual(x : integer, xd : integer,
+                         y : integer, yd : integer) : boolean
+  begin
+    return x * yd = y * xd
+  end;
+
+  function fractionGreater(x : integer, xd : integer,
+                           y : integer, yd : integer) : boolean
+  begin
+    return greater(x * yd, y * xd)
+  end;
+
+  function greater(x : integer, y : integer) : boolean
+  begin
+    return not ((x < y) or (x = y))
+  end;
+
+begin
+  print( fareyNum(xNum, xDen, N) );
+  return fareyDen(xNum, xDen, N)
+end.

@@ -126,6 +126,7 @@ class Scanner:
                     state = State.comment_state
                 elif program[pos] == "}":
                     error_msg = "Unmatched end of comment character : '}'"
+                    raise LexicalError(error_msg)
                 elif program[pos] == '0':
                     state = State.zero_state
                 elif program[pos] in '123456789':
@@ -237,8 +238,11 @@ class Scanner:
 
             # integer detected... read digits until delimiter is found
             elif state == State.integer_state:
-                if int(accum) > 2**32:
-                    error_msg = "Integer {} too large"
+                if int(accum) >= 2**31 and not tokens[-1].isMinus():
+                    error_msg = "Integer beginning with {}... is too large"
+                    raise LexicalError(error_msg.format(accum))
+                elif int(accum) > 2^31 and tokens[-1].isMinus():
+                    error_msg = "Integer beginning with -{}... is too small"
                     raise LexicalError(error_msg.format(accum))
                 if program[pos].isdigit():
                     accum += program[pos]
