@@ -306,8 +306,8 @@ class IntegerLiteral(ASTnode):
     def getType(self):
         return self.type
     def genCode(self, symbolTable, code):
-        code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1")
-        code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value".format(self.value))
+        code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
+        code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
         code += lineRO(symbolTable,"SUB",6,6,2,"increment end of stack pointer")
         return code
