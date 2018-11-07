@@ -417,7 +417,7 @@ class Program(ASTnode):
         return self.formals
     def genCode(self, symbolTable):
         code = lineRM(0,"LDC",5,1023,0,"set r5 to beginning of {}'s AR".format(self.getName()))
-        code += lineRM(1,"LDC",6,1021,0,"set r6 to end of {}'s AR".format(self.getName()))
+        code += lineRM(1,"LDC",6,1022,0,"set r6 to end of {}'s AR".format(self.getName()))
         # add activation record for MAIN
         code += lineRM(2,"LDC",6,5,0,"set r1 to return address")
         code += lineRM(3,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
