@@ -6,6 +6,7 @@ class SymbolTable():
         self.errors = False
         self.lineNum = 0
         self.stackEmpty = True
+        self.printAddress = 0
     def __iter__(self):
         if self.table:
             for f in self.table:
@@ -30,6 +31,10 @@ class SymbolTable():
         self.errors = True
     def hasError(self):
         return self.errors
+    def setPrintAddress(self, addr):
+        self.printAddress = addr
+    def getPrintAddress(self):
+        return self.printAddress
     def setLineNum(self, num):
         self.lineNum = num
     def getLineNum(self):

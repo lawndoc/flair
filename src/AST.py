@@ -438,9 +438,10 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
         code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # jump to PRINT
-        code += lineRM(symbolTable,"LDA",7,11,0,"jump to PRINT") # note: print address hard-coded
+        code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT") # note: print address hard-coded
         code += lineRO(symbolTable,"HALT",0,0,0)
         code += header("PRINT")
+        symbolTable.setPrintAddress(symbolTable.getLineNum())
         code += lineRM(symbolTable,"LD",1,-8,5,"load arg from AR into r1")
         code += lineRO(symbolTable,"OUT",1,0,0,"print value")
         # restore registers
@@ -467,6 +468,12 @@ class Program(ASTnode):
                 code = code[:code.index(placeholder)] + \
                        symbolTable[function].getAddress() + \
                        code[code.index(placeholder)+phLen:]
+        placeholder = "<PRINT>"
+        phLen = len(placeholder)
+        while placeholder in code:
+            code = code[:code.index(placeholder)] + \
+                   symbolTable.getPrintAddress() + \
+                   code[code.index(placeholder)+phLen:]
         return code
 
 
