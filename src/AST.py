@@ -11,6 +11,22 @@ from src.symbolTable import SymbolTable, FunctionRecord, FormalRecord
 #
 # sys.excepthook = excepthook
 
+
+def lineRO(lineNum, instruction, r1, r2, r3, comment = ""):
+    if comment:
+        comment = "\t# {}\n".format(comment)
+    return "{}: {} {},{},{}{}\n".format(str(lineNum),instruction,str(r1),str(r2),str(r3),comment)
+
+def lineRM(lineNum, instruction, r1, offset, r2, comment = ""):
+    if comment:
+        comment = "\t# {}\n".format(comment)
+    return "{}: {} {},{}({}){}\n".format(str(lineNum),instruction,str(r1),str(offset),str(r2),comment)
+
+def header(name):
+    return "*\n*{}\n*\n".format(name)
+
+
+
 class colors():
     blue = "\033[34m"
     green = "\033[92m"
@@ -290,9 +306,7 @@ class IntegerLiteral(ASTnode):
     def getType(self):
         return self.type
     def genCode(self, symbolTable, code):
-        def eol(comment = ""):
-            return "\t# "+ comment + "\n"
-        code += symbolTable.nextLine() + ": LDC 5,{}(0)".format(self.value) + eol("load {} into r5".format(self.value))
+        code += lineRM(symbolTable.nextLine(),"LDC",5,self.value,0,"load {} into r5".format(self.value))
         return code
 
 class BooleanLiteral(ASTnode):
@@ -399,17 +413,15 @@ class Program(ASTnode):
     def getFormals(self):
         return self.formals
     def genCode(self, symbolTable):
-        def eol(comment = ""):
-            return "\t# "+ comment + "\n"
-        code =  "0: LDA 6,1(7)" + eol("store return address for {}".format(self.getName()))
-        code += "1: LDA 7,<{}>(0)".format(self.getName()) + eol("jump to {}".format(self.getName())) # returned value in r4
-        code += "2: LDA 6,1(7)" + eol("store return address for PRINT")
-        code += "3: LDA 7,5(0)" + eol("jump to PRINT") # note: print address hard-coded
-        code += "4: HALT 0,0,0" + eol()
-        code += "*\n*PRINT\n*\n" # note: hard-coded print value in r5
-        code += "5: OUT 5,0,0" + eol()
-        code += "6: LDA 7,0(6)" + eol("return to call")
-        code += "*\n*{}\n*\n".format(self.getName())
+        code = lineRM(0,"LDA",6,1,7,"store return address for {}".format(self.getName()))
+        code += lineRM(1,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))# returned value in r4
+        code += lineRM(2,"LDA",6,1,7,"store return address for PRINT")
+        code += lineRM(3,"LDA",7,5,0,"jump to PRINT") # note: print address hard-coded
+        code += lineRO(4,"HALT",0,0,0)
+        code += header("PRINT") # note: hard-coded print value in r5
+        code += lineRO(5,"OUT",5,0,0)
+        code += lineRM(6,"LDA",7,0,6,"return to call")
+        code += header(self.getName())
         symbolTable[self.getName()].setAddress(7)
         symbolTable.setLineNum(7)
         code = self.body.genCode(symbolTable, code)
