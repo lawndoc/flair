@@ -309,7 +309,7 @@ class IntegerLiteral(ASTnode):
         code += lineRM(symbolTable.nextLine(),"LDC",1,self.value,0,"load {} into r1")
         code += lineRM(symbolTable.nextLine(),"ST",1,-1,6,"copy r1 into new temp value".format(self.value))
         code += lineRM(symbolTable.nextLine(),"LDC",2,1,0,"load 1 into r2")
-        code += lineRM(symbolTable.nextLine(),"SUB",6,6,2,"increment end of stack pointer")
+        code += lineRO(symbolTable.nextLine(),"SUB",6,6,2,"increment end of stack pointer")
         return code
 
 class BooleanLiteral(ASTnode):
