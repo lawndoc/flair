@@ -34,7 +34,7 @@ class SymbolTable():
     def setPrintAddress(self, addr):
         self.printAddress = addr
     def getPrintAddress(self):
-        return self.printAddress
+        return str(self.printAddress)
     def setLineNum(self, num):
         self.lineNum = num
     def getLineNum(self):
