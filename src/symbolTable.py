@@ -41,7 +41,7 @@ class SymbolTable():
         self.stackEmpty = False
     def setEmpty(self):
         self.stackEmpty = True
-    def stackEmpty(self):
+    def stackIsEmpty(self):
         return self.stackEmpty
 class FormalRecord:
     def __init__(self, formalNode):
