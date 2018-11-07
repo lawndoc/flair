@@ -423,7 +423,7 @@ class Program(ASTnode):
         code += lineRM(3,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to MAIN
         code += lineRM(4,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
-        code += lineRM(5, "LD",2,0,5,"put return value from {} into r2".format(self.name()))
+        code += lineRM(5, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
         # add activation record for PRINT
         code += lineRM(6, "ST",2,2,5,"move returned value into arg for PRINT's AR")
         code += lineRM(7,"LDA",3,2,7,"put return address for PRINT into r3") # change
