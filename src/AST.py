@@ -14,12 +14,12 @@ from src.symbolTable import SymbolTable, FunctionRecord, FormalRecord
 
 def lineRO(lineNum, instruction, r1, r2, r3, comment = ""):
     if comment:
-        comment = "\t# {}\n".format(comment)
+        comment = "\t# {}".format(comment)
     return "{}: {} {},{},{}{}\n".format(str(lineNum),instruction,str(r1),str(r2),str(r3),comment)
 
 def lineRM(lineNum, instruction, r1, offset, r2, comment = ""):
     if comment:
-        comment = "\t# {}\n".format(comment)
+        comment = "\t# {}".format(comment)
     return "{}: {} {},{}({}){}\n".format(str(lineNum),instruction,str(r1),str(offset),str(r2),comment)
 
 def header(name):
