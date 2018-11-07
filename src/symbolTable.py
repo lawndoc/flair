@@ -5,6 +5,7 @@ class SymbolTable():
         self.table = {}
         self.errors = False
         self.lineNum = 0
+        self.stackEmpty = True
     def __iter__(self):
         if self.table:
             for f in self.table:
@@ -36,6 +37,12 @@ class SymbolTable():
     def nextLine(self):
         self.lineNum += 1
         return str(self.lineNum - 1)
+    def setNotEmpty(self):
+        self.stackEmpty = False
+    def setEmpty(self):
+        self.stackEmpty = True
+    def stackEmpty(self):
+        return self.stackEmpty
 class FormalRecord:
     def __init__(self, formalNode):
         self.id = formalNode.getName()

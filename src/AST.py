@@ -627,7 +627,10 @@ class ReturnStatement(ASTnode):
         code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
-        code += lineRM(symbolTable,"LD",7,2,6,"load return address into r7")
+        if symbolTable.stackEmpty():
+            code += lineRM(symbolTable,"LD",7,-2,5,"load return address into r7")
+        else:
+            code += lineRM(symbolTable,"LD",7,2,6,"load return address into r7")
         return code
 
 class FunctionCall(ASTnode):
