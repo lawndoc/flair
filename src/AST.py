@@ -425,9 +425,9 @@ class Program(ASTnode):
         code += lineRM(4,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         code += lineRM(5, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
         # add activation record for PRINT
-        code += lineRM(6, "ST",2,2,5,"move returned value into arg for PRINT's AR")
+        code += lineRM(6, "ST",2,-2,5,"move returned value into arg for PRINT's AR")
         code += lineRM(7,"LDA",3,2,7,"put return address for PRINT into r3") # change
-        code += lineRM(8,"ST",3,1,5,"move return address into PRINT's AR")
+        code += lineRM(8,"ST",3,-1,5,"move return address into PRINT's AR")
         # jump to PRINT
         code += lineRM(9,"LDA",7,11,0,"jump to PRINT") # note: print address hard-coded
         code += lineRO(10,"HALT",0,0,0)
@@ -605,12 +605,12 @@ class ReturnStatement(ASTnode):
         code += lineRM(symbolTable.nextLine(),"LD",1,0,6,"move most recent temp value to r1")
         code += lineRM(symbolTable.nextLine(),"ST",1,0,5,"put value from r1 into return value")
         # restore registers
-        code += lineRM(symbolTable.nextLine(),"LD",1,2,5,"restore r1")
-        code += lineRM(symbolTable.nextLine(),"LD",2,3,5,"restore r2")
-        code += lineRM(symbolTable.nextLine(),"LD",3,4,5,"restore r3")
-        code += lineRM(symbolTable.nextLine(),"LD",4,5,5,"restore r4")
-        code += lineRM(symbolTable.nextLine(),"LD",6,7,5,"restore r6")
-        code += lineRM(symbolTable.nextLine(),"LD",5,6,5,"restore r5")
+        code += lineRM(symbolTable.nextLine(),"LD",1,-2,5,"restore r1")
+        code += lineRM(symbolTable.nextLine(),"LD",2,-3,5,"restore r2")
+        code += lineRM(symbolTable.nextLine(),"LD",3,-4,5,"restore r3")
+        code += lineRM(symbolTable.nextLine(),"LD",4,-5,5,"restore r4")
+        code += lineRM(symbolTable.nextLine(),"LD",6,-7,5,"restore r6")
+        code += lineRM(symbolTable.nextLine(),"LD",5,-6,5,"restore r5")
         code += lineRM(symbolTable.nextLine(),"LD",7,2,6,"load return address into r7") # change
         return code
 
