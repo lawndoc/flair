@@ -8,10 +8,13 @@
 1 |    return address    |
   |______________________|
   |                      |
-2 |       argument       |
+2 |  pre-call registers  | --> 6 of these (r1-r6)
+. |_________...._________|
+. |                      |
+8 |       argument       |
   |______________________|
 
-          MAIN (this project only)
+           MAIN
    ____________________
   |                    |
 0 |    return value    |
@@ -20,7 +23,10 @@
 1 |   return address   |
   |____________________|
   |                    |
-2 |         T1         |
+2 | pre-call registers | --> (r1-r6)
+. |________....________|
+. |                    |
+8 |         T1         |
   |____________________|
 
 

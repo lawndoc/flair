@@ -12,15 +12,15 @@ from src.symbolTable import SymbolTable, FunctionRecord, FormalRecord
 # sys.excepthook = excepthook
 
 
-def lineRO(lineNum, instruction, r1, r2, r3, comment = ""):
+def lineRO(symbolTable, instruction, r1, r2, r3, comment = ""):
     if comment:
         comment = "\t# {}".format(comment)
-    return "{}: {} {},{},{}{}\n".format(str(lineNum),instruction,str(r1),str(r2),str(r3),comment)
+    return "{}: {} {},{},{}{}\n".format(str(symbolTable.nextLine()),instruction,str(r1),str(r2),str(r3),comment)
 
-def lineRM(lineNum, instruction, r1, offset, r2, comment = ""):
+def lineRM(symbolTable, instruction, r1, offset, r2, comment = ""):
     if comment:
         comment = "\t# {}".format(comment)
-    return "{}: {} {},{}({}){}\n".format(str(lineNum),instruction,str(r1),str(offset),str(r2),comment)
+    return "{}: {} {},{}({}){}\n".format(str(symbolTable.nextLine()),instruction,str(r1),str(offset),str(r2),comment)
 
 def header(name):
     return "*\n*{}\n*\n".format(name)
@@ -416,27 +416,41 @@ class Program(ASTnode):
     def getFormals(self):
         return self.formals
     def genCode(self, symbolTable):
-        code = lineRM(0,"LDC",5,1023,0,"set r5 to beginning of {}'s AR".format(self.getName()))
-        code += lineRM(1,"LDC",6,1022,0,"set r6 to end of {}'s AR".format(self.getName()))
+        symbolTable.setLineNum(0)
+        code = lineRM(symbolTable,"LDC",5,1023,0,"set r5 to beginning of {}'s AR".format(self.getName()))
+        code += lineRM(symbolTable,"LDC",6,1016,0,"set r6 to end of {}'s AR".format(self.getName()))
         # add activation record for MAIN
-        code += lineRM(2,"LDC",1,5,0,"set r1 to return address")
-        code += lineRM(3,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
+        code += lineRM(symbolTable,"LDC",1,5,0,"set r1 to return address")
+        code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
+        # load r5 and r6 into AR
+        code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
+        code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # jump to MAIN
-        code += lineRM(4,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
-        code += lineRM(5, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
+        code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
+        code += lineRM(symbolTable, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
         # add activation record for PRINT
-        code += lineRM(6, "ST",2,-2,5,"move returned value into arg for PRINT's AR")
-        code += lineRM(7,"LDA",3,2,7,"put return address for PRINT into r3") # change
-        code += lineRM(8,"ST",3,-1,5,"move return address into PRINT's AR")
+        code += lineRM(symbolTable, "ST",2,-8,5,"move returned value into arg for PRINT's AR")
+        code += lineRM(symbolTable,"LDA",3,2,7,"put return address for PRINT into r3") # change
+        code += lineRM(symbolTable,"ST",3,-1,5,"move return address into PRINT's AR")
+        # load r5 and r6 to AR
+        code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
+        code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # jump to PRINT
-        code += lineRM(9,"LDA",7,11,0,"jump to PRINT") # note: print address hard-coded
-        code += lineRO(10,"HALT",0,0,0)
+        code += lineRM(symbolTable,"LDA",7,11,0,"jump to PRINT") # note: print address hard-coded
+        code += lineRO(symbolTable,"HALT",0,0,0)
         code += header("PRINT")
-        code += lineRO(11,"OUT",5,0,0) # change (get arg from AR)
-        code += lineRM(12,"LDA",7,0,6,"return to call") # change (get RA from AR)
+        code += lineRM(symbolTable,"LD",1,-8,5,"load arg from AR into r1")
+        code += lineRO(symbolTable,"OUT",1,0,0,"print value")
+        # restore registers
+        code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
+        code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
+        code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
+        code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
+        code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
+        code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
+        code += lineRM(symbolTable,"LD",7,-1,5,"return to call") # change (get RA from AR)
         code += header(self.getName())
-        symbolTable[self.getName()].setAddress(13)
-        symbolTable.setLineNum(13)
+        symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
         code = self.body.genCode(symbolTable, code)
         # TODO: this is where we will call each definition's genCode()
 
@@ -602,16 +616,16 @@ class ReturnStatement(ASTnode):
         return self.type
     def genCode(self, symbolTable, code):
         code = self.retStatement.genCode(symbolTable, code) # return value is at end of stack
-        code += lineRM(symbolTable.nextLine(),"LD",1,0,6,"move most recent temp value to r1")
-        code += lineRM(symbolTable.nextLine(),"ST",1,0,5,"put value from r1 into return value")
+        code += lineRM(symbolTable,"LD",1,0,6,"move most recent temp value to r1")
+        code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
         # restore registers
-        code += lineRM(symbolTable.nextLine(),"LD",1,-2,5,"restore r1")
-        code += lineRM(symbolTable.nextLine(),"LD",2,-3,5,"restore r2")
-        code += lineRM(symbolTable.nextLine(),"LD",3,-4,5,"restore r3")
-        code += lineRM(symbolTable.nextLine(),"LD",4,-5,5,"restore r4")
-        code += lineRM(symbolTable.nextLine(),"LD",6,-7,5,"restore r6")
-        code += lineRM(symbolTable.nextLine(),"LD",5,-6,5,"restore r5")
-        code += lineRM(symbolTable.nextLine(),"LD",7,2,6,"load return address into r7") # change
+        code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
+        code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
+        code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
+        code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
+        code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
+        code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
+        code += lineRM(symbolTable,"LD",7,2,6,"load return address into r7") # change
         return code
 
 class FunctionCall(ASTnode):
