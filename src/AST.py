@@ -423,8 +423,8 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LDC",1,5,0,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # load r5 and r6 into AR
-        code += lineRM(symbolTable,"ST",0,-7,5,"save register 6 to AR")
-        code += lineRM(symbolTable,"ST",-6,5,"save register 5 to AR")
+        code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
+        code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # set r6 to end of MAIN's AR
         code += lineRM(symbolTable,"LDC",6,1021,0,"set r6 to end of {}'s AR".format(self.getName()))
         # jump to MAIN
