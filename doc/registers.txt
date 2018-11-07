@@ -2,7 +2,7 @@
 1:
 2:
 3:
-4: returned value
-5:
-6: return address
+4:
+5: start of stack pointer
+6: end of stack pointer
 7: program counter

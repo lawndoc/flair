@@ -1,0 +1,43 @@
+
+        final PRINT
+   ______________________
+  |                      |
+0 |     return value     |
+  |______________________|
+  |                      |
+1 |    return address    |
+  |______________________|
+  |                      |
+2 |       argument       |
+  |______________________|
+
+          MAIN (this project only)
+   ____________________
+  |                    |
+0 |    return value    |
+  |____________________|
+  |                    |
+1 |   return address   |
+  |____________________|
+  |                    |
+2 |         T1         |
+  |____________________|
+
+
+       general frame
+   ______________________
+  |                      |
+0 |     return value     |
+  |______________________|
+  |                      |
+1 |    return address    |
+  |______________________|
+  |                      |
+2 |  pre-call registers  | --> 6 of these (r1-r6)
+. |_________...._________|
+. |                      |
+8 |      arguments       | --> arbitrary number of these
+. |_________...._________|
+. |                      |
+x |      temp values     | --> arbitrary number of these
+  |_________...._________|
