@@ -10,7 +10,6 @@ Known Bugs:
 
 Features Not Implemented:
     - Compiler doesn't track which line of code an error occurred on.
-    - Compiler doesn't yet generate TM code for args passed into a program.
 
 Optimizations:
     - Scanner: We combined multiple states when possibly reading a word reserved

@@ -1,5 +1,11 @@
 
-                stack frame
+    We build our stacks from the bottom up from the end of DMEM. We do this
+so that there is one more address space usable (when it gets to the top, it
+will overwrite the no-longer-needed maxAddr slot 0). This doesn't add much
+value, but it doesn't hurt anything either so we decided to go with it. Below
+is a graphical representation of how our Activation Records will be set up.
+
+                Stack Frame
            _________...._________
 /\        |                      |
 /\      x |      temp values     | --> 0 or more of these

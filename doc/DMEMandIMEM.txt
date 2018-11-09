@@ -1,4 +1,13 @@
 
+We decided to generate the static code first, and then the PRINT function right
+after that. Then comes the program function. The defined functions will be after
+the program function. Addresses for each function are saved in the SymbolTable
+as they are built. Whenever there is a jump to a function being generated, we
+put a placeholder "<function-name>" in the place of the address in the code.
+Once all the code is generated and the function addresses have all been recorded
+in the symbolTable, the generator walks through the generated code and replaces
+each placholder "<function-name>" with the correct address for that function.
+
                  IMEM
          ____________________
       0 |    Static Code     |  \/
@@ -9,6 +18,9 @@
         |________....________|  \/
         |  other functions   |  \/
         |________....________|  \/
+
+
+As mentioned in stackFrame.txt, we build our stack from the bottom up in DMEM.
 
                  DMEM
          ____________________
