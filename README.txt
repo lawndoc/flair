@@ -1,17 +1,16 @@
 Malwareswaldo: C.J. May, Nick Sanford
 
-New to Project 4:
-    - made semantic-errors.flr (orig and fixed) found in tests/
-    - output of errors/warnings for semantic-errors.flr found in
-        doc/semantic-errors.txt
-    - made src/analyzer.py but most of the heavy lifting goes on
-        in src/AST.py with the analyze function for each node
-    - made analyzertest.py client in clients/ called by flairv
+New to Project 5:
+    - Made DMEMandIMEM.txt, registers.txt, and stackFrame.txt.
+    - Made src/generator.py but most of the heavy lifting goes on
+        in src/AST.py with the genCode function for each node.
+    - Made generatortest.py client in clients/ called by flairc.
 
 Known Bugs:
 
 Features Not Implemented:
     - Compiler doesn't track which line of code an error occurred on.
+    - Compiler doesn't yet generate TM code for args passed into a program.
 
 Optimizations:
     - Scanner: We combined multiple states when possibly reading a word reserved
@@ -60,3 +59,12 @@ How To Run:
         - call analyzertest.py with python3 from the command line, passing in an
             argument for a flair program
             (ex. python3 analyzertest.py /path/to/program.flr )
+
+    To compile a program with the generator, use one of these three ways:
+        - call flairc from the command line, passing in an argument for a flair
+            program (ex. $ flairc /path/to/program.flr )
+        - call generatortest.py from from the command line, passing in an argument
+            for a flair program (ex. $ generatortest.py /path/to/program.flr )
+        - call generatortest.py with python3 from the command line, passing in an
+            argument for a flair program
+            (ex. python3 generatortest.py /path/to/program.flr )

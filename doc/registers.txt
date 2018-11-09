@@ -1,8 +1,8 @@
-0: always 0
-1:
-2:
-3:
-4:
-5: start of stack pointer
-6: end of stack pointer
-7: program counter
+r0: always 0
+r1:
+r2:
+r3:
+r4:
+r5: start of stack pointer
+r6: end of stack pointer
+r7: program counter

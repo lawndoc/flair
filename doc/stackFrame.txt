@@ -1,0 +1,19 @@
+
+                stack frame
+           _________...._________
+/\        |                      |
+/\      x |      temp values     | --> 0 or more of these
+/\      . |_________...._________|
+/\      . |                      |
+/\     -8 |      arguments       | --> 0 or more of these
+/\        |______________________|
+/\        |                      |
+/\     -2 |  pre-call registers  | --> 6 of these (r1-r6)
+/\        |______________________|
+/\        |                      |
+/\     -1 |    return address    |
+/\        |______________________|
+/\        |                      |
+/\ maxAddr|     return value     |
+/\        |______________________|
+              (bottom of dmem)

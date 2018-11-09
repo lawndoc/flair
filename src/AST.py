@@ -417,8 +417,10 @@ class Program(ASTnode):
         return self.formals
     def genCode(self, symbolTable):
         symbolTable.setLineNum(0)
-        code = lineRM(symbolTable,"LDC",5,1023,0,"set r5 to bottom of dmem".format(self.getName()))
-        code += lineRM(symbolTable,"LDC",6,1023,0,"set r6 to bottom of dmem".format(self.getName()))
+        # TODO: optionally generate code if program takes arguments
+        code = lineRM(symbolTable, "LD",1,0,0,"load max memory address into r1")
+        code += lineRM(symbolTable,"LDA",5,0,1,"set r5 to bottom of dmem".format(self.getName()))
+        code += lineRM(symbolTable,"LDA",6,0,1,"set r6 to bottom of dmem".format(self.getName()))
         # add activation record for MAIN
         code += lineRM(symbolTable,"LDA",1,5,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
@@ -438,7 +440,7 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
         code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # jump to PRINT
-        code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT") # note: print address hard-coded
+        code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
         code += lineRO(symbolTable,"HALT",0,0,0)
         code += header("PRINT")
         symbolTable.setPrintAddress(symbolTable.getLineNum())
