@@ -138,6 +138,7 @@ class MinusExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "integer"
+        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " - " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -148,6 +149,22 @@ class MinusExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer - operation in function '{}'".format(fName))
+    def genCode(self, symbolTable, code):
+        code = self.left.genCode(symbolTable, code)
+        leftValOffset = self.left.getvalueOffset()
+        code = self.right.genCode(symbolTable, code)
+        rightValOffset = self.right.getvalueOffset()
+        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+        code += lineRO(symbolTable,"SUB",1,1,2,"subtract the two values")
+        code += lineRM(symbolTable,"ST",1,-1,6,"store difference into new temp value")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
+        return code
+    def getvalueOffset(self):
+        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
