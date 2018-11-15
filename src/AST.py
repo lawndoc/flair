@@ -111,8 +111,18 @@ class PlusExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer + operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code):
-        code = self.right.genCode(symbolTable, code)
+    def genCode(self, symbolTable, code, offset):
+        code = self.left.genCode(symbolTable, code, offset)
+        leftValOffset = self.left.getvalueOffset()
+        code += self.right.genCode(symbolTable, code, offset)
+        rightValOffset = self.right.getvalueOffset()
+        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+        code += lineRO(symbolTable,"ADD",1,1,2,"add the two values")
+        code += lineRM(symbolTable,"ST",1,-1,6,"store sum into new temp value")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        offset += 1
         # TODO: finish code generation
     def setType(self, myType):
         self.type = myType
@@ -298,7 +308,7 @@ class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
         self.type = "integer"
-        self.valueAddr = 0
+        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
     def analyze(self, symbolTable, ids, fName):
@@ -309,15 +319,15 @@ class IntegerLiteral(ASTnode):
             raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
-    def getValueAddr(self):
-        return self.valueAddr
+    def getvalueOffset(self):
+        return self.valueOffset
     def genCode(self, symbolTable, code, offset):
         code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
         code += lineRO(symbolTable,"SUB",6,6,2,"increment end of stack pointer")
         offset += 1
-        self.valueAddr = offset
+        self.valueOffset = offset
         return code
 
 class BooleanLiteral(ASTnode):
