@@ -448,7 +448,7 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # set r6 to end of MAIN's AR
         code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
-        code += lineRM(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
+        code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
         symbolTable.setOffset(-7)
         # optionally generate code if program takes arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
@@ -456,7 +456,7 @@ class Program(ASTnode):
                 code += lineRM(symbolTable,"LD",2,i+1,0,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,i-8,5,"load arg{} into AR".format(str(i+1)))
                 code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-                code += lineRM(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+                code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
                 symbolTable.decrementOffset()
         # add return address to MAIN'S AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
