@@ -112,10 +112,10 @@ class PlusExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer + operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code):
-        code = self.left.genCode(symbolTable, code)
+    def genCode(self, symbolTable, code, fName):
+        code = self.left.genCode(symbolTable, code, fName)
         leftValOffset = self.left.getvalueOffset()
-        code = self.right.genCode(symbolTable, code)
+        code = self.right.genCode(symbolTable, code, fName)
         rightValOffset = self.right.getvalueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
@@ -149,10 +149,10 @@ class MinusExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer - operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code):
-        code = self.left.genCode(symbolTable, code)
+    def genCode(self, symbolTable, code, fName):
+        code = self.left.genCode(symbolTable, code, fName)
         leftValOffset = self.left.getvalueOffset()
-        code = self.right.genCode(symbolTable, code)
+        code = self.right.genCode(symbolTable, code, fName)
         rightValOffset = self.right.getvalueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
@@ -186,10 +186,10 @@ class TimesExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer * operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code):
-        code = self.left.genCode(symbolTable, code)
+    def genCode(self, symbolTable, code, fName):
+        code = self.left.genCode(symbolTable, code, fName)
         leftValOffset = self.left.getvalueOffset()
-        code = self.right.genCode(symbolTable, code)
+        code = self.right.genCode(symbolTable, code, fName)
         rightValOffset = self.right.getvalueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
@@ -223,10 +223,10 @@ class DivideExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer / operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code):
-        code = self.left.genCode(symbolTable, code)
+    def genCode(self, symbolTable, code, fName):
+        code = self.left.genCode(symbolTable, code, fName)
         leftValOffset = self.left.getvalueOffset()
-        code = self.right.genCode(symbolTable, code)
+        code = self.right.genCode(symbolTable, code, fName)
         rightValOffset = self.right.getvalueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
@@ -340,7 +340,6 @@ class IfStatement(ASTnode):
 class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
-        print(self.value)
         self.type = None
         self.valueOffset = 0
     def __str__(self, level = 0):
@@ -354,9 +353,8 @@ class Identifier(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: reference to unknown identifier '{}' in function '{}'".format(self.value, fName))
-    def genCode(self, symbolTable, code):
-        pass
-        #self.valueOffset = self.symbolTable[fName].getFormals()[self.]
+    def genCode(self, symbolTable, code, fName):
+        self.valueOffset = -(self.symbolTable[fName].getFormals()[self.value].getPos() + 8)
     def getName(self):
         return self.value
     def setType(self, myType):
@@ -381,7 +379,7 @@ class IntegerLiteral(ASTnode):
         return self.type
     def getvalueOffset(self):
         return self.valueOffset
-    def genCode(self, symbolTable, code):
+    def genCode(self, symbolTable, code, fName):
         code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
@@ -552,7 +550,7 @@ class Program(ASTnode):
         # begin program function code
         code += header(self.getName())
         symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
-        code = self.body.genCode(symbolTable, code)
+        code = self.body.genCode(symbolTable, code, self.getName())
         # TODO: this is where we will call each definition's genCode()
 
         # done generating code. replace function address placeholders
@@ -698,10 +696,10 @@ class Body(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def genCode(self, symbolTable, code):
+    def genCode(self, symbolTable, code, fName):
         for ps in self.printStatements:
-            code = ps.genCode(symbolTable, code)
-        code = self.returnStatement.genCode(symbolTable, code)
+            code = ps.genCode(symbolTable, code, fName)
+        code = self.returnStatement.genCode(symbolTable, code, fName)
         return code
 
 
@@ -721,9 +719,10 @@ class ReturnStatement(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def genCode(self, symbolTable, code):
-        code = self.retStatement.genCode(symbolTable, code) # return value is at end of stack
-        code += lineRM(symbolTable,"LD",1,0,6,"move most recent temp value to r1")
+    def genCode(self, symbolTable, code, fName):
+        code = self.retStatement.genCode(symbolTable, code, fName) # return value is at end of stack
+        valOffset = self.retStatement.getvalueOffset()
+        code += lineRM(symbolTable,"LD",1,valOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
         # restore registers
         code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
