@@ -340,7 +340,9 @@ class IfStatement(ASTnode):
 class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
+        print(self.value)
         self.type = None
+        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + colors.brown + str(self.value) + colors.white
     def analyze(self, symbolTable, ids, fName):
@@ -352,6 +354,9 @@ class Identifier(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: reference to unknown identifier '{}' in function '{}'".format(self.value, fName))
+    def genCode(self, symbolTable, code):
+        pass
+        #self.valueOffset = self.symbolTable[fName].getFormals()[self.]
     def getName(self):
         return self.value
     def setType(self, myType):

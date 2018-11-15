@@ -55,15 +55,19 @@ class SymbolTable():
         self.stackEmpty = True
     def stackIsEmpty(self):
         return self.stackEmpty
+
 class FormalRecord:
-    def __init__(self, formalNode):
+    def __init__(self, formalNode, pos):
         self.id = formalNode.getName()
         self.type = formalNode.getType()
+        self.pos = pos
         self.called = False
     def newCall(self):
         self.called = True
     def isCalled(self):
         return self.called
+    def getPos(self):
+        return self.pos
     def getName(self):
         return self.id
     def getType(self):
@@ -77,12 +81,14 @@ class FunctionRecord:
         self.formalError = False
         self.programFunction = False
         if functionNode.getFormals():
+            pos = 0
             for formal in functionNode.getFormals():
                 # Make sure each identifier is only defined once
                 if formal.getName() in self.formals:
                     self.formalError = True
                     print("Semantic error: identifier '{}' is defined more than once in function '{}'".format(formal.getName(), self.id))
-                self.formals[formal.getName()] = FormalRecord(formal)
+                self.formals[formal.getName()] = FormalRecord(formal, pos)
+                pos += 1
         self.callers = []
         self.codeAddress = 0
     def __str__(self):
