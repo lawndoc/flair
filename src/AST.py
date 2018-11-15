@@ -356,6 +356,8 @@ class Identifier(ASTnode):
     def genCode(self, symbolTable, code, fName):
         self.valueOffset = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
         return code
+    def getvalueOffset(self):
+        return self.valueOffset
     def getName(self):
         return self.value
     def setType(self, myType):
