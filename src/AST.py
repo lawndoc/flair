@@ -513,7 +513,7 @@ class Program(ASTnode):
         if len(symbolTable[self.getName()].getFormals()) > 0:
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 code += lineRM(symbolTable,"LD",2,i+1,0,"load arg{} into r2".format(str(i+1)))
-                code += lineRM(symbolTable,"ST",2,i-8,5,"load arg{} into AR".format(str(i+1)))
+                code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
                 code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
                 code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
                 symbolTable.decrementOffset()
