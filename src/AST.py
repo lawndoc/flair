@@ -112,10 +112,10 @@ class PlusExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer + operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, offset):
-        code = self.left.genCode(symbolTable, code, offset)
+    def genCode(self, symbolTable, code):
+        code = self.left.genCode(symbolTable, code)
         leftValOffset = self.left.getvalueOffset()
-        code = self.right.genCode(symbolTable, code, offset)
+        code = self.right.genCode(symbolTable, code)
         rightValOffset = self.right.getvalueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
@@ -123,8 +123,8 @@ class PlusExpr(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,6,"store sum into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
-        offset += 1
-        self.valueOffset = offset
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
         return code
     def getvalueOffset(self):
         return self.valueOffset
@@ -325,13 +325,13 @@ class IntegerLiteral(ASTnode):
         return self.type
     def getvalueOffset(self):
         return self.valueOffset
-    def genCode(self, symbolTable, code, offset):
+    def genCode(self, symbolTable, code):
         code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
         code += lineRO(symbolTable,"SUB",6,6,2,"increment end of stack pointer")
-        offset += 1
-        self.valueOffset = offset
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
         return code
 
 class BooleanLiteral(ASTnode):
@@ -442,7 +442,6 @@ class Program(ASTnode):
         code = lineRM(symbolTable, "LD",1,0,0,"load max memory address into r1")
         code += lineRM(symbolTable,"LDA",5,0,1,"set r5 to bottom of dmem".format(self.getName()))
         code += lineRM(symbolTable,"LDA",6,0,1,"set r6 to bottom of dmem".format(self.getName()))
-        offset = 0
         ## add Activation Record for MAIN
         # load r5 and r6 into AR
         code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
@@ -450,7 +449,7 @@ class Program(ASTnode):
         # set r6 to end of MAIN's AR
         code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
         code += lineRM(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
-        offset += 7
+        symbolTable.setOffset(-7)
         # optionally generate code if program takes arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
@@ -458,7 +457,7 @@ class Program(ASTnode):
                 code += lineRM(symbolTable,"ST",2,i-8,5,"load arg{} into AR".format(str(i+1)))
                 code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
                 code += lineRM(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
-                offset += 1
+                symbolTable.decrementOffset()
         # add return address to MAIN'S AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
@@ -497,7 +496,7 @@ class Program(ASTnode):
         # begin program function code
         code += header(self.getName())
         symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
-        code = self.body.genCode(symbolTable, code, offset)
+        code = self.body.genCode(symbolTable, code)
         # TODO: this is where we will call each definition's genCode()
 
         # done generating code. replace function address placeholders
@@ -643,10 +642,10 @@ class Body(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def genCode(self, symbolTable, code, offset):
+    def genCode(self, symbolTable, code):
         for ps in self.printStatements:
-            code = ps.genCode(symbolTable, code, offset)
-        code = self.returnStatement.genCode(symbolTable, code, offset)
+            code = ps.genCode(symbolTable, code)
+        code = self.returnStatement.genCode(symbolTable, code)
         return code
 
 
@@ -666,8 +665,8 @@ class ReturnStatement(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def genCode(self, symbolTable, code, offset):
-        code = self.retStatement.genCode(symbolTable, code, offset) # return value is at end of stack
+    def genCode(self, symbolTable, code):
+        code = self.retStatement.genCode(symbolTable, code) # return value is at end of stack
         code += lineRM(symbolTable,"LD",1,0,6,"move most recent temp value to r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
         # restore registers
