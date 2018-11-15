@@ -111,6 +111,9 @@ class PlusExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer + operation in function '{}'".format(fName))
+    def genCode(self, symbolTable, code):
+        code = self.right.genCode(symbolTable, code)
+        # TODO: finish code generation
     def setType(self, myType):
         self.type = myType
     def getType(self):
