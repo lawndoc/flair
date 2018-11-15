@@ -663,7 +663,7 @@ class ReturnStatement(ASTnode):
     def getType(self):
         return self.type
     def genCode(self, symbolTable, code, offset):
-        code = self.retStatement.genCode(symbolTable, code) # return value is at end of stack
+        code = self.retStatement.genCode(symbolTable, code, offset) # return value is at end of stack
         code += lineRM(symbolTable,"LD",1,0,6,"move most recent temp value to r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
         # restore registers
