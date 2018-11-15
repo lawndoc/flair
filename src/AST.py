@@ -355,6 +355,7 @@ class Identifier(ASTnode):
             print("Semantic error: reference to unknown identifier '{}' in function '{}'".format(self.value, fName))
     def genCode(self, symbolTable, code, fName):
         self.valueOffset = -(self.symbolTable[fName].getFormals()[self.value].getPos() + 8)
+        return code
     def getName(self):
         return self.value
     def setType(self, myType):
