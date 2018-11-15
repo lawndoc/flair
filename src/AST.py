@@ -298,6 +298,7 @@ class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
         self.type = "integer"
+        self.valueAddr = 0
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
     def analyze(self, symbolTable, ids, fName):
@@ -308,11 +309,15 @@ class IntegerLiteral(ASTnode):
             raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
-    def genCode(self, symbolTable, code):
+    def getValueAddr(self):
+        return self.valueAddr
+    def genCode(self, symbolTable, code, offset):
         code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
         code += lineRO(symbolTable,"SUB",6,6,2,"increment end of stack pointer")
+        offset += 1
+        self.valueAddr = offset
         return code
 
 class BooleanLiteral(ASTnode):
@@ -423,12 +428,15 @@ class Program(ASTnode):
         code = lineRM(symbolTable, "LD",1,0,0,"load max memory address into r1")
         code += lineRM(symbolTable,"LDA",5,0,1,"set r5 to bottom of dmem".format(self.getName()))
         code += lineRM(symbolTable,"LDA",6,0,1,"set r6 to bottom of dmem".format(self.getName()))
+        offset = 0
         ## add Activation Record for MAIN
         # load r5 and r6 into AR
         code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
         code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # set r6 to end of MAIN's AR
-        code += lineRM(symbolTable,"LDC",6,1021,0,"set r6 to end of {}'s AR".format(self.getName()))
+        code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
+        code += lineRM(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
+        offset += 7
         # optionally generate code if program takes arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
@@ -436,6 +444,7 @@ class Program(ASTnode):
                 code += lineRM(symbolTable,"ST",2,i-8,5,"load arg{} into AR".format(str(i+1)))
                 code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
                 code += lineRM(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+                offset += 1
         # add return address to MAIN'S AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
@@ -474,7 +483,7 @@ class Program(ASTnode):
         # begin program function code
         code += header(self.getName())
         symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
-        code = self.body.genCode(symbolTable, code)
+        code = self.body.genCode(symbolTable, code, offset)
         # TODO: this is where we will call each definition's genCode()
 
         # done generating code. replace function address placeholders
@@ -620,10 +629,10 @@ class Body(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def genCode(self, symbolTable, code):
+    def genCode(self, symbolTable, code, offset):
         for ps in self.printStatements:
-            code = ps.genCode(symbolTable, code)
-        code = self.returnStatement.genCode(symbolTable, code)
+            code = ps.genCode(symbolTable, code, offset)
+        code = self.returnStatement.genCode(symbolTable, code, offset)
         return code
 
 
@@ -643,7 +652,7 @@ class ReturnStatement(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def genCode(self, symbolTable, code):
+    def genCode(self, symbolTable, code, offset):
         code = self.retStatement.genCode(symbolTable, code) # return value is at end of stack
         code += lineRM(symbolTable,"LD",1,0,6,"move most recent temp value to r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
