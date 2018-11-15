@@ -476,8 +476,10 @@ class Program(ASTnode):
             print("Semantic error: cannot define a function called 'print'")
         # Pass program's formals to 'ids' for program body analysis
         if self.formals:
+            pos = 0
             for formal in self.formals:
-                ids[formal.getName()] = FormalRecord(formal)
+                ids[formal.getName()] = FormalRecord(formal, pos)
+                pos += 1
         # Analyze each function and annotate symbolTable
         self.definitions.analyze(symbolTable)
         # Analyze program body and annotate symbolTable
