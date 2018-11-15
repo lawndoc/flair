@@ -123,7 +123,7 @@ class PlusExpr(ASTnode):
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
         offset += 1
-        # TODO: finish code generation
+        return code
     def setType(self, myType):
         self.type = myType
     def getType(self):
