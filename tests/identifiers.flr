@@ -1,0 +1,5 @@
+program addArgs(a:integer, b:integer);
+{takes two integers as input and prints their sum}
+begin
+    return a + b
+end.

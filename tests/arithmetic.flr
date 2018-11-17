@@ -1,0 +1,5 @@
+program arithmetic();
+{prints expression below -- evaluates to 12}
+begin
+    return 2*3+6/(3-2)
+end.
