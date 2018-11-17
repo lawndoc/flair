@@ -1,0 +1,4 @@
+program math(a : integer, b : integer);
+begin
+  return a * b + a / b
+end.
