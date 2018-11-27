@@ -364,7 +364,7 @@ class NotExpr(ASTnode):
         code = self.expr.genCode(symbolTable, code, fName)
         childValOffset = self.expr.getValueOffset()
         code += lineRM(symbolTable,"LD",1,childValOffset,5,"load operand value into r1")
-        code += lineRM(symbolTable,"JNE",1,3,7,"jump if operand is true")
+        code += lineRM(symbolTable,"JNE",1,4,7,"jump if operand is true")
         code += lineRM(symbolTable,"LDC",1,1,0,"change operand to true")
         code += lineRM(symbolTable,"ST",1,0,6,"load true into same temp value")
         code += lineRM(symbolTable,"LDA",1,1,7,"skip switching temp to false")
