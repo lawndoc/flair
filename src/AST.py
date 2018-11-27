@@ -444,6 +444,7 @@ class IfStatement(ASTnode):
         code += lineRM(symbolTable,"LD",3,elseValOffset,5,"load else value into r3")
         code += lineRM(symbolTable,"JEQ",1,1,7,"jump to else value if false")
         code += lineRM(symbolTable,"ST",2,-1,6,"store then value to new temp value")
+        code += lineRM(symbolTable,"LDA",7,1,7,"skip else case")
         code += lineRM(symbolTable,"ST",3,-1,6,"store else value to new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
