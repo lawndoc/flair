@@ -49,7 +49,7 @@ class PrintStatement(ASTnode):
         # Analyze expression to be printed and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
-    # TODO: genCode()
+    # TODO: 6th -- genCode() for printStatements (do last)
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -431,7 +431,7 @@ class IfStatement(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: inconsistent return type under if-then-else in function '{}'".format(fName))
-        # TODO: genCode()
+        # TODO: 1st -- genCode() for if statements
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -681,7 +681,7 @@ class Program(ASTnode):
         code += header(self.getName())
         symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
         code = self.body.genCode(symbolTable, code, self.getName())
-        # TODO: this is where we will call each definition's genCode()
+        # TODO: 4th -- this is where we will call each definition's genCode()
 
         # done generating code. replace function address placeholders
         for function in symbolTable:
@@ -751,7 +751,7 @@ class Definitions(ASTnode):
     def analyze(self, symbolTable):
         for function in self.definitions:
             function.analyze(symbolTable)
-    # TODO: genCode()
+    # TODO: 2nd -- genCode() for definitions
     def hasDefinitions(self):
         if self.definitions:
             return True
@@ -790,7 +790,7 @@ class Function(ASTnode):
         if self.body.getType() != self.getType():
             symbolTable.newError()
             print("Semantic error: '{}' function's returned value doesn't match the declared return type".format(self.getName()))
-    # TODO: genCode()
+    # TODO: 3rd -- genCode() for each function
     def getFormals(self):
         return self.formals
     def getName(self):
@@ -912,7 +912,7 @@ class FunctionCall(ASTnode):
             if len(symbolTable[self.getName()].getFormals()) > 0:
                 symbolTable.newError()
                 print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
-    # TODO: genCode()
+    # TODO: 5th -- genCode() for function calls
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):
