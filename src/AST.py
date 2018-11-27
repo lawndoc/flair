@@ -80,7 +80,7 @@ class LessThan(ASTnode):
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
         code += lineRO(symbolTable,"SUB",1,1,2,"subtract right operand from the left")
-        code += lineRM(symbolTable,"JGT",1,2,7,"jump if left is greater than right")
+        code += lineRM(symbolTable,"JLT",1,2,7,"jump if left < right")
         code += lineRM(symbolTable,"ST",0,-1,6,"load false into new temp var")
         code += lineRM(symbolTable,"LDA",7,2,7,"skip not equal")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
