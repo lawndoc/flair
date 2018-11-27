@@ -61,6 +61,7 @@ class LessThan(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "boolean"
+        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " < " + colors.white + self.right.__str__()
     def analyze(self, symbolTable, ids, fName):
@@ -71,16 +72,25 @@ class LessThan(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer < comparison in function '{}'".format(fName))
+    def genCode(self, symbolTable, code, fName):
+        code = self.left.genCode(symbolTable, code, fName)
+        leftValOffset = self.left.getValueOffset()
+        code = self.right.genCode(symbolTable, code, fName)
+        rightValOffset = self.right.getValueOffset()
+        # TODO: finish comparison
     def setType(self, myType):
         self.type = myType
     def getType(self):
         return self.type
+    def getValueOffset(self):
+        return self.valueOffset
 
 class EqualTo(ASTnode):
     def __init__(self, last, semanticStack):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "boolean"
+        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " = " + colors.white + self.right.__str__()
     def analyze(self, symbolTable, ids, fName):
@@ -91,10 +101,18 @@ class EqualTo(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer = comparison in function '{}'".format(fName))
+    def genCode(self, symbolTable, code, fName):
+        code = self.left.genCode(symbolTable, code, fName)
+        leftValOffset = self.left.getValueOffset()
+        code = self.right.genCode(symbolTable, code, fName)
+        rightValOffset = self.right.getValueOffset()
+        # TODO: finish comparison
     def setType(self, myType):
         self.type = myType
     def getType(self):
         return self.type
+    def getValueOffset(self):
+        return self.valueOffset
 
 class PlusExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -249,6 +267,7 @@ class AndExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "boolean"
+        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " and " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -259,6 +278,28 @@ class AndExpr(ASTnode):
         if not (self.right.getType() == "boolean" and self.left.getType() == "boolean"):
             symbolTable.newError()
             print("Semantic error: non-boolean 'and' operation in function '{}'".format(fName))
+    def genCode(self, symbolTable, code, fName):
+        code = self.left.genCode(symbolTable, code, fName)
+        leftValOffset = self.left.getValueOffset()
+        code = self.right.genCode(symbolTable, code, fName)
+        rightValOffset = self.right.getValueOffset()
+        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+        code += lineRM(symbolTable,"LDC",3,2,0,"load 2 into r3 (true + true)")
+        code += lineRO(symbolTable,"ADD",1,1,2,"add left and right boolean")
+        code += lineRO(symbolTable,"SUB",1,3,1,"subtract the added booleans from 2")
+        code += lineRM(symbolTable,"JNE",1,2,7,"jump if left and right is false")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
+        code += lineRM(symbolTable,"LDA",7,1,7,"skip loading 0 (false)")
+        code += lineRM(symbolTable,"LDC",1,0,0,"load 0 (false) into r1")
+        code += lineRM(symbolTable,"ST",1,-1,6,"store boolean into new temp value")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
+        return code
+    def getValueOffset(self):
+        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -269,6 +310,7 @@ class OrExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "boolean"
+        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " or " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -279,6 +321,26 @@ class OrExpr(ASTnode):
         if not (self.right.getType() == "boolean" and self.left.getType() == "boolean"):
             symbolTable.newError()
             print("Semantic error: non-boolean 'or' operation in function '{}'".format(fName))
+    def genCode(self, symbolTable, code, fName):
+        code = self.left.genCode(symbolTable, code, fName)
+        leftValOffset = self.left.getValueOffset()
+        code = self.right.genCode(symbolTable, code, fName)
+        rightValOffset = self.right.getValueOffset()
+        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+        code += lineRM(symbolTable,"JNE",1,3,7,"jump if left is true")
+        code += lineRM(symbolTable,"JNE",2,2,7,"jump if right is true")
+        code += lineRM(symbolTable,"LDC",1,0,0,"load 0 (false) into r1")
+        code += lineRM(symbolTable,"LDA",7,1,7,"skip loading 1 (true)")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
+        code += lineRM(symbolTable,"ST",1,-1,6,"store boolean into new temp value")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
+        return code
+    def getValueOffset(self):
+        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -288,6 +350,7 @@ class NotExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.expr = semanticStack.pop()
         self.type = "boolean"
+        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + colors.blue + "not " + colors.white + self.expr.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -297,6 +360,17 @@ class NotExpr(ASTnode):
         if self.expr.getType() != "boolean":
             symbolTable.newError()
             print("Semantic error: non-boolean 'not' operation in function '{}'".format(fName))
+    def genCode(self, symbolTable, code, fName):
+        code = self.expr.genCode(symbolTable, code, fName)
+        childValOffset = self.left.getValueOffset()
+        code += lineRM(symbolTable,"LD",1,childValOffset,5,"load operand value into r1")
+        code += lineRM(symbolTable,"JNE",1,3,7,"jump if operand is true")
+        code += lineRM(symbolTable,"LDC",1,1,0,"change operand to true")
+        code += lineRM(symbolTable,"ST",1,0,6,"load true into same temp value")
+        code += lineRM(symbolTable,"LDA",1,1,7,"skip switching temp to false")
+        code += lineRM(symbolTable,"ST",0,0,6,"load false into same temp value")
+        self.valueOffset = symbolTable.getOffset()
+        return code
     def setType(self, myType):
         self.type = myType
     def getType(self):

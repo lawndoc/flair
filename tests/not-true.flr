@@ -1,0 +1,4 @@
+program print_false();
+begin
+    return not true
+end.

@@ -1,0 +1,4 @@
+program and_true();
+begin
+    return true and true
+end.
