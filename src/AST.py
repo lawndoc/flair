@@ -408,7 +408,16 @@ class BooleanLiteral(ASTnode):
             error_msg = "tried to assign {} type to boolean literal '{}'"
             raise SemanticError(error_msg.format(myType, self.value))
     def genCode(self, symbolTable, code, fName):
-        pass
+        if self.value == "true":
+            code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
+        else: # value == "false"
+            code += lineRM(symbolTable,"LDC",1,0,0,"load 0 (false) into r1")
+        code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
+        code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
+        code += lineRO(symbolTable,"SUB",6,6,2,"increment end of stack pointer")
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
+        return code
     def getType(self):
         return self.type
 
