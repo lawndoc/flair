@@ -8,6 +8,7 @@ class SymbolTable():
         self.stackEmpty = True
         self.printAddress = 0
         self.offset = 0
+        self.lastOffsets = []
     def __iter__(self):
         if self.table:
             for f in self.table:
@@ -38,6 +39,11 @@ class SymbolTable():
         self.offset -= 1
     def getOffset(self):
         return self.offset
+    def newOffset(self, new):
+        self.lastOffsets.append(self.offset)
+        self.offset = new
+    def lastOffset(self):
+        self.offset = self.lastOffsets.pop()
     def setPrintAddress(self, addr):
         self.printAddress = addr
     def getPrintAddress(self):

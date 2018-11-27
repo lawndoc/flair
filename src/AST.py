@@ -394,6 +394,10 @@ class IntegerLiteral(ASTnode):
 class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
+        if not self.value:
+            print("Python Boolean")
+        else:
+            print(self.value)
         self.type = "boolean"
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
@@ -403,6 +407,8 @@ class BooleanLiteral(ASTnode):
         if myType != "boolean":
             error_msg = "tried to assign {} type to boolean literal '{}'"
             raise SemanticError(error_msg.format(myType, self.value))
+    def genCode(self, symbolTable, code, fName):
+        pass
     def getType(self):
         return self.type
 
