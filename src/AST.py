@@ -367,7 +367,7 @@ class NotExpr(ASTnode):
         code += lineRM(symbolTable,"JNE",1,3,7,"jump if operand is true")
         code += lineRM(symbolTable,"LDC",1,1,0,"change operand to true")
         code += lineRM(symbolTable,"ST",1,0,6,"load true into same temp value")
-        code += lineRM(symbolTable,"LDA",1,1,7,"skip switching temp to false")
+        code += lineRM(symbolTable,"LDA",7,1,7,"skip switching temp to false")
         code += lineRM(symbolTable,"ST",0,0,6,"load false into same temp value")
         self.valueOffset = symbolTable.getOffset()
         return code
