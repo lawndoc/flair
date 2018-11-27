@@ -532,6 +532,7 @@ class NegateExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.factor = semanticStack.pop()
         self.type = "integer"
+        self.valueOffset = 0
     def __str__(self, level = 0):
         rep = "\t" * level + "(" + colors.blue + "- " + colors.white + self.factor.__str__() + ")"
         return rep
@@ -542,6 +543,16 @@ class NegateExpr(ASTnode):
         if self.factor.getType() != "integer":
             symbolTable.newError()
             print("Semantic error: '-' negation applied to non-integer in function '{}'".format(fName))
+    def genCode(self, symbolTable, code, fName):
+        code = self.expr.genCode(symbolTable, code, fName)
+        childValOffset = self.expr.getValueOffset()
+        code += lineRM(symbolTable,"LD",1,childValOffset,5,"load operand value into r1")
+        code += lineRM(symbolTable,"LDC",1,1,0,"negate integer")
+        code += lineRM(symbolTable,"ST",1,0,6,"load negated integer into same temp value")
+        self.valueOffset = symbolTable.getOffset()
+        return code
+    def getValueOffset(self):
+        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
