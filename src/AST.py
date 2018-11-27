@@ -407,6 +407,7 @@ class IfStatement(ASTnode):
         self.thenExpr = semanticStack.pop()
         self.ifExpr = semanticStack.pop()
         self.type = None
+        self.valueOffset = 0
     def __str__(self, level = 0):
         rep = "\t" * level + colors.red + "if " + colors.white
         rep += self.ifExpr.__str__()
@@ -431,7 +432,26 @@ class IfStatement(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: inconsistent return type under if-then-else in function '{}'".format(fName))
-        # TODO: 1st -- genCode() for if statements
+    def genCode(self, symbolTable, code, fName):
+        code = self.ifExpr.genCode(symbolTable, code, fName)
+        ifValOffset = self.ifExpr.getValueOffset()
+        code = self.thenExpr.genCode(symbolTable, code, fName)
+        thenValOffset = self.thenExpr.getValueOffset()
+        code = self.elseExpr.genCode(symbolTable, code, fName)
+        elseValOffset = self.elseExpr.getValueOffset()
+        code += lineRM(symbolTable,"LD",1,ifValOffset,5,"load if check value into r1")
+        code += lineRM(symbolTable,"LD",2,thenValOffset,5,"load then value into r2")
+        code += lineRM(symbolTable,"LD",3,elseValOffset,5,"load else value into r3")
+        code += lineRM(symbolTable,"JEQ",1,1,7,"jump to else value if false")
+        code += lineRM(symbolTable,"ST",2,-1,6,"store then value to new temp value")
+        code += lineRM(symbolTable,"ST",3,-1,6,"store else value to new temp value")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
+        return code
+    def getValueOffset(self):
+        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
