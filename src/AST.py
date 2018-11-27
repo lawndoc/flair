@@ -417,6 +417,8 @@ class BooleanLiteral(ASTnode):
         return code
     def getType(self):
         return self.type
+    def getvalueOffset(self):
+        return self.valueOffset
 
 class Type(ASTnode):
     def __init__(self, last, semanticStack):
