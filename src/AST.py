@@ -371,6 +371,8 @@ class NotExpr(ASTnode):
         code += lineRM(symbolTable,"ST",0,0,6,"load false into same temp value")
         self.valueOffset = symbolTable.getOffset()
         return code
+    def getValueOffset(self):
+        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
