@@ -114,9 +114,9 @@ class PlusExpr(ASTnode):
             print("Semantic error: non-integer + operation in function '{}'".format(fName))
     def genCode(self, symbolTable, code, fName):
         code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getvalueOffset()
+        leftValOffset = self.left.getValueOffset()
         code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getvalueOffset()
+        rightValOffset = self.right.getValueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
         code += lineRO(symbolTable,"ADD",1,1,2,"add the two values")
@@ -126,7 +126,7 @@ class PlusExpr(ASTnode):
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
-    def getvalueOffset(self):
+    def getValueOffset(self):
         return self.valueOffset
     def setType(self, myType):
         self.type = myType
@@ -151,9 +151,9 @@ class MinusExpr(ASTnode):
             print("Semantic error: non-integer - operation in function '{}'".format(fName))
     def genCode(self, symbolTable, code, fName):
         code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getvalueOffset()
+        leftValOffset = self.left.getValueOffset()
         code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getvalueOffset()
+        rightValOffset = self.right.getValueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
         code += lineRO(symbolTable,"SUB",1,1,2,"subtract the two values")
@@ -163,7 +163,7 @@ class MinusExpr(ASTnode):
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
-    def getvalueOffset(self):
+    def getValueOffset(self):
         return self.valueOffset
     def setType(self, myType):
         self.type = myType
@@ -188,9 +188,9 @@ class TimesExpr(ASTnode):
             print("Semantic error: non-integer * operation in function '{}'".format(fName))
     def genCode(self, symbolTable, code, fName):
         code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getvalueOffset()
+        leftValOffset = self.left.getValueOffset()
         code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getvalueOffset()
+        rightValOffset = self.right.getValueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
         code += lineRO(symbolTable,"MUL",1,1,2,"multiply the two values")
@@ -200,7 +200,7 @@ class TimesExpr(ASTnode):
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
-    def getvalueOffset(self):
+    def getValueOffset(self):
         return self.valueOffset
     def setType(self, myType):
         self.type = myType
@@ -225,9 +225,9 @@ class DivideExpr(ASTnode):
             print("Semantic error: non-integer / operation in function '{}'".format(fName))
     def genCode(self, symbolTable, code, fName):
         code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getvalueOffset()
+        leftValOffset = self.left.getValueOffset()
         code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getvalueOffset()
+        rightValOffset = self.right.getValueOffset()
         code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
         code += lineRO(symbolTable,"DIV",1,1,2,"divide the r1 by r2")
@@ -237,7 +237,7 @@ class DivideExpr(ASTnode):
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
-    def getvalueOffset(self):
+    def getValueOffset(self):
         return self.valueOffset
     def setType(self, myType):
         self.type = myType
@@ -356,7 +356,7 @@ class Identifier(ASTnode):
     def genCode(self, symbolTable, code, fName):
         self.valueOffset = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
         return code
-    def getvalueOffset(self):
+    def getValueOffset(self):
         return self.valueOffset
     def getName(self):
         return self.value
@@ -380,7 +380,7 @@ class IntegerLiteral(ASTnode):
             raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
-    def getvalueOffset(self):
+    def getValueOffset(self):
         return self.valueOffset
     def genCode(self, symbolTable, code, fName):
         code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
@@ -417,7 +417,7 @@ class BooleanLiteral(ASTnode):
         return code
     def getType(self):
         return self.type
-    def getvalueOffset(self):
+    def getValueOffset(self):
         return self.valueOffset
 
 class Type(ASTnode):
@@ -740,7 +740,7 @@ class ReturnStatement(ASTnode):
         return self.type
     def genCode(self, symbolTable, code, fName):
         code = self.retStatement.genCode(symbolTable, code, fName) # return value is at end of stack
-        valOffset = self.retStatement.getvalueOffset()
+        valOffset = self.retStatement.getValueOffset()
         code += lineRM(symbolTable,"LD",1,valOffset,5,"load left operand value into r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
         # restore registers
