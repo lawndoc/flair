@@ -394,6 +394,7 @@ class IntegerLiteral(ASTnode):
 class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
+        self.type = "boolean"
         self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
