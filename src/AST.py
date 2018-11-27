@@ -362,7 +362,7 @@ class NotExpr(ASTnode):
             print("Semantic error: non-boolean 'not' operation in function '{}'".format(fName))
     def genCode(self, symbolTable, code, fName):
         code = self.expr.genCode(symbolTable, code, fName)
-        childValOffset = self.left.getValueOffset()
+        childValOffset = self.expr.getValueOffset()
         code += lineRM(symbolTable,"LD",1,childValOffset,5,"load operand value into r1")
         code += lineRM(symbolTable,"JNE",1,3,7,"jump if operand is true")
         code += lineRM(symbolTable,"LDC",1,1,0,"change operand to true")
