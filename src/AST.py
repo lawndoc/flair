@@ -25,8 +25,6 @@ def lineRM(symbolTable, instruction, r1, offset, r2, comment = ""):
 def header(name):
     return "*\n* {}\n*\n".format(name)
 
-
-
 class colors():
     blue = "\033[34m"
     green = "\033[92m"
@@ -51,6 +49,7 @@ class PrintStatement(ASTnode):
         # Analyze expression to be printed and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
+    # TODO: genCode()
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -432,6 +431,7 @@ class IfStatement(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: inconsistent return type under if-then-else in function '{}'".format(fName))
+        # TODO: genCode()
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -751,6 +751,7 @@ class Definitions(ASTnode):
     def analyze(self, symbolTable):
         for function in self.definitions:
             function.analyze(symbolTable)
+    # TODO: genCode()
     def hasDefinitions(self):
         if self.definitions:
             return True
@@ -789,6 +790,7 @@ class Function(ASTnode):
         if self.body.getType() != self.getType():
             symbolTable.newError()
             print("Semantic error: '{}' function's returned value doesn't match the declared return type".format(self.getName()))
+    # TODO: genCode()
     def getFormals(self):
         return self.formals
     def getName(self):
@@ -822,15 +824,15 @@ class Body(ASTnode):
         # Analyze return statement and annotate symbolTable
         self.returnStatement.analyze(symbolTable, ids, fName)
         self.setType(self.returnStatement.getType())
-    def setType(self, myType):
-        self.type = myType
-    def getType(self):
-        return self.type
     def genCode(self, symbolTable, code, fName):
         for ps in self.printStatements:
             code = ps.genCode(symbolTable, code, fName)
         code = self.returnStatement.genCode(symbolTable, code, fName)
         return code
+    def setType(self, myType):
+        self.type = myType
+    def getType(self):
+        return self.type
 
 
 class ReturnStatement(ASTnode):
@@ -910,7 +912,7 @@ class FunctionCall(ASTnode):
             if len(symbolTable[self.getName()].getFormals()) > 0:
                 symbolTable.newError()
                 print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
-
+    # TODO: genCode()
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):
