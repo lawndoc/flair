@@ -1,0 +1,4 @@
+program prints_true();
+begin
+    return 3 = 3
+end.

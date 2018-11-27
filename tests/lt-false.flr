@@ -1,0 +1,4 @@
+program prints_false();
+begin
+    return 3 < 3
+end.

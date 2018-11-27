@@ -77,13 +77,25 @@ class LessThan(ASTnode):
         leftValOffset = self.left.getValueOffset()
         code = self.right.genCode(symbolTable, code, fName)
         rightValOffset = self.right.getValueOffset()
-        # TODO: finish comparison
+        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+        code += lineRO(symbolTable,"SUB",1,1,2,"subtract right operand from the left")
+        code += lineRM(symbolTable,"JGT",1,2,7,"jump if left is greater than right")
+        code += lineRM(symbolTable,"ST",0,-1,6,"load false into new temp var")
+        code += lineRM(symbolTable,"LDA",7,2,7,"skip not equal")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
+        code += lineRM(symbolTable,"ST",1,-1,6,"load true into new temp var")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
+        return code
+    def getValueOffset(self):
+        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
         return self.type
-    def getValueOffset(self):
-        return self.valueOffset
 
 class EqualTo(ASTnode):
     def __init__(self, last, semanticStack):
@@ -106,13 +118,25 @@ class EqualTo(ASTnode):
         leftValOffset = self.left.getValueOffset()
         code = self.right.genCode(symbolTable, code, fName)
         rightValOffset = self.right.getValueOffset()
-        # TODO: finish comparison
+        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+        code += lineRO(symbolTable,"SUB",1,1,2,"subtract right operand from the left")
+        code += lineRM(symbolTable,"JEQ",1,2,7,"jump if left equals right")
+        code += lineRM(symbolTable,"ST",0,-1,6,"load false into new temp var")
+        code += lineRM(symbolTable,"LDA",7,2,7,"skip not equal")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
+        code += lineRM(symbolTable,"ST",1,-1,6,"load true into new temp var")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
+        return code
+    def getValueOffset(self):
+        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
         return self.type
-    def getValueOffset(self):
-        return self.valueOffset
 
 class PlusExpr(ASTnode):
     def __init__(self, last, semanticStack):
