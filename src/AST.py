@@ -442,7 +442,7 @@ class IfStatement(ASTnode):
         code += lineRM(symbolTable,"LD",1,ifValOffset,5,"load if check value into r1")
         code += lineRM(symbolTable,"LD",2,thenValOffset,5,"load then value into r2")
         code += lineRM(symbolTable,"LD",3,elseValOffset,5,"load else value into r3")
-        code += lineRM(symbolTable,"JEQ",1,1,7,"jump to else value if false")
+        code += lineRM(symbolTable,"JEQ",1,2,7,"jump to else value if false")
         code += lineRM(symbolTable,"ST",2,-1,6,"store then value to new temp value")
         code += lineRM(symbolTable,"LDA",7,1,7,"skip else case")
         code += lineRM(symbolTable,"ST",3,-1,6,"store else value to new temp value")
