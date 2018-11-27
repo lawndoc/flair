@@ -1,0 +1,4 @@
+program prints_negThree();
+begin
+    return -3
+end.

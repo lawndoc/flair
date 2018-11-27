@@ -568,7 +568,7 @@ class NegateExpr(ASTnode):
         code = self.factor.genCode(symbolTable, code, fName)
         childValOffset = self.factor.getValueOffset()
         code += lineRM(symbolTable,"LD",1,childValOffset,5,"load operand value into r1")
-        code += lineRM(symbolTable,"LDC",1,1,0,"negate integer")
+        code += lineRO(symbolTable,"SUB",1,0,1,"negate integer")
         code += lineRM(symbolTable,"ST",1,0,6,"load negated integer into same temp value")
         self.valueOffset = symbolTable.getOffset()
         return code
