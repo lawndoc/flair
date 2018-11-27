@@ -1,0 +1,5 @@
+program ops();
+{should return false}
+begin
+    return not (true and not (false or false))
+end.
