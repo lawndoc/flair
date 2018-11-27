@@ -544,8 +544,8 @@ class NegateExpr(ASTnode):
             symbolTable.newError()
             print("Semantic error: '-' negation applied to non-integer in function '{}'".format(fName))
     def genCode(self, symbolTable, code, fName):
-        code = self.expr.genCode(symbolTable, code, fName)
-        childValOffset = self.expr.getValueOffset()
+        code = self.factor.genCode(symbolTable, code, fName)
+        childValOffset = self.factor.getValueOffset()
         code += lineRM(symbolTable,"LD",1,childValOffset,5,"load operand value into r1")
         code += lineRM(symbolTable,"LDC",1,1,0,"negate integer")
         code += lineRM(symbolTable,"ST",1,0,6,"load negated integer into same temp value")
