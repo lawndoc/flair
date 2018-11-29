@@ -60,7 +60,7 @@ class SymbolTable():
     def stackPop(self):
         self.stack.pop()
     def stackIsEmpty(self):
-        if len(self.stack) == 0:
+        if len(self.stack) == 1:
             return True
         else:
             return False
