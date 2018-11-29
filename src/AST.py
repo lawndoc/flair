@@ -720,6 +720,7 @@ class Program(ASTnode):
         # jump to MAIN
         symbolTable.stackPush(self.getName())
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
+        symbolTable.lastOffset()
         # MAIN done, print returned value
         code += lineRM(symbolTable, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
         # add activation record for PRINT
