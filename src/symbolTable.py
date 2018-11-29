@@ -8,7 +8,7 @@ class SymbolTable():
         self.stack = []
         self.printAddress = 0
         self.offset = 0
-        self.lastOffsets = []
+        self.lastOffsets = [-7]
     def __iter__(self):
         if self.table:
             for f in self.table:
