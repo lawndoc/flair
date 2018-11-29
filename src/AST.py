@@ -85,7 +85,7 @@ class LessThan(ASTnode):
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"load true into new temp var")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -131,7 +131,7 @@ class EqualTo(ASTnode):
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"load true into new temp var")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -173,7 +173,7 @@ class PlusExpr(ASTnode):
         code += lineRO(symbolTable,"ADD",1,1,2,"add the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store sum into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -212,7 +212,7 @@ class MinusExpr(ASTnode):
         code += lineRO(symbolTable,"SUB",1,1,2,"subtract the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store difference into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -251,7 +251,7 @@ class TimesExpr(ASTnode):
         code += lineRO(symbolTable,"MUL",1,1,2,"multiply the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store product into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -290,7 +290,7 @@ class DivideExpr(ASTnode):
         code += lineRO(symbolTable,"DIV",1,1,2,"divide the r1 by r2")
         code += lineRM(symbolTable,"ST",1,-1,6,"store quotient into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -335,7 +335,7 @@ class AndExpr(ASTnode):
         code += lineRM(symbolTable,"LDC",1,0,0,"load 0 (false) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"store boolean into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -381,7 +381,7 @@ class OrExpr(ASTnode):
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"store boolean into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -480,7 +480,7 @@ class IfStatement(ASTnode):
         code += lineRM(symbolTable,"LDA",7,1,7,"skip else case")
         code += lineRM(symbolTable,"ST",3,-1,6,"store else value to new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -549,7 +549,7 @@ class IntegerLiteral(ASTnode):
         code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
-        code += lineRO(symbolTable,"SUB",6,6,2,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,2,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -576,7 +576,7 @@ class BooleanLiteral(ASTnode):
             code += lineRM(symbolTable,"LDC",1,0,0,"load 0 (false) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
-        code += lineRO(symbolTable,"SUB",6,6,2,"increment end of stack pointer")
+        code += lineRO(symbolTable,"SUB",6,6,2,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
@@ -733,7 +733,6 @@ class Program(ASTnode):
         # jump to PRINT
         symbolTable.stackPush("PRINT")
         code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
-        symbolTable.stackPop()
         # final PRINT done, HALT
         code += lineRO(symbolTable,"HALT",0,0,0)
         # begin PRINT function code
@@ -950,6 +949,7 @@ class ReturnStatement(ASTnode):
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
         symbolTable.stackPop()
+        symbolTable.lastOffset()
         if symbolTable.stackIsEmpty():
             code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
         else:
@@ -1032,7 +1032,7 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         # decrement r6 to make call's return value a temp variable in current frame
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement r6")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
