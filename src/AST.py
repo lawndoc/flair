@@ -95,6 +95,8 @@ class LessThan(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: less than expr value
 
 class EqualTo(ASTnode):
     def __init__(self, last, semanticStack):
@@ -136,6 +138,8 @@ class EqualTo(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: equal to expr value
 
 class PlusExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -173,6 +177,8 @@ class PlusExpr(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: plus expr value
 
 class MinusExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -210,6 +216,8 @@ class MinusExpr(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: minus expr value
 
 class TimesExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -247,6 +255,8 @@ class TimesExpr(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: times expr value
 
 class DivideExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -284,6 +294,8 @@ class DivideExpr(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: divide expr value
 
 class AndExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -327,6 +339,8 @@ class AndExpr(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: and expr value
 
 class OrExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -368,6 +382,8 @@ class OrExpr(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: or expr value
 
 class NotExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -400,6 +416,8 @@ class NotExpr(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: not expr value
 
 class IfStatement(ASTnode):
     def __init__(self, last, semanticStack):
@@ -457,6 +475,8 @@ class IfStatement(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: if statement value
 
 class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
@@ -485,6 +505,8 @@ class Identifier(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: identifier value
 
 class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
@@ -511,6 +533,8 @@ class IntegerLiteral(ASTnode):
         symbolTable.decrementOffset()
         self.valueOffset = symbolTable.getOffset()
         return code
+    def getValue(self):
+        pass # TODO: integer literal value
 
 class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
@@ -540,6 +564,8 @@ class BooleanLiteral(ASTnode):
         return self.type
     def getValueOffset(self):
         return self.valueOffset
+    def getValue(self):
+        pass # TODO: boolean literal value
 
 class Type(ASTnode):
     def __init__(self, last, semanticStack):
@@ -578,6 +604,8 @@ class NegateExpr(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: negate expr value
 
 class Program(ASTnode):
     def __init__(self, last, semanticStack):
@@ -827,6 +855,8 @@ class Function(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: function value
 
 class Body(ASTnode):
     def __init__(self, last, semanticStack):
@@ -861,6 +891,8 @@ class Body(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValue(self):
+        pass # TODO: body value
 
 
 class ReturnStatement(ASTnode):
@@ -897,6 +929,8 @@ class ReturnStatement(ASTnode):
         else:
             code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
         return code
+    def getValue(self):
+        pass # TODO: return statement value
 
 class FunctionCall(ASTnode):
     def __init__(self, last, semanticStack):
@@ -961,7 +995,7 @@ class FunctionCall(ASTnode):
         if len(symbolTable[self.getName()].getFormals()) > 0:
             code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
-                code += lineRM(symbolTable,"LDC",2,self.actuals[i],0,"load arg{} into r2".format(str(i+1)))
+                code += lineRM(symbolTable,"LDC",2,self.actuals[i].getValue(),0,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
                 code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
                 symbolTable.decrementOffset()
@@ -978,6 +1012,8 @@ class FunctionCall(ASTnode):
         return code
     def getName(self):
         return self.identifier.getName()
+    def getValue(self):
+        pass # TODO: funciton call value
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -995,6 +1031,8 @@ class Actuals(ASTnode):
         for actual in self.actuals:
             yield actual
         # raise StopIteration
+    def __getitem__(self, key):
+        return self.actuals[key]
     def __str__(self, level = 0):
         rep = ""
         for actual in self.actuals:
@@ -1023,6 +1061,8 @@ class Actual(ASTnode):
         # Analyze expression passed into function as an argument and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
+    def getValue(self):
+        return self.expr.getValue()
     def setType(self, myType):
         self.type = myType
     def getType(self):
