@@ -1018,7 +1018,8 @@ class FunctionCall(ASTnode):
         if len(symbolTable[self.getName()].getFormals()) > 0:
             code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
-                code += lineRM(symbolTable,"LDC",2,self.actuals[i].getValue(),0,"load arg{} into r2".format(str(i+1)))
+                # TODO: generate code for actual
+                code += lineRM(symbolTable,"LD",2,self.actuals[i].getOffset(),5,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
                 code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
                 symbolTable.decrementOffset(); code += "* offset: " + str(symbolTable.getOffset()) + "\n"
@@ -1081,6 +1082,7 @@ class Actual(ASTnode):
     def __init__(self, last, semanticStack):
         self.expr = semanticStack.pop()
         self.type = None
+        self.valueOffset = 0
     def __str__(self, level=0):
         rep = self.expr.__str__()
         return rep
@@ -1088,9 +1090,15 @@ class Actual(ASTnode):
         # Analyze expression passed into function as an argument and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
+    def genCode(self, symbolTable, code, fName):
+        code = self.expr.genCode()
+        self.valueOffset = self.expr.getOffset()
+        return code
     def getValue(self):
         return self.expr.getValue()
     def setType(self, myType):
         self.type = myType
     def getType(self):
         return self.type
+    def getValueOffset(self):
+        return self.valueOffset
