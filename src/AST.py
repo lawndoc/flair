@@ -96,7 +96,10 @@ class LessThan(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: less than expr value
+        if self.left.getValue() < self.right.getValue():
+            return 1
+        else:
+            return 0
 
 class EqualTo(ASTnode):
     def __init__(self, last, semanticStack):
@@ -139,7 +142,10 @@ class EqualTo(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: equal to expr value
+        if self.left.getValue() == self.right.getValue():
+            return 1
+        else:
+            return 0
 
 class PlusExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -178,7 +184,7 @@ class PlusExpr(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: plus expr value
+        return self.left.getValue() + self.right.getValue()
 
 class MinusExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -217,7 +223,7 @@ class MinusExpr(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: minus expr value
+        return self.left.getValue() - self.right.getValue()
 
 class TimesExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -256,7 +262,7 @@ class TimesExpr(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: times expr value
+        return self.left.getValue() * self.right.getValue()
 
 class DivideExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -295,7 +301,7 @@ class DivideExpr(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: divide expr value
+        return self.left.getValue() / self.right.getValue()
 
 class AndExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -340,7 +346,10 @@ class AndExpr(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: and expr value
+        if self.left.getValue() + self.right.getValue() == 2:
+            return 1
+        else:
+            return 0
 
 class OrExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -383,7 +392,10 @@ class OrExpr(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: or expr value
+        if self.left.getValue() + self.right.getValue() > 0:
+            return 1
+        else:
+            return 0
 
 class NotExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -417,7 +429,10 @@ class NotExpr(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: not expr value
+        if self.expr.getValue() == 0:
+            return 1
+        else:
+            return 0
 
 class IfStatement(ASTnode):
     def __init__(self, last, semanticStack):
@@ -476,7 +491,10 @@ class IfStatement(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: if statement value
+        if self.ifExpr.getValue() == 1:
+            return self.thenExpr.getValue()
+        else:
+            return self.elseExpr.getValue()
 
 class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
@@ -506,6 +524,8 @@ class Identifier(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
+        print("Unimplemented feature: cannot pass in variable to function call.")
+        exit()
         pass # TODO: identifier value
 
 class IntegerLiteral(ASTnode):
@@ -534,7 +554,7 @@ class IntegerLiteral(ASTnode):
         self.valueOffset = symbolTable.getOffset()
         return code
     def getValue(self):
-        pass # TODO: integer literal value
+        return self.value
 
 class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
@@ -565,7 +585,10 @@ class BooleanLiteral(ASTnode):
     def getValueOffset(self):
         return self.valueOffset
     def getValue(self):
-        pass # TODO: boolean literal value
+        if self.value == "true":
+            return 1
+        else:
+            return 0
 
 class Type(ASTnode):
     def __init__(self, last, semanticStack):
@@ -605,7 +628,7 @@ class NegateExpr(ASTnode):
     def getType(self):
         return self.type
     def getValue(self):
-        pass # TODO: negate expr value
+        return 0 - self.factor.getValue()
 
 class Program(ASTnode):
     def __init__(self, last, semanticStack):
@@ -1013,7 +1036,9 @@ class FunctionCall(ASTnode):
     def getName(self):
         return self.identifier.getName()
     def getValue(self):
-        pass # TODO: funciton call value
+        print("Unimplemented feature: cannot pass a function call as an argument to a function call.")
+        exit()
+        pass # TODO: function call value
     def setType(self, myType):
         self.type = myType
     def getType(self):
