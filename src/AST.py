@@ -718,8 +718,10 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to MAIN
+        symbolTable.stackPush(self.getName())
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         # MAIN done, print returned value
+        symbolTable.stackPop()
         code += lineRM(symbolTable, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
         # add activation record for PRINT
         code += lineRM(symbolTable, "ST",2,-8,5,"move returned value into arg for PRINT's AR")
@@ -730,7 +732,9 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LDA",3,2,7,"put return address for PRINT into r3")
         code += lineRM(symbolTable,"ST",3,-1,5,"move return address into PRINT's AR")
         # jump to PRINT
+        symbolTable.stackPush("PRINT")
         code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
+        symbolTable.stackPop()
         # final PRINT done, HALT
         code += lineRO(symbolTable,"HALT",0,0,0)
         # begin PRINT function code
