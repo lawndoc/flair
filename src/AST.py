@@ -721,7 +721,6 @@ class Program(ASTnode):
         symbolTable.stackPush(self.getName())
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         # MAIN done, print returned value
-        symbolTable.stackPop()
         code += lineRM(symbolTable, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
         # add activation record for PRINT
         code += lineRM(symbolTable, "ST",2,-8,5,"move returned value into arg for PRINT's AR")
