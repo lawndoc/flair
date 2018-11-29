@@ -1094,7 +1094,7 @@ class Actual(ASTnode):
         self.setType(self.expr.getType())
     def genCode(self, symbolTable, code, fName):
         code = self.expr.genCode(symbolTable, code, fName)
-        self.valueOffset = self.expr.getOffset()
+        self.valueOffset = self.expr.getValueOffset()
         return code
     def getValue(self):
         return self.expr.getValue()
