@@ -891,10 +891,11 @@ class ReturnStatement(ASTnode):
         code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
+        symbolTable.stackPop()
         if symbolTable.stackIsEmpty():
             code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
         else:
-            code += lineRM(symbolTable,"LD",7,2,6,"load return address into r7")
+            code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
         return code
 
 class FunctionCall(ASTnode):
@@ -955,11 +956,12 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
         code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
         symbolTable.newOffset(-7)
-        # optionally generate code if function takes arguments
+        symbolTable.stackPush(self.getName())
+        # optionally generate code if function gives arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
             code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
-                code += lineRM(symbolTable,"LD",2,i+1,0,"load arg{} into r2".format(str(i+1)))
+                code += lineRM(symbolTable,"LDC",2,self.actuals[i],0,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
                 code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
                 symbolTable.decrementOffset()

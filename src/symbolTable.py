@@ -5,7 +5,7 @@ class SymbolTable():
         self.table = {}
         self.errors = False
         self.lineNum = 0
-        self.stackEmpty = True
+        self.stack = []
         self.printAddress = 0
         self.offset = 0
         self.lastOffsets = []
@@ -55,12 +55,15 @@ class SymbolTable():
     def nextLine(self):
         self.lineNum += 1
         return str(self.lineNum - 1)
-    def setNotEmpty(self):
-        self.stackEmpty = False
-    def setEmpty(self):
-        self.stackEmpty = True
+    def stackPush(self,new):
+        self.stack.append(new)
+    def stackPop(self):
+        self.stack.pop()
     def stackIsEmpty(self):
-        return self.stackEmpty
+        if len(self.stack) == 0:
+            return True
+        else:
+            return False
 
 class FormalRecord:
     def __init__(self, formalNode, pos):
