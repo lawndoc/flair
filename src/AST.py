@@ -942,7 +942,7 @@ class Body(ASTnode):
         self.setType(self.returnStatement.getType())
     def genCode(self, symbolTable, code, fName, fromMain):
         for ps in self.printStatements:
-            code = ps.genCode(symbolTable, code, fName)
+            code = ps.genCode(symbolTable, code, fName, fromMain)
         code = self.returnStatement.genCode(symbolTable, code, fName, fromMain)
         return code
     def setType(self, myType):
