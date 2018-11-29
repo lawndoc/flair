@@ -1018,8 +1018,9 @@ class FunctionCall(ASTnode):
         if len(symbolTable[self.getName()].getFormals()) > 0:
             code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
-                # TODO: generate code for actual : "LDC" --> "LD", getValue() --> getValueOffset()
-                code += lineRM(symbolTable,"LDC",2,self.actuals[i].getValue(),5,"load arg{} into r2".format(str(i+1)))
+                # TODO: generate code for actual : "LDC" <--> "LD", getValue() <--> getValueOffset()
+                code += lineRM(symbolTable,"LD",2,self.actuals[i].getValueOffset(),0,"load arg{} into r2".format(str(i+1)))
+                # code += lineRM(symbolTable,"LDC",2,self.actuals[i].getValue(),5,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
                 code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
                 symbolTable.decrementOffset(); code += "* offset: " + str(symbolTable.getOffset()) + "\n"
