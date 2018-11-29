@@ -949,7 +949,6 @@ class ReturnStatement(ASTnode):
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
         symbolTable.stackPop()
-        symbolTable.lastOffset()
         if symbolTable.stackIsEmpty():
             code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
         else:
@@ -1030,6 +1029,7 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to function body
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
+        symbolTable.lastOffset()
         # decrement r6 to make call's return value a temp variable in current frame
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
