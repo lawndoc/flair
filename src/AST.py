@@ -655,13 +655,13 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
         code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
         symbolTable.setOffset(-7)
-        # optionally generate code if program takes arguments
+        # optionally generate code if function takes arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
+            code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 code += lineRM(symbolTable,"LD",2,i+1,0,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
-                code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-                code += lineRO(symbolTable,"SUB",6,6,1,"increment end of stack pointer")
+                code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
                 symbolTable.decrementOffset()
         # add return address to MAIN'S AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
@@ -698,12 +698,12 @@ class Program(ASTnode):
             code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
         else:
             code += lineRM(symbolTable,"LD",7,2,6,"load return address into r7")
-        # begin program function code
+        # generate program body code
         code += header(self.getName())
         symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
         code = self.body.genCode(symbolTable, code, self.getName())
-        # TODO: 4th -- this is where we will call each definition's genCode()
-
+        # generate each function's code
+        code = self.definitions.genCode(symbolTable, code)
         # done generating code. replace function address placeholders
         for function in symbolTable:
             placeholder = "<{}>".format(function)
@@ -772,7 +772,10 @@ class Definitions(ASTnode):
     def analyze(self, symbolTable):
         for function in self.definitions:
             function.analyze(symbolTable)
-    # TODO: 2nd -- genCode() for definitions
+    def genCode(self, symbolTable, code):
+        for function in self.definitions:
+            code = function.genCode(symbolTable, code)
+        return code
     def hasDefinitions(self):
         if self.definitions:
             return True
@@ -811,7 +814,11 @@ class Function(ASTnode):
         if self.body.getType() != self.getType():
             symbolTable.newError()
             print("Semantic error: '{}' function's returned value doesn't match the declared return type".format(self.getName()))
-    # TODO: 3rd -- genCode() for each function
+    def genCode(self, symbolTable, code):
+        code += header(self.getName())
+        symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
+        code = self.body.genCode(symbolTable, code, self.getName())
+        return code
     def getFormals(self):
         return self.formals
     def getName(self):
@@ -933,7 +940,34 @@ class FunctionCall(ASTnode):
             if len(symbolTable[self.getName()].getFormals()) > 0:
                 symbolTable.newError()
                 print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
-    # TODO: 5th -- genCode() for function calls
+    def genCode(self, symbolTable, code, fName):
+        ## add Activation Record for function
+        # load registers into AR
+        code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
+        code += lineRM(symbolTable,"ST",5,-7,6,"save register 5 to AR")
+        code += lineRM(symbolTable,"ST",4,-6,6,"save register 4 to AR")
+        code += lineRM(symbolTable,"ST",3,-5,6,"save register 3 to AR")
+        code += lineRM(symbolTable,"ST",2,-4,6,"save register 2 to AR")
+        code += lineRM(symbolTable,"ST",1,-3,6,"save register 1 to AR")
+        # set r5 and r6 to beginning and end of function's AR, respectively
+        code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of {}'s AR".format(self.getName()))
+        code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
+        code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
+        symbolTable.newOffset(-7)
+        # optionally generate code if function takes arguments
+        if len(symbolTable[self.getName()].getFormals()) > 0:
+            code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
+            for i in range(0,len(symbolTable[self.getName()].getFormals())):
+                code += lineRM(symbolTable,"LD",2,i+1,0,"load arg{} into r2".format(str(i+1)))
+                code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
+                code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+                symbolTable.decrementOffset()
+        # add return address to MAIN'S AR
+        code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
+        code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
+        # jump to function body
+        code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
+        return code
     def getName(self):
         return self.identifier.getName()
     def setType(self, myType):

@@ -1,0 +1,9 @@
+program one_function();
+{program should print 13}
+    function returns_input( a: integer ): integer
+    begin
+        return a
+    end;
+begin
+    return returns_input(12)+1
+end.

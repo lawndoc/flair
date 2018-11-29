@@ -35,8 +35,8 @@ class SymbolTable():
         return self.errors
     def setOffset(self, value):
         self.offset = value
-    def decrementOffset(self):
-        self.offset -= 1
+    def decrementOffset(self, amount = 1):
+        self.offset -= amount
     def getOffset(self):
         return self.offset
     def newOffset(self, new):
