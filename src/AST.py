@@ -905,6 +905,7 @@ class FunctionCall(ASTnode):
             self.actuals = None
         self.identifier = semanticStack.pop()
         self.type = None
+        self.valueOffset = 0
     def __str__(self, level = 0):
         rep = "\t" * level + self.identifier.__str__()
         rep += "("
@@ -962,11 +963,12 @@ class FunctionCall(ASTnode):
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
                 code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
                 symbolTable.decrementOffset()
-        # add return address to MAIN'S AR
+        # add return address to function's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to function body
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
+        self.valueOffset = symbolTable.getOffset() - 1
         return code
     def getName(self):
         return self.identifier.getName()
@@ -974,6 +976,8 @@ class FunctionCall(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def getValueOffset(self):
+        return self.valueOffset
 
 class Actuals(ASTnode):
     def __init__(self, last, semanticStack):
