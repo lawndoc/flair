@@ -75,7 +75,7 @@ class PrintStatement(ASTnode):
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into PRINT's AR")
         # jump to PRINT body
-        code += lineRM(symbolTable,"LDA",7,"<PRINT>".format(self.getName()),0,"jump to PRINT")
+        code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
         symbolTable.lastOffset()
         code += "* restored last frame's offset\n"
         # decrement r6 to make call's return value a temp variable in current frame
