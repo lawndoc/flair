@@ -1093,7 +1093,7 @@ class Actual(ASTnode):
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
     def genCode(self, symbolTable, code, fName):
-        code = self.expr.genCode()
+        code = self.expr.genCode(symbolTable, code, fName)
         self.valueOffset = self.expr.getOffset()
         return code
     def getValue(self):
