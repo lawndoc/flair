@@ -882,7 +882,7 @@ class ReturnStatement(ASTnode):
     def genCode(self, symbolTable, code, fName):
         code = self.retStatement.genCode(symbolTable, code, fName) # return value is at end of stack
         valOffset = self.retStatement.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,valOffset,5,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",1,valOffset,5,"load function's return value into r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
         # restore registers
         code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
@@ -968,7 +968,11 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to function body
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
-        self.valueOffset = symbolTable.getOffset() - 1
+        # decrement r6 to make call's return value a temp variable in current frame
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement r6")
+        symbolTable.decrementOffset()
+        self.valueOffset = symbolTable.getOffset()
         return code
     def getName(self):
         return self.identifier.getName()
