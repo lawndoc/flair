@@ -49,7 +49,41 @@ class PrintStatement(ASTnode):
         # Analyze expression to be printed and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
-    # TODO: 6th -- genCode() for printStatements (do last)
+    def genCode(self, symbolTable, code, fName, fromMain):
+        ## add Activation Record for PRINT
+        # load registers into AR
+        code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
+        code += lineRM(symbolTable,"ST",5,-7,6,"save register 5 to AR")
+        code += lineRM(symbolTable,"ST",4,-6,6,"save register 4 to AR")
+        code += lineRM(symbolTable,"ST",3,-5,6,"save register 3 to AR")
+        code += lineRM(symbolTable,"ST",2,-4,6,"save register 2 to AR")
+        code += lineRM(symbolTable,"ST",1,-3,6,"save register 1 to AR")
+        # set r5 and r6 to beginning and end of PRINT's AR, respectively
+        code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of PRINT's AR")
+        code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
+        code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of PRINT's AR")
+        symbolTable.newOffset(-7)
+        code += "* reset offset to -7\n"
+        # evaluate expression and place in PRINT's arg slot
+        code = self.expr.genCode(symbolTable, code, fName)
+        code += lineRM(symbolTable,"LD",2,self.expr.getValueOffset(),5,"load arg into r2")
+        code += lineRM(symbolTable,"ST",2,-8,5,"load arg into AR")
+        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
+        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        symbolTable.decrementOffset(); code += "* offset: " + str(symbolTable.getOffset()) + "\n"
+        # add return address to PRINT's AR
+        code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
+        code += lineRM(symbolTable,"ST",1,-1,5,"store return address into PRINT's AR")
+        # jump to PRINT body
+        code += lineRM(symbolTable,"LDA",7,"<PRINT>".format(self.getName()),0,"jump to PRINT")
+        symbolTable.lastOffset()
+        code += "* restored last frame's offset\n"
+        # decrement r6 to make call's return value a temp variable in current frame
+        # code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
+        # code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        # symbolTable.decrementOffset(); code += "* offset: " + str(symbolTable.getOffset()) + "\n"
+        # self.valueOffset = symbolTable.getOffset()
+        return code
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -727,7 +761,7 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
         code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # add return address to PRINT's AR
-        code += lineRM(symbolTable,"LDA",3,2,7,"put return address for PRINT into r3")
+        code += lineRM(symbolTable,"LDA",3,2,7,"put return address into r3")
         code += lineRM(symbolTable,"ST",3,-1,5,"move return address into PRINT's AR")
         # jump to PRINT
         code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")

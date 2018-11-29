@@ -1,0 +1,12 @@
+program test_print();
+    function same( a:integer ) : integer
+    begin
+        return a
+    end;
+begin
+    print (1 + 3);
+    print (1 + 2);
+    print (1 + 1);
+    print (1 + 0);
+    return 1 + -1
+end.
