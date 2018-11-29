@@ -718,7 +718,6 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to MAIN
-        symbolTable.stackPush(self.getName())
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         # MAIN done, print returned value
         code += lineRM(symbolTable, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
@@ -731,7 +730,6 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LDA",3,2,7,"put return address for PRINT into r3")
         code += lineRM(symbolTable,"ST",3,-1,5,"move return address into PRINT's AR")
         # jump to PRINT
-        symbolTable.stackPush("PRINT")
         code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
         # final PRINT done, HALT
         code += lineRO(symbolTable,"HALT",0,0,0)
@@ -747,14 +745,14 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
-        if symbolTable.stackIsEmpty():
+        if True: # TODO: handle when other functions call PRINT
             code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
         else:
-            code += lineRM(symbolTable,"LD",7,2,6,"load return address into r7")
+            code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
         # generate program body code
         code += header(self.getName())
         symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
-        code = self.body.genCode(symbolTable, code, self.getName())
+        code = self.body.genCode(symbolTable, code, self.getName(), True)
         # generate each function's code
         code = self.definitions.genCode(symbolTable, code)
         # done generating code. replace function address placeholders
@@ -871,7 +869,7 @@ class Function(ASTnode):
     def genCode(self, symbolTable, code):
         code += header(self.getName())
         symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
-        code = self.body.genCode(symbolTable, code, self.getName())
+        code = self.body.genCode(symbolTable, code, self.getName(), False)
         return code
     def getFormals(self):
         return self.formals
@@ -908,10 +906,10 @@ class Body(ASTnode):
         # Analyze return statement and annotate symbolTable
         self.returnStatement.analyze(symbolTable, ids, fName)
         self.setType(self.returnStatement.getType())
-    def genCode(self, symbolTable, code, fName):
+    def genCode(self, symbolTable, code, fName, fromMain):
         for ps in self.printStatements:
             code = ps.genCode(symbolTable, code, fName)
-        code = self.returnStatement.genCode(symbolTable, code, fName)
+        code = self.returnStatement.genCode(symbolTable, code, fName, fromMain)
         return code
     def setType(self, myType):
         self.type = myType
@@ -937,7 +935,7 @@ class ReturnStatement(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def genCode(self, symbolTable, code, fName):
+    def genCode(self, symbolTable, code, fName, fromMain):
         code = self.retStatement.genCode(symbolTable, code, fName) # return value is at end of stack
         valOffset = self.retStatement.getValueOffset()
         code += lineRM(symbolTable,"LD",1,valOffset,5,"load function's return value into r1")
@@ -949,8 +947,7 @@ class ReturnStatement(ASTnode):
         code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
-        symbolTable.stackPop()
-        if symbolTable.stackIsEmpty():
+        if fromMain:
             code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
         else:
             code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
@@ -1017,7 +1014,6 @@ class FunctionCall(ASTnode):
         code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
         symbolTable.newOffset(-7)
         code += "* reset offset to -7\n"
-        symbolTable.stackPush(self.getName())
         # optionally generate code if function gives arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
             code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
