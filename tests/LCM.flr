@@ -1,6 +1,6 @@
-program LCM( n: integer, m: integer ) : integer {should be ; }
+program LCM( n: integer, m: integer ); {should be ; }
 	{ Input two numbers and return their least common multiple }
-	function MOD(n:integer,divisor:integer):integer
+	function MOD(n:integer,m:integer):integer
 	begin
 		return m-m/n*n
 	end;

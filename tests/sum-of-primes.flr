@@ -1,0 +1,39 @@
+program sum_of_primes( maximum : integer );
+  { ----------------------------------------------
+    functions from the Flair library
+    ---------------------------------------------- }
+
+  function MOD( m : integer, n : integer ) : integer
+  begin
+    return m - m/n * n
+  end;
+
+  function isPrime( n : integer , divisor : integer ) : boolean
+  begin
+    return if divisor = 1 then
+      true
+    else if MOD( n, divisor) = 0 then
+      false
+    else
+      isPrime( n, divisor-1)
+  end;
+
+  function addPrime( n: integer ) : integer
+	begin
+		return if n = 1 then
+        n
+      else
+        n + addPrime( nextPrime( n-1 ) )
+  end;
+
+  function nextPrime( n : integer ) : integer
+  begin
+    return if isPrime( n ) then
+      n
+    else
+      nextPrime( n-1 )
+  end;
+
+begin
+  return addPrime( nextPrime( maximum ) )
+end.
