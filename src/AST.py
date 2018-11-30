@@ -1044,7 +1044,7 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"ST",1,-3,6,"save register 1 to AR")
         # set r5 and r6 to beginning and end of function's AR, respectively
         code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of {}'s AR".format(self.getName()))
-        code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
+        code += lineRM(symbolTable,"LDC",2,8,0,"load 8 into r2")
         code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
         symbolTable.newOffset(-7)
         code += "* reset offset to -7\n"
