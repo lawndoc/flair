@@ -753,8 +753,15 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to MAIN
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
+        # restore registers
+        code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
+        code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
+        code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
+        code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
+        code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
+        code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
         # MAIN done, print returned value
-        code += lineRM(symbolTable, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
+        code += lineRM(symbolTable, "LD",2,-1,6,"put return value from {} into r2".format(self.getName()))
         # add activation record for PRINT
         code += lineRM(symbolTable, "ST",2,-8,5,"move returned value into arg for PRINT's AR")
         # load r5 and r6 to AR
@@ -772,13 +779,6 @@ class Program(ASTnode):
         symbolTable.setPrintAddress(symbolTable.getLineNum())
         code += lineRM(symbolTable,"LD",1,-8,5,"load arg from AR into r1")
         code += lineRO(symbolTable,"OUT",1,0,0,"print value")
-        # restore registers
-        code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
-        code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
-        code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
-        code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
-        code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
-        code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
         # if True:
         code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
         # else:
