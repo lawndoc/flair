@@ -746,7 +746,7 @@ class Program(ASTnode):
                 code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
                 symbolTable.decrementOffset()# ; code += "* offset: " + str(symbolTable.getOffset()) + "\n"
         # add return address to MAIN'S AR
-        code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
+        code += lineRM(symbolTable,"LDA",1,4,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # load r5 and r6 into AR
         code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
