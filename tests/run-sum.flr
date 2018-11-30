@@ -1,6 +1,6 @@
 program RunSum();
 	{ Return the sum of every number between 1 and 5 inclusive == 15}
-	function recursiveAdd( n: integer )
+	function recursiveAdd( n: integer ) : integer
 	begin
 		return if n = 1 then
 			n
