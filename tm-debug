@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# pass in path to a tm program as an argument
-FILE_PATH=$1
-
-# may have to change path to files
-cat /Users/nicksanford/github/tm-debugger/debug_input | /Users/nicksanford/github/tm-simulator/tm-cli $FILE_PATH > debugged.txt;
-python3 /Users/nicksanford/github/tm-debugger/cleanup.py debugged.txt;
-echo "Saved debugging output to debugged.txt";
