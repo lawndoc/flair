@@ -1,10 +1,10 @@
 Malwareswaldo: C.J. May, Nick Sanford
 
 New to Project 6:
-    - Made DMEMandIMEM.txt, registers.txt, and stackFrame.txt.
-    - Made src/generator.py but most of the heavy lifting goes on
-        in src/AST.py with the genCode function for each node.
-    - Made generatortest.py client in clients/ called by flairc.
+    - Made tm-debug to help debug TM programs
+    - Updated src/generator.py but most of the heavy lifting goes on
+        in src/AST.py with the genCode() method for each node
+    - Made lots of test files to test features of language
 
 Known Bugs:
 
