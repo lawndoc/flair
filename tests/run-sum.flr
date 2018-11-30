@@ -1,12 +1,12 @@
-program RunSum(n: integer);
-	{ Return the sum of every number between 1 and n inclusive }
+program RunSum();
+	{ Return the sum of every number between 1 and 5 inclusive == 15}
 	function recursiveAdd( n: integer )
 	begin
-		return if n = 1 {then}
+		return if n = 1 then
 			n
-		else  
+		else
 			n + recursiveAdd(n-1)
 	end;
 begin
-	return recursiveAdd(n, 0)
+	return recursiveAdd(5)
 end.
