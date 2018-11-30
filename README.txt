@@ -1,6 +1,6 @@
 Malwareswaldo: C.J. May, Nick Sanford
 
-New to Project 5:
+New to Project 6:
     - Made DMEMandIMEM.txt, registers.txt, and stackFrame.txt.
     - Made src/generator.py but most of the heavy lifting goes on
         in src/AST.py with the genCode function for each node.
