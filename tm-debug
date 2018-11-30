@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# pass in path to a tm program as an argument
+FILE_PATH=$1
+
+# may have to change path to files
+cat /home/doctormay6/Compiler/tm-debugger/debug_input | tm-cli $FILE_PATH > debugged.txt;
+python3 /home/doctormay6/Compiler/tm-debugger/cleanup.py debugged.txt;
+echo "Saved debugging output to debugged.txt";
