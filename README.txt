@@ -5,6 +5,10 @@ New to Project 6:
     - Updated src/generator.py but most of the heavy lifting goes on
         in src/AST.py with the genCode() method for each node
     - Made lots of test files to test features of language
+    - Made a "late CS1 program" named "sum-of-primes.flr" that will
+        add all of the prime numbers less than the maximum number inputted
+        by the user. This was a solution to one of the Euler Project Problems
+        (Problem 10) to find the sum of all primes below 2 million.
 
 Known Bugs:
 
