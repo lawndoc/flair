@@ -733,9 +733,6 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LDA",5,0,1,"set r5 to bottom of dmem".format(self.getName()))
         code += lineRM(symbolTable,"LDA",6,0,1,"set r6 to bottom of dmem".format(self.getName()))
         ## add Activation Record for MAIN
-        # load r5 and r6 into AR
-        code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
-        code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # set r6 to end of MAIN's AR
         code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
         code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
@@ -751,6 +748,9 @@ class Program(ASTnode):
         # add return address to MAIN'S AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
+        # load r5 and r6 into AR
+        code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
+        code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # jump to MAIN
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         # restore registers
