@@ -779,10 +779,10 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
-        if True: # TODO: handle when other functions call PRINT
-            code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
-        else:
-            code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
+        # if True:
+        code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
+        # else:
+        #     code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
         # generate program body code
         code += header(self.getName())
         symbolTable[self.getName()].setAddress(symbolTable.getLineNum())
@@ -975,16 +975,16 @@ class ReturnStatement(ASTnode):
         code += lineRM(symbolTable,"LD",1,valOffset,5,"load function's return value into r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
         # restore registers
-        code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
-        code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
-        code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
-        code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
-        code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
-        code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
-        if fromMain:
-            code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
-        else:
-            code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
+        # code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
+        # code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
+        # code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
+        # code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
+        # code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
+        # code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
+        # if fromMain:
+        code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
+        # else:
+        #     code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
         return code
     def getValue(self):
         pass # TODO: return statement value
@@ -1065,7 +1065,13 @@ class FunctionCall(ASTnode):
         # jump to function body
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         symbolTable.lastOffset()
-        code += "* restored last frame's offset\n"
+        # restore registers
+        code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
+        code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
+        code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
+        code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
+        code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
+        code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
         # decrement r6 to make call's return value a temp variable in current frame
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
