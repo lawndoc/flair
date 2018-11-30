@@ -1,0 +1,13 @@
+program two_functions();
+{ should return 30 }
+    function add(a:integer, b:integer):integer
+    begin
+        return a + b
+    end;
+    function do_this(a:integer, b:integer):integer
+    begin
+        return add(a,b*5)
+    end;
+begin
+    return do_this(5,5)
+end.
