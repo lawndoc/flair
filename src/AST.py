@@ -77,7 +77,7 @@ class PrintStatement(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into PRINT's AR")
         # jump to PRINT body
         code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
-        symbolTable[fName].lastOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         code += "* restored last frame's offset\n"
         return code
     def setType(self, myType):
@@ -603,7 +603,7 @@ class Identifier(ASTnode):
             code += lineRM(symbolTable,"ST",1,-1,6,"store value into new temp variable")
             code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
             code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-            # set valueOffset for node to location of new temp variable
+            # set value offset for node to location of new temp variable
             if child == 0:
                 code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
             elif child == 1:
@@ -1145,7 +1145,7 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to function body
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
-        symbolTable[self.getName()].lastOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         code += "* restored last frame's offset\n"
         # restore registers
         code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
