@@ -550,8 +550,7 @@ class Identifier(ASTnode):
         if symbolTable.isFromCall():
             ## move from last frame into new temp variable
             # move r5 to last frame
-            code += lineRM(symbolTable,"LDC",2,symbolTable.peekLastOffset()-1,0,"load address for begging of last frame into r2")
-            code += lineRO(symbolTable,"SUB",5,5,2,"set r5 to last frame to get variable {}".format(self.value))
+            code += lineRO(symbolTable,"SUB",5,5,4,"set r5 to last frame to get variable {}".format(self.value))
             # load arg into r1
             code += lineRM(symbolTable,"LD",1,-(symbolTable[fName].getFormals()[self.value].getPos() + 8),5,"load variable {} into r1".format(self.value))
             # store arg into new temp variable
@@ -561,7 +560,7 @@ class Identifier(ASTnode):
             # set valueOffset for node to location of new temp variable
             self.valueOffset = symbolTable.getOffset()
             # reset r5 back to normal
-            code += lineRO(symbolTable,"ADD",5,5,2,"set r5 back to next frame")
+            code += lineRO(symbolTable,"ADD",5,5,4,"set r5 back to next frame")
         else:
             self.valueOffset = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
         return code
@@ -745,13 +744,11 @@ class Program(ASTnode):
         return self.formals
     def genCode(self, symbolTable):
         symbolTable.setLineNum(0)
-        code = lineRM(symbolTable, "LD",1,0,0,"load max memory address into r1")
-        code += lineRM(symbolTable,"LDA",5,0,1,"set r5 to bottom of dmem".format(self.getName()))
-        code += lineRM(symbolTable,"LDA",6,0,1,"set r6 to bottom of dmem".format(self.getName()))
+        code = lineRM(symbolTable,"LDA",5,0,0,"set r5 to bottom of dmem")
+        code += lineRM(symbolTable,"LDA",6,0,0,"set r6 to bottom of dmem")
         ## add Activation Record for MAIN
         # set r6 to end of MAIN's AR
-        code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
-        code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
+        code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
         symbolTable.setOffset(-7)
         # optionally generate code if function takes arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
@@ -1049,9 +1046,11 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"ST",2,-4,6,"save register 2 to AR")
         code += lineRM(symbolTable,"ST",1,-3,6,"save register 1 to AR")
         # set r5 and r6 to beginning and end of function's AR, respectively
+        code += lineRM(symbolTable,"LDC",1,1,0)
+        code += lineRO(symbolTable,"SUB",4,5,6,"set r4 to last frame size")
+        code += lineRO(symbolTable,"ADD",4,4,1,"set r4 to last frame size + 1")
         code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of {}'s AR".format(self.getName()))
-        code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
-        code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of {}'s AR".format(self.getName()))
+        code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
         symbolTable.newOffset(-7)
         code += "* reset offset to -7\n"
         # optionally generate code if function gives arguments
