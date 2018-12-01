@@ -7,7 +7,6 @@ class SymbolTable():
         self.lineNum = 0
         self.stack = []
         self.printAddress = 0
-        self.offsets = [-7]
         self.fromFCall = False
         self.ifNum = -1
         self.elses = []
@@ -36,25 +35,6 @@ class SymbolTable():
         self.errors = True
     def hasError(self):
         return self.errors
-    def setOffset(self, value):
-        if self.offsets:
-            self.offsets[-1] = value
-        else:
-            self.offsets.append(value)
-    def decrementOffset(self, amount = 1):
-        if self.offsets:
-            self.offsets[-1] -= amount
-    def getOffset(self):
-        if self.offsets:
-            return self.offsets[-1]
-        else:
-            return -7
-    def newOffset(self, new):
-        self.offsets.append(new)
-    def lastOffset(self):
-        self.offsets.pop()
-    def peekLastOffset(self):
-        return self.offsets[-2]
     def setPrintAddress(self, addr):
         self.printAddress = addr
     def getPrintAddress(self):
@@ -130,6 +110,7 @@ class FunctionRecord:
                 pos += 1
         self.callers = []
         self.codeAddress = 0
+        self.offsets = []
     def __str__(self):
         if self.isProgram():
             rep = " Program '" + self.id + "'\n"
@@ -164,3 +145,22 @@ class FunctionRecord:
         self.codeAddress = addr
     def getAddress(self):
         return str(self.codeAddress)
+    def setOffset(self, value):
+        if self.offsets:
+            self.offsets[-1] = value
+        else:
+            self.offsets.append(value)
+    def decrementOffset(self, amount = 1):
+        if self.offsets:
+            self.offsets[-1] -= amount
+    def getOffset(self):
+        if self.offsets:
+            return self.offsets[-1]
+        else:
+            return -7
+    def newOffset(self, new):
+        self.offsets.append(new)
+    def lastOffset(self):
+        self.offsets.pop()
+    def peekLastOffset(self):
+        return self.offsets[-2]
