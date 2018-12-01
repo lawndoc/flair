@@ -69,8 +69,7 @@ class PrintStatement(ASTnode):
         code += lineRO(symbolTable,"ADD",3,5,1,"get temp value's address in DMEM")
         code += lineRM(symbolTable,"LD",2,0,3,"load temp value into r2 for arg slot")
         code += lineRM(symbolTable,"ST",2,-8,5,"load arg into AR")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # add return address to PRINT's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
@@ -78,7 +77,6 @@ class PrintStatement(ASTnode):
         # jump to PRINT body
         code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-        code += "* restored last frame's offset\n"
         return code
     def setType(self, myType):
         self.type = myType
@@ -115,8 +113,7 @@ class LessThan(ASTnode):
         code += lineRM(symbolTable,"LDA",7,2,7,"skip not equal")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"load true into new temp var")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -165,8 +162,7 @@ class EqualTo(ASTnode):
         code += lineRM(symbolTable,"LDA",7,2,7,"skip not equal")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"load true into new temp var")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -211,8 +207,7 @@ class PlusExpr(ASTnode):
         code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"ADD",1,1,2,"add the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store sum into new temp value")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -254,8 +249,7 @@ class MinusExpr(ASTnode):
         code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"SUB",1,1,2,"subtract the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store difference into new temp value")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -297,8 +291,7 @@ class TimesExpr(ASTnode):
         code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"MUL",1,1,2,"multiply the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store product into new temp value")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -340,8 +333,7 @@ class DivideExpr(ASTnode):
         code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"DIV",1,1,2,"divide the r1 by r2")
         code += lineRM(symbolTable,"ST",1,-1,6,"store quotient into new temp value")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -389,8 +381,7 @@ class AndExpr(ASTnode):
         code += lineRM(symbolTable,"LDA",7,1,7,"skip loading 0 (false)")
         code += lineRM(symbolTable,"LDC",1,0,0,"load 0 (false) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"store boolean into new temp value")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -439,8 +430,7 @@ class OrExpr(ASTnode):
         code += lineRM(symbolTable,"LDA",7,1,7,"skip loading 1 (true)")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"store boolean into new temp value")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -557,8 +547,7 @@ class IfStatement(ASTnode):
         # end if -- store value into new temp value
         symbolTable.newFi(symbolTable.getLineNum())
         code += lineRM(symbolTable,"ST",2,-1,6,"store value to new temp value")
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -650,8 +639,7 @@ class IntegerLiteral(ASTnode):
     def genCode(self, symbolTable, code, fName, child, level):
         code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
-        code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
-        code += lineRO(symbolTable,"SUB",6,6,2,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -681,8 +669,7 @@ class BooleanLiteral(ASTnode):
         else: # value == "false"
             code += lineRM(symbolTable,"LDC",1,0,0,"load 0 (false) into r1")
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
-        code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
-        code += lineRO(symbolTable,"SUB",6,6,2,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -808,18 +795,16 @@ class Program(ASTnode):
     def genCode(self, symbolTable):
         symbolTable.setLineNum(0)
         code = lineRM(symbolTable,"LD",5,0,0,"set r5 to bottom of dmem")
-        code += lineRM(symbolTable,"LD",6,0,0,"set r6 to bottom of dmem")
         ## add Activation Record for MAIN
         # set r6 to end of MAIN's AR
         code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # optionally generate code if function takes arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
-            code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 code += lineRM(symbolTable,"LD",2,i+1,0,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
-                code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+                code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
                 code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # add return address to MAIN'S AR
         code += lineRM(symbolTable,"LDA",1,4,7,"set r1 to return address")
@@ -827,6 +812,7 @@ class Program(ASTnode):
         # load r5 and r6 into AR
         code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
         code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
+        code += lineRM(symbolTable,"ST",4,-5,5,"save register 4 to AR")
         # jump to MAIN
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         # restore registers
@@ -1116,9 +1102,6 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"ST",2,-4,6,"save register 2 to AR")
         code += lineRM(symbolTable,"ST",1,-3,6,"save register 1 to AR")
         # set r5 and r6 to beginning and end of function's AR, respectively
-        code += lineRM(symbolTable,"LDC",1,1,0)
-        code += lineRO(symbolTable,"SUB",4,5,6,"set r4 to last frame size")
-        code += lineRO(symbolTable,"ADD",4,4,1,"set r4 to last frame size + 1")
         code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of {}'s AR".format(self.getName()))
         code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
@@ -1146,7 +1129,6 @@ class FunctionCall(ASTnode):
         # jump to function body
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-        code += "* restored last frame's offset\n"
         # restore registers
         code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
         code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
@@ -1155,8 +1137,7 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
         # decrement r6 to make call's return value a temp variable in current frame
-        code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
-        code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         if child == 0:
             code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
