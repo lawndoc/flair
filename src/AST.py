@@ -558,7 +558,7 @@ class Identifier(ASTnode):
             # move r5 to last frame
             code += lineRO(symbolTable,"ADD",5,5,4,"set r5 to last frame to get variable {}".format(self.value))
             # load arg into r1
-            code += lineRM(symbolTable,"LD",1,-(symbolTable[fName].getFormals()[self.value].getPos() + 8),5,"load variable {} into r1".format(self.value))
+            code += lineRM(symbolTable,"LD",1,-(symbolTable[lastFunction].getFormals()[self.value].getPos() + 8),5,"load variable {} into r1".format(self.value))
             # store arg into new temp variable
             code += lineRM(symbolTable,"ST",1,-1,6,"store value into new temp variable")
             code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
@@ -1090,8 +1090,8 @@ class FunctionCall(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to function body
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
-        symbolTable[self.getName()].lastOffset()
-        code += "* restored last frame's offset\n"
+        # symbolTable[self.getName()].lastOffset()
+        # code += "* restored last frame's offset\n"
         # restore registers
         code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
         code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
