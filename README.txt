@@ -15,6 +15,7 @@ Known Bugs:
 
 Features Not Implemented:
     - Compiler doesn't track which line of code an error occurred on.
+    - Can't yet generate print statements.
 
 Optimizations:
     - Scanner: We combined multiple states when possibly reading a word reserved

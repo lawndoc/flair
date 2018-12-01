@@ -50,6 +50,8 @@ class PrintStatement(ASTnode):
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
     def genCode(self, symbolTable, code, fName, fromMain, level):
+        print("Compiler Error: currently cannot use Print Statements.")
+        exit()
         ## add Activation Record for PRINT
         # load registers into AR
         code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
