@@ -1052,8 +1052,9 @@ class FunctionCall(ASTnode):
         if len(symbolTable[self.getName()].getFormals()) > 0:
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 code = self.actuals[i].genCode(symbolTable, code, fName)
+            for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 code += lineRM(symbolTable,"LD",2,self.actuals[i].getValueOffset(),5,"load arg{} into r2".format(str(i+1)))
-                code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
+                code += lineRM(symbolTable,"ST",2,-(i+8),6,"load arg{} into AR".format(str(i+1)))
         # add return address to function's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
