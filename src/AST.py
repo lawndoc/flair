@@ -49,7 +49,7 @@ class PrintStatement(ASTnode):
         # Analyze expression to be printed and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
-    def genCode(self, symbolTable, code, fName, fromMain):
+    def genCode(self, symbolTable, code, fName, fromMain, level):
         ## add Activation Record for PRINT
         # load registers into AR
         code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
@@ -62,15 +62,16 @@ class PrintStatement(ASTnode):
         code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of PRINT's AR")
         code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
         code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of PRINT's AR")
-        symbolTable[fName].newOffset(-7)
-        code += "* reset offset to -7\n"
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # evaluate expression and place in PRINT's arg slot
-        code = self.expr.genCode(symbolTable, code, fName)
-        code += lineRM(symbolTable,"LD",2,self.expr.getValueOffset(),5,"load arg into r2")
+        code = self.expr.genCode(symbolTable, code, fName, 0, 0)
+        code += lineRM(symbolTable,"LD",1,(3*level),0,"load expr's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get temp value's address in DMEM")
+        code += lineRM(symbolTable,"LD",2,0,3,"load temp value into r2 for arg slot")
         code += lineRM(symbolTable,"ST",2,-8,5,"load arg into AR")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # add return address to PRINT's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into PRINT's AR")
@@ -89,7 +90,6 @@ class LessThan(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "boolean"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " < " + colors.white + self.right.__str__()
     def analyze(self, symbolTable, ids, fName):
@@ -100,13 +100,15 @@ class LessThan(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer < comparison in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getValueOffset()
-        code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
-        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.left.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load left's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get left value's address in DMEM")
+        code = self.right.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load right's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",2,5,1,"get right value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"SUB",1,1,2,"subtract right operand from the left")
         code += lineRM(symbolTable,"JLT",1,2,7,"jump if left < right")
         code += lineRM(symbolTable,"ST",0,-1,6,"load false into new temp var")
@@ -115,11 +117,14 @@ class LessThan(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,6,"load true into new temp var")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -135,7 +140,6 @@ class EqualTo(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "boolean"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + self.left.__str__() + colors.blue + " = " + colors.white + self.right.__str__()
     def analyze(self, symbolTable, ids, fName):
@@ -146,13 +150,15 @@ class EqualTo(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer = comparison in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getValueOffset()
-        code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
-        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.left.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load left's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get left value's address in DMEM")
+        code = self.right.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load right's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",2,5,1,"get right value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"SUB",1,1,2,"subtract right operand from the left")
         code += lineRM(symbolTable,"JEQ",1,2,7,"jump if left equals right")
         code += lineRM(symbolTable,"ST",0,-1,6,"load false into new temp var")
@@ -161,11 +167,14 @@ class EqualTo(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,6,"load true into new temp var")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -181,7 +190,6 @@ class PlusExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "integer"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " + "+ colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -192,22 +200,27 @@ class PlusExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer + operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getValueOffset()
-        code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
-        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.left.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load left's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get left value's address in DMEM")
+        code = self.right.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load right's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",2,5,1,"get right value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"ADD",1,1,2,"add the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store sum into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -220,7 +233,6 @@ class MinusExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "integer"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " - " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -231,22 +243,27 @@ class MinusExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer - operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getValueOffset()
-        code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
-        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.left.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load left's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get left value's address in DMEM")
+        code = self.right.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load right's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",2,5,1,"get right value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"SUB",1,1,2,"subtract the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store difference into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -259,7 +276,6 @@ class TimesExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "integer"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " * " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -270,22 +286,27 @@ class TimesExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer * operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getValueOffset()
-        code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
-        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.left.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load left's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get left value's address in DMEM")
+        code = self.right.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load right's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",2,5,1,"get right value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"MUL",1,1,2,"multiply the two values")
         code += lineRM(symbolTable,"ST",1,-1,6,"store product into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -298,7 +319,6 @@ class DivideExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "integer"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " / " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -309,22 +329,27 @@ class DivideExpr(ASTnode):
         if not (self.right.getType() == "integer" and self.left.getType() == "integer"):
             symbolTable.newError()
             print("Semantic error: non-integer / operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getValueOffset()
-        code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
-        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.left.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load left's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get left value's address in DMEM")
+        code = self.right.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load right's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",2,5,1,"get right value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRO(symbolTable,"DIV",1,1,2,"divide the r1 by r2")
         code += lineRM(symbolTable,"ST",1,-1,6,"store quotient into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -337,7 +362,6 @@ class AndExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "boolean"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " and " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -348,13 +372,15 @@ class AndExpr(ASTnode):
         if not (self.right.getType() == "boolean" and self.left.getType() == "boolean"):
             symbolTable.newError()
             print("Semantic error: non-boolean 'and' operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getValueOffset()
-        code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
-        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.left.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load left's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get left value's address in DMEM")
+        code = self.right.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load right's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",2,5,1,"get right value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRM(symbolTable,"LDC",3,2,0,"load 2 into r3 (true + true)")
         code += lineRO(symbolTable,"ADD",1,1,2,"add left and right boolean")
         code += lineRO(symbolTable,"SUB",1,3,1,"subtract the added booleans from 2")
@@ -365,11 +391,14 @@ class AndExpr(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,6,"store boolean into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -385,7 +414,6 @@ class OrExpr(ASTnode):
         self.right = semanticStack.pop()
         self.left = semanticStack.pop()
         self.type = "boolean"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + self.left.__str__() + colors.blue + " or " + colors.white + self.right.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -396,13 +424,15 @@ class OrExpr(ASTnode):
         if not (self.right.getType() == "boolean" and self.left.getType() == "boolean"):
             symbolTable.newError()
             print("Semantic error: non-boolean 'or' operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.left.genCode(symbolTable, code, fName)
-        leftValOffset = self.left.getValueOffset()
-        code = self.right.genCode(symbolTable, code, fName)
-        rightValOffset = self.right.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,leftValOffset,5,"load left operand value into r1")
-        code += lineRM(symbolTable,"LD",2,rightValOffset,5,"load right operand value into r2")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.left.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load left's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get left value's address in DMEM")
+        code = self.right.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load right's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",2,5,1,"get right value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load left operand value into r1")
+        code += lineRM(symbolTable,"LD",2,0,2,"load right operand value into r2")
         code += lineRM(symbolTable,"JNE",1,3,7,"jump if left is true")
         code += lineRM(symbolTable,"JNE",2,2,7,"jump if right is true")
         code += lineRM(symbolTable,"LDC",1,0,0,"load 0 (false) into r1")
@@ -411,11 +441,14 @@ class OrExpr(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,6,"store boolean into new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -430,7 +463,6 @@ class NotExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.expr = semanticStack.pop()
         self.type = "boolean"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + "(" + colors.blue + "not " + colors.white + self.expr.__str__() + ")"
     def analyze(self, symbolTable, ids, fName):
@@ -440,19 +472,23 @@ class NotExpr(ASTnode):
         if self.expr.getType() != "boolean":
             symbolTable.newError()
             print("Semantic error: non-boolean 'not' operation in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.expr.genCode(symbolTable, code, fName)
-        childValOffset = self.expr.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,childValOffset,5,"load operand value into r1")
-        code += lineRM(symbolTable,"JNE",1,3,7,"jump if operand is true")
-        code += lineRM(symbolTable,"LDC",1,1,0,"change operand to true")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.expr.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load expr's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get temp value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load expr value into r1")
+        code += lineRM(symbolTable,"JNE",1,3,7,"jump if expr is true")
+        code += lineRM(symbolTable,"LDC",1,1,0,"change expr to true")
         code += lineRM(symbolTable,"ST",1,0,6,"load true into same temp value")
         code += lineRM(symbolTable,"LDA",7,1,7,"skip switching temp to false")
         code += lineRM(symbolTable,"ST",0,0,6,"load false into same temp value")
-        self.valueOffset = symbolTable[fName].getOffset()
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -469,7 +505,6 @@ class IfStatement(ASTnode):
         self.thenExpr = semanticStack.pop()
         self.ifExpr = semanticStack.pop()
         self.type = None
-        self.valueOffset = 0
     def __str__(self, level = 0):
         rep = "\t" * level + colors.red + "if " + colors.white
         rep += self.ifExpr.__str__()
@@ -494,38 +529,44 @@ class IfStatement(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: inconsistent return type under if-then-else in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
+    def genCode(self, symbolTable, code, fName, child, level):
         symbolTable.nextIfNum()
         ifNum = str(symbolTable.getIfNum())
         # generate boolean check and jumps
-        code = self.ifExpr.genCode(symbolTable, code, fName)
-        ifValOffset = self.ifExpr.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,ifValOffset,5,"load if check value into r1")
+        code = self.ifExpr.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load ifExpr's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get temp value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load ifExpr value into r1")
         code += lineRM(symbolTable,"JEQ",1,1,7,"jump to else clause if false")
         code += lineRM(symbolTable,"LDA",7,2,7,"jump to then clause")
         code += lineRM(symbolTable,"LDC",1,"<else"+ifNum+">",0,"load else clause address")
         code += lineRM(symbolTable,"LDA",7,0,1,"jump to else clause")
         # generate code for then clause
-        code = self.thenExpr.genCode(symbolTable, code, fName)
-        thenValOffset = self.thenExpr.getValueOffset()
-        code += lineRM(symbolTable,"LD",2,thenValOffset,5,"load then value into r2")
+        code = self.thenExpr.genCode(symbolTable, code, fName, 1, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+1,0,"load thenExpr's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get temp value's address in DMEM")
+        code += lineRM(symbolTable,"LD",2,0,3,"load thenExpr value into r2")
         code += lineRM(symbolTable,"LDC",1,"<fi"+ifNum+">",0,"load end if address")
         code += lineRM(symbolTable,"LDA",7,0,1,"jump over else clause to end if")
         # generate code for else clause
         symbolTable.newElse(symbolTable.getLineNum())
-        code = self.elseExpr.genCode(symbolTable, code, fName)
-        elseValOffset = self.elseExpr.getValueOffset()
-        code += lineRM(symbolTable,"LD",2,elseValOffset,5,"load else value into r2")
+        code = self.elseExpr.genCode(symbolTable, code, fName, 2, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1))+2,0,"load elseExpr's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get temp value's address in DMEM")
+        code += lineRM(symbolTable,"LD",2,0,3,"load elseExpr value into r2")
         # end if -- store value into new temp value
         symbolTable.newFi(symbolTable.getLineNum())
         code += lineRM(symbolTable,"ST",2,-1,6,"store value to new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -540,7 +581,6 @@ class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
         self.type = None
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + colors.brown + str(self.value) + colors.white
     def analyze(self, symbolTable, ids, fName):
@@ -552,7 +592,7 @@ class Identifier(ASTnode):
             self.setType("unknown")
             symbolTable.newError()
             print("Semantic error: reference to unknown identifier '{}' in function '{}'".format(self.value, fName))
-    def genCode(self, symbolTable, code, fName):
+    def genCode(self, symbolTable, code, fName, child, level):
         if symbolTable.isFromCall():
             ## move from last frame into new temp variable
             # move r5 to last frame
@@ -562,16 +602,26 @@ class Identifier(ASTnode):
             # store arg into new temp variable
             code += lineRM(symbolTable,"ST",1,-1,6,"store value into new temp variable")
             code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
-            symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
+            code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
             # set valueOffset for node to location of new temp variable
-            self.valueOffset = symbolTable[fName].getOffset()
+            if child == 0:
+                code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+            elif child == 1:
+                code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+            elif child == 2:
+                code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
             # reset r5 back to normal
             code += lineRO(symbolTable,"SUB",5,5,4,"set r5 back to next frame")
         else:
-            self.valueOffset = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
+            o = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
+            code += lineRM(symbolTable,"LDC",1,o,0,"load arg slot into r1")
+            if child == 0:
+                code += lineRM(symbolTable,"ST",1,(3*level),0,"store offset in frame")
+            elif child == 1:
+                code += lineRM(symbolTable,"ST",1,(3*level)+1,0,"store offset in frame")
+            elif child == 2:
+                code += lineRM(symbolTable,"ST",1,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def getName(self):
         return self.value
     def setType(self, myType):
@@ -587,7 +637,6 @@ class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
         self.type = "integer"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
     def analyze(self, symbolTable, ids, fName):
@@ -598,15 +647,18 @@ class IntegerLiteral(ASTnode):
             raise SemanticError(error_msg.format(myType, self.value))
     def getType(self):
         return self.type
-    def getValueOffset(self):
-        return self.valueOffset
-    def genCode(self, symbolTable, code, fName):
+    def genCode(self, symbolTable, code, fName, child, level):
         code += lineRM(symbolTable,"LDC",1,self.value,0,"load {} into r1".format(self.value))
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
         code += lineRO(symbolTable,"SUB",6,6,2,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
     def getValue(self):
         return self.value
@@ -615,7 +667,6 @@ class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
         self.value = last
         self.type = "boolean"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         return "\t" * level + colors.yellow + str(self.value) + colors.white
     def analyze(self, symbolTable, ids, fName):
@@ -624,7 +675,7 @@ class BooleanLiteral(ASTnode):
         if myType != "boolean":
             error_msg = "tried to assign {} type to boolean literal '{}'"
             raise SemanticError(error_msg.format(myType, self.value))
-    def genCode(self, symbolTable, code, fName):
+    def genCode(self, symbolTable, code, fName, child, level):
         if self.value == "true":
             code += lineRM(symbolTable,"LDC",1,1,0,"load 1 (true) into r1")
         else: # value == "false"
@@ -632,13 +683,16 @@ class BooleanLiteral(ASTnode):
         code += lineRM(symbolTable,"ST",1,-1,6,"copy r1 into new temp value")
         code += lineRM(symbolTable,"LDC",2,1,0,"load 1 into r2")
         code += lineRO(symbolTable,"SUB",6,6,2,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
     def getType(self):
         return self.type
-    def getValueOffset(self):
-        return self.valueOffset
     def getValue(self):
         if self.value == "true":
             return 1
@@ -657,7 +711,6 @@ class NegateExpr(ASTnode):
     def __init__(self, last, semanticStack):
         self.factor = semanticStack.pop()
         self.type = "integer"
-        self.valueOffset = 0
     def __str__(self, level = 0):
         rep = "\t" * level + "(" + colors.blue + "- " + colors.white + self.factor.__str__() + ")"
         return rep
@@ -668,16 +721,20 @@ class NegateExpr(ASTnode):
         if self.factor.getType() != "integer":
             symbolTable.newError()
             print("Semantic error: '-' negation applied to non-integer in function '{}'".format(fName))
-    def genCode(self, symbolTable, code, fName):
-        code = self.factor.genCode(symbolTable, code, fName)
-        childValOffset = self.factor.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,childValOffset,5,"load operand value into r1")
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.factor.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"load factor's temp value offset into r1")
+        code += lineRO(symbolTable,"ADD",3,5,1,"get temp value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,3,"load factor value into r1")
         code += lineRO(symbolTable,"SUB",1,0,1,"negate integer")
         code += lineRM(symbolTable,"ST",1,0,6,"load negated integer into same temp value")
-        self.valueOffset = symbolTable[fName].getOffset()
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
-    def getValueOffset(self):
-        return self.valueOffset
     def setType(self, myType):
         self.type = myType
     def getType(self):
@@ -755,7 +812,7 @@ class Program(ASTnode):
         ## add Activation Record for MAIN
         # set r6 to end of MAIN's AR
         code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
-        symbolTable[self.getName()].newOffset(-7)
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # optionally generate code if function takes arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
             code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for decrementing r6")
@@ -763,7 +820,7 @@ class Program(ASTnode):
                 code += lineRM(symbolTable,"LD",2,i+1,0,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
                 code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-                symbolTable[self.getName()].decrementOffset(); code += "* offset: " + str(symbolTable[self.getName()].getOffset()) + "\n"
+                code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # add return address to MAIN'S AR
         code += lineRM(symbolTable,"LDA",1,4,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
@@ -970,7 +1027,7 @@ class Body(ASTnode):
         self.setType(self.returnStatement.getType())
     def genCode(self, symbolTable, code, fName, fromMain):
         for ps in self.printStatements:
-            code = ps.genCode(symbolTable, code, fName, fromMain)
+            code = ps.genCode(symbolTable, code, fName, fromMain, 0)
         code = self.returnStatement.genCode(symbolTable, code, fName, fromMain)
         return code
     def setType(self, myType):
@@ -998,7 +1055,7 @@ class ReturnStatement(ASTnode):
     def getType(self):
         return self.type
     def genCode(self, symbolTable, code, fName, fromMain):
-        code = self.retStatement.genCode(symbolTable, code, fName) # return value is at end of stack
+        code = self.retStatement.genCode(symbolTable, code, fName, 0, 0) # return value is at end of stack
         code += lineRM(symbolTable,"LD",1,0,6,"load function's return value into r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
         code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
@@ -1014,7 +1071,6 @@ class FunctionCall(ASTnode):
             self.actuals = None
         self.identifier = semanticStack.pop()
         self.type = None
-        self.valueOffset = 0
     def __str__(self, level = 0):
         rep = "\t" * level + self.identifier.__str__()
         rep += "("
@@ -1050,7 +1106,7 @@ class FunctionCall(ASTnode):
             if len(symbolTable[self.getName()].getFormals()) > 0:
                 symbolTable.newError()
                 print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
-    def genCode(self, symbolTable, code, fName):
+    def genCode(self, symbolTable, code, fName, child, level):
         ## add Activation Record for function
         # load registers into AR
         code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
@@ -1065,33 +1121,32 @@ class FunctionCall(ASTnode):
         code += lineRO(symbolTable,"ADD",4,4,1,"set r4 to last frame size + 1")
         code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of {}'s AR".format(self.getName()))
         code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
-        symbolTable[self.getName()].newOffset(-7)
-        code += "* reset offset to -7\n"
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # optionally generate code if function gives arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
             # compute args and store at end of new frame in temp variables
             # keeping track of their offset from beginning
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 symbolTable.fromCall()
-                code = self.actuals[i].genCode(symbolTable, code, fName)
+                code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+i//3)
                 symbolTable.notFromCall()
             code += lineRM(symbolTable,"LDA",6,-7,5,"reset end of frame")
-            symbolTable[self.getName()].setOffset(-7)
-            code += "* reset offset to -7\n"
+            code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
             # move args into correct slots in new stack frame
-            code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for incrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
-                code += lineRM(symbolTable,"LD",2,self.actuals[i].getValueOffset(),5,"load arg{} into r2".format(str(i+1)))
+                code += lineRM(symbolTable,"LD",2,(3*(level+(i//3)+1)+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
+                code += lineRO(symbolTable,"ADD",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
+                code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
-                code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-                symbolTable[self.getName()].decrementOffset(); code += "* offset: " + str(symbolTable[self.getName()].getOffset()) + "\n"
+                code += lineRM(symbolTable,"LDC",6,-1,6,"decrement end of stack pointer")
+                code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # add return address to function's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # jump to function body
         code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
-        # symbolTable[self.getName()].lastOffset()
-        # code += "* restored last frame's offset\n"
+        symbolTable[self.getName()].lastOffset()
+        code += "* restored last frame's offset\n"
         # restore registers
         code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
         code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
@@ -1102,8 +1157,13 @@ class FunctionCall(ASTnode):
         # decrement r6 to make call's return value a temp variable in current frame
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
-        symbolTable[fName].decrementOffset(); code += "* offset: " + str(symbolTable[fName].getOffset()) + "\n"
-        self.valueOffset = symbolTable[fName].getOffset()
+        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
     def getName(self):
         return self.identifier.getName()
@@ -1115,8 +1175,6 @@ class FunctionCall(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def getValueOffset(self):
-        return self.valueOffset
 
 class Actuals(ASTnode):
     def __init__(self, last, semanticStack):
@@ -1151,7 +1209,6 @@ class Actual(ASTnode):
     def __init__(self, last, semanticStack):
         self.expr = semanticStack.pop()
         self.type = None
-        self.valueOffset = 0
     def __str__(self, level=0):
         rep = self.expr.__str__()
         return rep
@@ -1159,9 +1216,15 @@ class Actual(ASTnode):
         # Analyze expression passed into function as an argument and annotate symbolTable
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
-    def genCode(self, symbolTable, code, fName):
-        code = self.expr.genCode(symbolTable, code, fName)
-        self.valueOffset = self.expr.getValueOffset()
+    def genCode(self, symbolTable, code, fName, child, level):
+        code = self.expr.genCode(symbolTable, code, fName, 0, level+1)
+        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"get expr's temp value offset")
+        if child == 0:
+            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+        elif child == 1:
+            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+        elif child == 2:
+            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         return code
     def getValue(self):
         return self.expr.getValue()
@@ -1169,5 +1232,3 @@ class Actual(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
-    def getValueOffset(self):
-        return self.valueOffset
