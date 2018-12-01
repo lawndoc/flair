@@ -807,7 +807,7 @@ class Program(ASTnode):
                 code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
                 code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # add return address to MAIN'S AR
-        code += lineRM(symbolTable,"LDA",1,4,7,"set r1 to return address")
+        code += lineRM(symbolTable,"LDA",1,5,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
         # load r5 and r6 into AR
         code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
