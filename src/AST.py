@@ -744,8 +744,8 @@ class Program(ASTnode):
         return self.formals
     def genCode(self, symbolTable):
         symbolTable.setLineNum(0)
-        code = lineRM(symbolTable,"LDA",5,0,0,"set r5 to bottom of dmem")
-        code += lineRM(symbolTable,"LDA",6,0,0,"set r6 to bottom of dmem")
+        code = lineRM(symbolTable,"LD",5,0,0,"set r5 to bottom of dmem")
+        code += lineRM(symbolTable,"LD",6,0,0,"set r6 to bottom of dmem")
         ## add Activation Record for MAIN
         # set r6 to end of MAIN's AR
         code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
