@@ -501,7 +501,7 @@ class IfStatement(ASTnode):
             print("Semantic error: inconsistent return type under if-then-else in function '{}'".format(fName))
     def genCode(self, symbolTable, code, fName):
         symbolTable.nextIfNum()
-        ifNum = symbolTable.getIfNum()
+        ifNum = str(symbolTable.getIfNum())
         # generate boolean check and jumps
         code = self.ifExpr.genCode(symbolTable, code, fName)
         ifValOffset = self.ifExpr.getValueOffset()
