@@ -1050,11 +1050,17 @@ class FunctionCall(ASTnode):
         code += "* reset offset to -7\n"
         # optionally generate code if function gives arguments
         if len(symbolTable[self.getName()].getFormals()) > 0:
+            # compute args and store at end of new frame in temp variables
+            # keeping track of their offset from beginning
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 code = self.actuals[i].genCode(symbolTable, code, fName)
+            code += lineRM(symbolTable,"LDA",6,-7,5,"reset end of frame")
+            # move args into correct slots in new stack frame
+            code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for incrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 code += lineRM(symbolTable,"LD",2,self.actuals[i].getValueOffset(),5,"load arg{} into r2".format(str(i+1)))
-                code += lineRM(symbolTable,"ST",2,-(i+9),6,"load arg{} into AR".format(str(i+1)))
+                code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
+                code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         # add return address to function's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
