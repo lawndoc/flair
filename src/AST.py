@@ -774,12 +774,9 @@ class Program(ASTnode):
         code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
         code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
         # MAIN done, print returned value
-        code += lineRM(symbolTable, "LD",2,-1,6,"put return value from {} into r2".format(self.getName()))
+        code += lineRM(symbolTable, "LD",2,0,5,"put return value from {} into r2".format(self.getName()))
         # add activation record for PRINT
         code += lineRM(symbolTable, "ST",2,-8,5,"move returned value into arg for PRINT's AR")
-        # load r5 and r6 to AR
-        code += lineRM(symbolTable,"ST",6,-7,5,"save register 6 to AR")
-        code += lineRM(symbolTable,"ST",5,-6,5,"save register 5 to AR")
         # add return address to PRINT's AR
         code += lineRM(symbolTable,"LDA",3,2,7,"put return address into r3")
         code += lineRM(symbolTable,"ST",3,-1,5,"move return address into PRINT's AR")
