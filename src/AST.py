@@ -986,23 +986,11 @@ class ReturnStatement(ASTnode):
     def getType(self):
         return self.type
     def genCode(self, symbolTable, code, fName, fromMain):
-        symbolTable.newOffset(-7)
         code = self.retStatement.genCode(symbolTable, code, fName) # return value is at end of stack
         valOffset = self.retStatement.getValueOffset() # TODO: culprit -- generates wrong offset
         code += lineRM(symbolTable,"LD",1,valOffset,5,"load function's return value into r1")
         code += lineRM(symbolTable,"ST",1,0,5,"put value from r1 into return value")
-        # restore registers
-        # code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
-        # code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
-        # code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
-        # code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
-        # code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
-        # code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
-        # if fromMain:
         code += lineRM(symbolTable,"LD",7,-1,5,"load return address into r7")
-        # else:
-        #     code += lineRM(symbolTable,"LD",7,-2,6,"load return address into r7")
-        symbolTable.lastOffset()
         return code
     def getValue(self):
         pass # TODO: return statement value
