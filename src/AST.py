@@ -547,7 +547,22 @@ class Identifier(ASTnode):
             symbolTable.newError()
             print("Semantic error: reference to unknown identifier '{}' in function '{}'".format(self.value, fName))
     def genCode(self, symbolTable, code, fName):
-        self.valueOffset = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
+        if symbolTable.isFromCall():
+            ## move from last frame into new temp variable
+            # move r5 to last frame
+            code += lineRO(symbolTable,"SUB",5,5,symbolTable.peekLastOffset()-1,"set r5 to last frame to get variable {}".format(self.value))
+            # load arg into r1
+            code += lineRM(symbolTable,"LD",1,-(symbolTable[fName].getFormals()[self.value].getPos() + 8),5,"load variable {} into r1".format(self.value))
+            # store arg into new temp variable
+            code += lineRM(symbolTable,"ST",1,-1,6,"store value into new temp variable")
+            code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
+            symbolTable.decrementOffset()
+            # set valueOffset for node to location of new temp variable
+            self.valueOffset = symbolTable.getOffset()
+            # reset r5 back to normal
+            code += lineRO(symbolTable,"ADD",5,5,symbolTable.peekLastOffset()-1,"set r5 back to next frame")
+        else:
+            self.valueOffset = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
         return code
     def getValueOffset(self):
         return self.valueOffset
@@ -1053,14 +1068,18 @@ class FunctionCall(ASTnode):
             # compute args and store at end of new frame in temp variables
             # keeping track of their offset from beginning
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
+                symbolTable.fromCall()
                 code = self.actuals[i].genCode(symbolTable, code, fName)
+                symbolTable.notFromCall()
             code += lineRM(symbolTable,"LDA",6,-7,5,"reset end of frame")
+            symbolTable.newOffset(-7)
             # move args into correct slots in new stack frame
             code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1 for incrementing r6")
             for i in range(0,len(symbolTable[self.getName()].getFormals())):
                 code += lineRM(symbolTable,"LD",2,self.actuals[i].getValueOffset(),5,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
                 code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
+                symbolTable.decrementOffset()
         # add return address to function's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
