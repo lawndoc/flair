@@ -8,7 +8,7 @@ class SymbolTable():
         self.stack = []
         self.printAddress = 0
         self.offsets = [-7]
-        self.fromCall = False
+        self.fromFCall = False
     def __iter__(self):
         if self.table:
             for f in self.table:
@@ -73,11 +73,11 @@ class SymbolTable():
         else:
             return False
     def fromCall(self):
-        self.fromCall = True
+        self.fromFCall = True
     def notFromCall(self):
-        self.fromCall = False
+        self.fromFCall = False
     def isFromCall(self):
-        return self.fromCall
+        return self.fromFCall
 
 class FormalRecord:
     def __init__(self, formalNode, pos):
