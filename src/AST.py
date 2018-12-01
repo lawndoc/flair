@@ -500,19 +500,30 @@ class IfStatement(ASTnode):
             symbolTable.newError()
             print("Semantic error: inconsistent return type under if-then-else in function '{}'".format(fName))
     def genCode(self, symbolTable, code, fName):
+        symbolTable.nextIfNum()
+        ifNum = symbolTable.getIfNum()
+        # generate boolean check and jumps
         code = self.ifExpr.genCode(symbolTable, code, fName)
         ifValOffset = self.ifExpr.getValueOffset()
+        code += lineRM(symbolTable,"LD",1,ifValOffset,5,"load if check value into r1")
+        code += lineRM(symbolTable,"JEQ",1,1,7,"jump to else clause if false")
+        code += lineRM(symbolTable,"LDA",7,2,7,"jump to then clause")
+        code += lineRM(symbolTable,"LDC",1,"<else"+ifNum+">",0,"load else clause address")
+        code += lineRM(symbolTable,"LDA",7,0,1,"jump to else clause")
+        # generate code for then clause
         code = self.thenExpr.genCode(symbolTable, code, fName)
         thenValOffset = self.thenExpr.getValueOffset()
+        code += lineRM(symbolTable,"LD",2,thenValOffset,5,"load then value into r2")
+        code += lineRM(symbolTable,"LDC",1,"<fi"+ifNum+">",0,"load end if address")
+        code += lineRM(symbolTable,"LDA",7,0,1,"jump over else clause to end if")
+        # generate code for else clause
+        symbolTable.newElse(symbolTable.getLineNum())
         code = self.elseExpr.genCode(symbolTable, code, fName)
         elseValOffset = self.elseExpr.getValueOffset()
-        code += lineRM(symbolTable,"LD",1,ifValOffset,5,"load if check value into r1")
-        code += lineRM(symbolTable,"LD",2,thenValOffset,5,"load then value into r2")
-        code += lineRM(symbolTable,"LD",3,elseValOffset,5,"load else value into r3")
-        code += lineRM(symbolTable,"JEQ",1,2,7,"jump to else value if false")
-        code += lineRM(symbolTable,"ST",2,-1,6,"store then value to new temp value")
-        code += lineRM(symbolTable,"LDA",7,1,7,"skip else case")
-        code += lineRM(symbolTable,"ST",3,-1,6,"store else value to new temp value")
+        code += lineRM(symbolTable,"LD",2,elseValOffset,5,"load else value into r2")
+        # end if -- store value into new temp value
+        symbolTable.newFi(symbolTable.getLineNum())
+        code += lineRM(symbolTable,"ST",2,-1,6,"store value to new temp value")
         code += lineRM(symbolTable,"LDC",1,1,0,"load 1 into r1")
         code += lineRO(symbolTable,"SUB",6,6,1,"decrement end of stack pointer")
         symbolTable.decrementOffset(); code += "* offset: " + str(symbolTable.getOffset()) + "\n"
@@ -813,7 +824,19 @@ class Program(ASTnode):
             code = code[:code.index(placeholder)] + \
                    symbolTable.getPrintAddress() + \
                    code[code.index(placeholder)+phLen:]
-        print(symbolTable.stack)
+        # replace if statement address placeholders
+        for i in range(0,symbolTable.getIfNum()+1):
+            placeholder = "<else"+str(i)+">"
+            phLen = len(placeholder)
+            code = code[:code.index(placeholder)] + \
+                   symbolTable.getElse(i) + \
+                   code[code.index(placeholder)+phLen:]
+            placeholder = "<fi"+str(i)+">"
+            phLen = len(placeholder)
+            code = code[:code.index(placeholder)] + \
+                   symbolTable.getFi(i) + \
+                   code[code.index(placeholder)+phLen:]
+
         return code
 
 

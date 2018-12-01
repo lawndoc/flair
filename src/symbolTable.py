@@ -9,6 +9,9 @@ class SymbolTable():
         self.printAddress = 0
         self.offsets = [-7]
         self.fromFCall = False
+        self.ifNum = -1
+        self.elses = []
+        self.fis = []
     def __iter__(self):
         if self.table:
             for f in self.table:
@@ -78,6 +81,19 @@ class SymbolTable():
         self.fromFCall = False
     def isFromCall(self):
         return self.fromFCall
+    def nextIfNum(self):
+        self.ifNum += 1
+    def getIfNum(self):
+        return self.ifNum
+    def newElse(self, address):
+        self.elses.append(address)
+    def getElse(self, i):
+        return self.elses[i]
+    def newFi(self, address):
+        self.fis.append(address)
+    def getFi(self, i):
+        return self.fis[i]
+
 
 class FormalRecord:
     def __init__(self, formalNode, pos):
