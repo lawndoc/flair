@@ -88,11 +88,11 @@ class SymbolTable():
     def newElse(self, address):
         self.elses.append(address)
     def getElse(self, i):
-        return self.elses[i]
+        return str(self.elses[i])
     def newFi(self, address):
         self.fis.append(address)
     def getFi(self, i):
-        return self.fis[i]
+        return str(self.fis[i])
 
 
 class FormalRecord:
