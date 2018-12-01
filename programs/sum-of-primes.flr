@@ -28,7 +28,7 @@ program sum_of_primes( maximum : integer );
 
   function nextPrime( n : integer ) : integer
   begin
-    return if isPrime( n ) then
+    return if isPrime( n, n ) then
       n
     else
       nextPrime( n-1 )

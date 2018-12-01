@@ -1,7 +1,8 @@
 Malwareswaldo: C.J. May, Nick Sanford
 
 New to Project 6:
-    - Made tm-debug to help debug TM programs
+    - Made tm-debug to help debug TM programs (some full paths need modified
+        to run)
     - Updated src/generator.py but most of the heavy lifting goes on
         in src/AST.py with the genCode() method for each node
     - Made lots of test files to test features of language
