@@ -49,7 +49,11 @@ class SymbolTable():
     def stackPush(self,new):
         self.stack.append(new)
     def stackPop(self):
-        self.stack.pop()
+        return self.stack.pop()
+    def stackPeek(self):
+        return self.stack[-1]
+    def stackLast(self):
+        return self.stack[-2]
     def stackIsEmpty(self):
         if len(self.stack) == 1:
             return True
