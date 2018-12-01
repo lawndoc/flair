@@ -550,7 +550,8 @@ class Identifier(ASTnode):
         if symbolTable.isFromCall():
             ## move from last frame into new temp variable
             # move r5 to last frame
-            code += lineRO(symbolTable,"SUB",5,5,symbolTable.peekLastOffset()-1,"set r5 to last frame to get variable {}".format(self.value))
+            code += lineRM(symbolTable,"LDC",2,symbolTable.peekLastOffset()-1,0,"load address for begging of last frame into r2")
+            code += lineRO(symbolTable,"SUB",5,5,2,"set r5 to last frame to get variable {}".format(self.value))
             # load arg into r1
             code += lineRM(symbolTable,"LD",1,-(symbolTable[fName].getFormals()[self.value].getPos() + 8),5,"load variable {} into r1".format(self.value))
             # store arg into new temp variable
@@ -560,7 +561,7 @@ class Identifier(ASTnode):
             # set valueOffset for node to location of new temp variable
             self.valueOffset = symbolTable.getOffset()
             # reset r5 back to normal
-            code += lineRO(symbolTable,"ADD",5,5,symbolTable.peekLastOffset()-1,"set r5 back to next frame")
+            code += lineRO(symbolTable,"ADD",5,5,2,"set r5 back to next frame")
         else:
             self.valueOffset = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
         return code
