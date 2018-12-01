@@ -602,7 +602,7 @@ class Identifier(ASTnode):
             elif child == 2:
                 code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
         else:
-            o = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
+            o = (symbolTable[fName].getFormals()[self.value].getPos() + 8)
             code += lineRM(symbolTable,"LDC",1,o,0,"load arg slot into r1")
             if child == 0:
                 code += lineRM(symbolTable,"ST",1,(3*level),0,"store offset in frame")
