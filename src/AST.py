@@ -1121,7 +1121,7 @@ class FunctionCall(ASTnode):
                 code += lineRO(symbolTable,"SUB",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
                 code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
                 code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
-                code += lineRM(symbolTable,"LDC",6,-1,6,"decrement end of stack pointer")
+                code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
                 code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # add return address to function's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
