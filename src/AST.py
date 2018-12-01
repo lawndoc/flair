@@ -600,7 +600,7 @@ class Identifier(ASTnode):
             elif child == 2:
                 code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
             # reset r5 back to normal
-            code += lineRO(symbolTable,"SUB",5,5,4,"set r5 back to next frame")
+            code += lineRO(symbolTable,"ADD",5,5,4,"set r5 back to next frame")
         else:
             o = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
             code += lineRM(symbolTable,"LDC",1,o,0,"load arg slot into r1")
