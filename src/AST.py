@@ -1198,14 +1198,7 @@ class Actual(ASTnode):
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
     def genCode(self, symbolTable, code, fName, child, level):
-        code = self.expr.genCode(symbolTable, code, fName, 0, level+1)
-        code += lineRM(symbolTable,"LD",1,(3*(level+1)),0,"get expr's temp value offset")
-        if child == 0:
-            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
-        elif child == 1:
-            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
-        elif child == 2:
-            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
+        code = self.expr.genCode(symbolTable, code, fName, child, level)
         return code
     def getValue(self):
         return self.expr.getValue()
