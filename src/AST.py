@@ -592,6 +592,8 @@ class Identifier(ASTnode):
             code += lineRM(symbolTable,"ST",1,-1,6,"store value into new temp variable")
             code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
             code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+            # reset r5 back to normal
+            code += lineRO(symbolTable,"SUB",5,5,4,"set r5 back to next frame")
             # set value offset for node to location of new temp variable
             if child == 0:
                 code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
@@ -599,8 +601,6 @@ class Identifier(ASTnode):
                 code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
             elif child == 2:
                 code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
-            # reset r5 back to normal
-            code += lineRO(symbolTable,"SUB",5,5,4,"set r5 back to next frame")
         else:
             o = -(symbolTable[fName].getFormals()[self.value].getPos() + 8)
             code += lineRM(symbolTable,"LDC",1,o,0,"load arg slot into r1")
