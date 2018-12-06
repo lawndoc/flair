@@ -1208,20 +1208,26 @@ class FunctionCall(ASTnode):
             if len(symbolTable[self.getName()].getFormals()) > 0:
                 # compute args and store at end of new frame in temp variables
                 # keeping track of their offset from beginning
-                for i in range(0,len(symbolTable[self.getName()].getFormals())):
+                numFormals = len(symbolTable[self.getName()].getFormals())
+                for i in range(0,numFormals):
                     symbolTable.fromCall()
                     code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+i//3)
                     symbolTable.notFromCall()
-                code += lineRM(symbolTable,"LDA",6,-7,5,"reset end of frame")
-                code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-                # move args into correct slots in new stack frame
-                for i in range(0,len(symbolTable[self.getName()].getFormals())):
+                    # move arg into correct slot in new stack frame
                     code += lineRM(symbolTable,"LD",2,(3*(level+(i//3)+1)+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
                     code += lineRO(symbolTable,"SUB",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
                     code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
                     code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
-                    code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
-                    code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+                code += lineRM(symbolTable,"LDA",6,-(numFormals+7),5,"reset end of frame to end of args")
+                code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+                # move args into correct slots in new stack frame
+                # for i in range(0,len(symbolTable[self.getName()].getFormals())):
+                #     code += lineRM(symbolTable,"LD",2,(3*(level+(i//3)+1)+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
+                #     code += lineRO(symbolTable,"SUB",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
+                #     code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
+                #     code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
+                #     code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
+                #     code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
             # add return address to function's AR
             code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
             code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
