@@ -33,7 +33,7 @@ program palindrome(number : integer);
    function isPalindrome(n : integer) : boolean
    begin
       return 0 = (n - reverse(n))
-   else;
+   end;
 
 { ----------------------------------------------
   main function: takes command-line argument
