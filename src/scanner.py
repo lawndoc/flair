@@ -241,7 +241,7 @@ class Scanner:
                 if int(accum) >= 2**31 and not tokens[-1].isMinus():
                     error_msg = "Integer beginning with {}... is too large"
                     raise LexicalError(error_msg.format(accum))
-                elif int(accum) > 2^31 and tokens[-1].isMinus():
+                elif int(accum) > 2**31 and tokens[-1].isMinus():
                     error_msg = "Integer beginning with -{}... is too small"
                     raise LexicalError(error_msg.format(accum))
                 if program[pos].isdigit():
