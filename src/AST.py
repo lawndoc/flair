@@ -99,7 +99,7 @@ class PrintStatement(ASTnode):
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into PRINT's AR")
         # jump to PRINT body
-        code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
+        code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # restore registers
         code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
