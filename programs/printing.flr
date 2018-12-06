@@ -1,12 +1,12 @@
 program printing(a : integer, b: integer);
-    function sum(n : integer)
+    function sum(n : integer) : integer
     begin
         return if n = 0 then 0
                         else n + sum( n - 1 )
     end;
 begin
-    print(a)
-    print(b)
-    print(sum(b))
+    print(a);
+    print(b);
+    print(sum(b));
     return 0
 end.
