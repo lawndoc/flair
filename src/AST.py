@@ -52,8 +52,9 @@ class PrintStatement(ASTnode):
     def genCode(self, symbolTable, code, fName, fromMain, level):
         # get value for expression
         code = self.expr.genCode(symbolTable, code, fName, 0, level)
-        # expr value should be in r6 at the end of the function's frame
-        code += lineRM(symbolTable,"LD",1,0,6,"put value of print expr into r1")
+        code += lineRM(symbolTable,"LD",1,(3*(level)),0,"load expr's temp value offset into r1")
+        code += lineRO(symbolTable,"SUB",2,5,1,"get expr value's address in DMEM")
+        code += lineRM(symbolTable,"LD",1,0,2,"load expr value into r1")
         ## add Activation Record for PRINT
         # load registers into AR
         code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
