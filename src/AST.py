@@ -1135,7 +1135,7 @@ class ReturnStatement(ASTnode):
     def getValue(self):
         pass # TODO: return statement value
     def checkIfTail(self):
-        return self.expr.checkIfTail()
+        return self.retStatement.checkIfTail()
 
 class FunctionCall(ASTnode):
     def __init__(self, last, semanticStack):
@@ -1184,7 +1184,8 @@ class FunctionCall(ASTnode):
         # check if function can be inlined
         if symbolTable[self.getName()].isNotTail():
             code = symbolTable[self.getName()].getBody().genCode(symbolTable, code, self.getName(), False)
-            return code
+            return code #I'm not sure if I did those last two right you know python way better than me
+
         else:
             ## add Activation Record for function
             # load registers into AR
@@ -1304,8 +1305,4 @@ class Actual(ASTnode):
     def getType(self):
         return self.type
     def checkIfTail(self):
-        expr = self.expr.checkIfTail()
-        type = self.type.checkIfTail()
-        if any(expr,type):
-            return True
-        return False
+        return self.expr.checkIfTail()
