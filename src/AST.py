@@ -69,32 +69,7 @@ class PrintStatement(ASTnode):
         code += lineRM(symbolTable,"ST",1,-8,5,"put value to be printed into arg slot")
         code += lineRM(symbolTable,"LDA",6,-1,6,"decrement stack pointer")
         code += lineRM(symbolTable,"LDA",4,1,4,"increment offset")
-        # now arg should be at end of PRINT's frame, lets look at the PRINT function
-        # to make sure it is pulling it from the right place
-
-# going to be changing below -- should be just one arg. cause it's just printing
-# one final value. I think we should genCode for the expression before we start
-# building the stack frame though, so we should probably do that before the stuff
-# above and then put it in r1 or something
-# true we could just comment it out you're right lets do that
-        # # optionally generate code if function gives arguments
-        # if len(symbolTable[self.getName()].getFormals()) > 0:
-        #     # compute args and store at end of new frame in temp variables
-        #     # keeping track of their offset from beginning
-        #     for i in range(0,len(symbolTable[self.getName()].getFormals())):
-        #         symbolTable.fromCall()
-        #         code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+i//3)
-        #         symbolTable.notFromCall()
-        #     code += lineRM(symbolTable,"LDA",6,-7,5,"reset end of frame")
-        #     code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-            # # move args into correct slots in new stack frame
-            # for i in range(0,len(symbolTable[self.getName()].getFormals())):
-            #     code += lineRM(symbolTable,"LD",2,(3*(level+(i//3)+1)+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
-            #     code += lineRO(symbolTable,"SUB",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
-            #     code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
-            #     code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
-            #     code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
-            #     code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        # now arg should be at end of PRINT's frame
         # add return address to PRINT's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into PRINT's AR")
@@ -113,6 +88,8 @@ class PrintStatement(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def checkIfTail(self):
+        return self.expr.checkIfTail()
 
 class LessThan(ASTnode):
     def __init__(self, last, semanticStack):
@@ -162,6 +139,12 @@ class LessThan(ASTnode):
             return 1
         else:
             return 0
+    def checkIfTail(self):
+        left = self.left.checkIfTail()
+        right = self.right.checkIfTail()
+        if any(left, right):
+            return True
+        return False
 
 class EqualTo(ASTnode):
     def __init__(self, last, semanticStack):
@@ -211,6 +194,12 @@ class EqualTo(ASTnode):
             return 1
         else:
             return 0
+    def checkIfTail(self):
+        left = self.left.checkIfTail()
+        right = self.right.checkIfTail()
+        if any(left, right):
+            return True
+        return False
 
 class PlusExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -253,6 +242,12 @@ class PlusExpr(ASTnode):
         return self.type
     def getValue(self):
         return self.left.getValue() + self.right.getValue()
+    def checkIfTail(self):
+        left = self.left.checkIfTail()
+        right = self.right.checkIfTail()
+        if any(left, right):
+            return True
+        return False
 
 class MinusExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -295,6 +290,12 @@ class MinusExpr(ASTnode):
         return self.type
     def getValue(self):
         return self.left.getValue() - self.right.getValue()
+    def checkIfTail(self):
+        left = self.left.checkIfTail()
+        right = self.right.checkIfTail()
+        if any(left, right):
+            return True
+        return False
 
 class TimesExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -337,6 +338,12 @@ class TimesExpr(ASTnode):
         return self.type
     def getValue(self):
         return self.left.getValue() * self.right.getValue()
+    def checkIfTail(self):
+        left = self.left.checkIfTail()
+        right = self.right.checkIfTail()
+        if any(left, right):
+            return True
+        return False
 
 class DivideExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -379,6 +386,12 @@ class DivideExpr(ASTnode):
         return self.type
     def getValue(self):
         return self.left.getValue() / self.right.getValue()
+    def checkIfTail(self):
+        left = self.left.checkIfTail()
+        right = self.right.checkIfTail()
+        if any(left, right):
+            return True
+        return False
 
 class AndExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -430,6 +443,12 @@ class AndExpr(ASTnode):
             return 1
         else:
             return 0
+    def checkIfTail(self):
+        left = self.left.checkIfTail()
+        right = self.right.checkIfTail()
+        if any(left, right):
+            return True
+        return False
 
 class OrExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -479,6 +498,12 @@ class OrExpr(ASTnode):
             return 1
         else:
             return 0
+    def checkIfTail(self):
+        left = self.left.checkIfTail()
+        right = self.right.checkIfTail()
+        if any(left, right):
+            return True
+        return False
 
 class NotExpr(ASTnode):
     def __init__(self, last, semanticStack):
@@ -519,6 +544,8 @@ class NotExpr(ASTnode):
             return 1
         else:
             return 0
+    def checkIfTail(self):
+        return self.expr.checkIfTail()
 
 class IfStatement(ASTnode):
     def __init__(self, last, semanticStack):
@@ -596,6 +623,13 @@ class IfStatement(ASTnode):
             return self.thenExpr.getValue()
         else:
             return self.elseExpr.getValue()
+    def checkIfTail(self):
+        ifC = self.ifExpr.checkIfTail()
+        thenC = self.thenExpr.checkIfTail()
+        elseC = self.elseExpr.checkIfTail()
+        if any(ifC, thenC, elseC):
+            return True
+        return False
 
 class Identifier(ASTnode):
     def __init__(self, last, semanticStack):
@@ -652,6 +686,8 @@ class Identifier(ASTnode):
         print("Unimplemented feature: cannot pass in variable to function call.")
         exit()
         pass # TODO: identifier value
+    def checkIfTail(self):
+        return False
 
 class IntegerLiteral(ASTnode):
     def __init__(self, last, semanticStack):
@@ -681,6 +717,8 @@ class IntegerLiteral(ASTnode):
         return code
     def getValue(self):
         return self.value
+    def checkIfTail(self):
+        return False
 
 class BooleanLiteral(ASTnode):
     def __init__(self, last, semanticStack):
@@ -716,6 +754,8 @@ class BooleanLiteral(ASTnode):
             return 1
         else:
             return 0
+    def checkIfTail(self):
+        return False
 
 class Type(ASTnode):
     def __init__(self, last, semanticStack):
@@ -759,6 +799,8 @@ class NegateExpr(ASTnode):
         return self.type
     def getValue(self):
         return 0 - self.factor.getValue()
+    def checkIfTail(self):
+        return self.factor.checkIfTail()
 
 class Program(ASTnode):
     def __init__(self, last, semanticStack):
@@ -1017,6 +1059,8 @@ class Function(ASTnode):
         return self.type
     def getValue(self):
         pass # TODO: function value
+    def checkIfTail(self):
+        return self.body.checkIfTail()
 
 class Body(ASTnode):
     def __init__(self, last, semanticStack):
@@ -1053,6 +1097,17 @@ class Body(ASTnode):
         return self.type
     def getValue(self):
         pass # TODO: body value
+    def checkIfTail(self):
+        psc = 0
+        for ps in self.printStatements:
+            if ps.checkIfTail():
+                psc += 1
+        if psc > 0:
+            psC = True
+        retC = self.returnStatement.checkIfTail()
+        if any(psC, retC):
+            return True
+        return False
 
 
 class ReturnStatement(ASTnode):
@@ -1079,6 +1134,8 @@ class ReturnStatement(ASTnode):
         return code
     def getValue(self):
         pass # TODO: return statement value
+    def checkIfTail(self):
+        return self.expr.checkIfTail()
 
 class FunctionCall(ASTnode):
     def __init__(self, last, semanticStack):
@@ -1124,59 +1181,64 @@ class FunctionCall(ASTnode):
                 symbolTable.newError()
                 print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
     def genCode(self, symbolTable, code, fName, child, level):
-        ## add Activation Record for function
-        # load registers into AR
-        code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
-        code += lineRM(symbolTable,"ST",5,-7,6,"save register 5 to AR")
-        code += lineRM(symbolTable,"ST",4,-6,6,"save register 4 to AR")
-        code += lineRM(symbolTable,"ST",3,-5,6,"save register 3 to AR")
-        code += lineRM(symbolTable,"ST",2,-4,6,"save register 2 to AR")
-        code += lineRM(symbolTable,"ST",1,-3,6,"save register 1 to AR")
-        # set r5 and r6 to beginning and end of function's AR, respectively
-        code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of {}'s AR".format(self.getName()))
-        code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
-        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-        # optionally generate code if function gives arguments
-        if len(symbolTable[self.getName()].getFormals()) > 0:
-            # compute args and store at end of new frame in temp variables
-            # keeping track of their offset from beginning
-            for i in range(0,len(symbolTable[self.getName()].getFormals())):
-                symbolTable.fromCall()
-                code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+i//3)
-                symbolTable.notFromCall()
-            code += lineRM(symbolTable,"LDA",6,-7,5,"reset end of frame")
+        # check if function can be inlined
+        if symbolTable[self.getName()].isNotTail():
+            code = symbolTable[self.getName()].getBody().genCode(symbolTable, code, self.getName(), False)
+            return code
+        else:
+            ## add Activation Record for function
+            # load registers into AR
+            code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
+            code += lineRM(symbolTable,"ST",5,-7,6,"save register 5 to AR")
+            code += lineRM(symbolTable,"ST",4,-6,6,"save register 4 to AR")
+            code += lineRM(symbolTable,"ST",3,-5,6,"save register 3 to AR")
+            code += lineRM(symbolTable,"ST",2,-4,6,"save register 2 to AR")
+            code += lineRM(symbolTable,"ST",1,-3,6,"save register 1 to AR")
+            # set r5 and r6 to beginning and end of function's AR, respectively
+            code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of {}'s AR".format(self.getName()))
+            code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of {}'s AR".format(self.getName()))
             code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-            # move args into correct slots in new stack frame
-            for i in range(0,len(symbolTable[self.getName()].getFormals())):
-                code += lineRM(symbolTable,"LD",2,(3*(level+(i//3)+1)+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
-                code += lineRO(symbolTable,"SUB",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
-                code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
-                code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
-                code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
+            # optionally generate code if function gives arguments
+            if len(symbolTable[self.getName()].getFormals()) > 0:
+                # compute args and store at end of new frame in temp variables
+                # keeping track of their offset from beginning
+                for i in range(0,len(symbolTable[self.getName()].getFormals())):
+                    symbolTable.fromCall()
+                    code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+i//3)
+                    symbolTable.notFromCall()
+                code += lineRM(symbolTable,"LDA",6,-7,5,"reset end of frame")
                 code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-        # add return address to function's AR
-        code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
-        code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
-        # jump to function body
-        code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
-        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-        # restore registers
-        code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
-        code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
-        code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
-        code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
-        code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
-        code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
-        # decrement r6 to make call's return value a temp variable in current frame
-        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
-        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-        if child == 0:
-            code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
-        elif child == 1:
-            code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
-        elif child == 2:
-            code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
-        return code
+                # move args into correct slots in new stack frame
+                for i in range(0,len(symbolTable[self.getName()].getFormals())):
+                    code += lineRM(symbolTable,"LD",2,(3*(level+(i//3)+1)+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
+                    code += lineRO(symbolTable,"SUB",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
+                    code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
+                    code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
+                    code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
+                    code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+            # add return address to function's AR
+            code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
+            code += lineRM(symbolTable,"ST",1,-1,5,"store return address into {}'s AR".format(self.getName()))
+            # jump to function body
+            code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
+            code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+            # restore registers
+            code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
+            code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
+            code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
+            code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
+            code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
+            code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
+            # decrement r6 to make call's return value a temp variable in current frame
+            code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
+            code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+            if child == 0:
+                code += lineRM(symbolTable,"ST",4,(3*level),0,"store offset in frame")
+            elif child == 1:
+                code += lineRM(symbolTable,"ST",4,(3*level)+1,0,"store offset in frame")
+            elif child == 2:
+                code += lineRM(symbolTable,"ST",4,(3*level)+2,0,"store offset in frame")
+            return code
     def getName(self):
         return self.identifier.getName()
     def getValue(self):
@@ -1187,6 +1249,8 @@ class FunctionCall(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def checkIfTail(self):
+        return True
 
 class Actuals(ASTnode):
     def __init__(self, last, semanticStack):
@@ -1216,6 +1280,8 @@ class Actuals(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def checkIfTail(self):
+        return self.actuals.checkIfTail()
 
 class Actual(ASTnode):
     def __init__(self, last, semanticStack):
@@ -1237,3 +1303,9 @@ class Actual(ASTnode):
         self.type = myType
     def getType(self):
         return self.type
+    def checkIfTail(self):
+        expr = self.expr.checkIfTail()
+        type = self.type.checkIfTail()
+        if any(expr,type):
+            return True
+        return False

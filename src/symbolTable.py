@@ -103,6 +103,8 @@ class FunctionRecord:
         self.formals = {}
         self.formalError = False
         self.programFunction = False
+        self.node = functionNode
+        self.tail = functionNode.checkIfTail()
         if functionNode.getFormals():
             pos = 0
             for formal in functionNode.getFormals():
@@ -168,3 +170,7 @@ class FunctionRecord:
         self.offsets.pop()
     def peekLastOffset(self):
         return self.offsets[-2]
+    def isNotTail(self):
+        return self.tail
+    def getBody(self):
+        return self.node.body
