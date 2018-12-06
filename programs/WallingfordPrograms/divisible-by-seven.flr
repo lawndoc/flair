@@ -44,7 +44,7 @@ program IsPrime(n : integer);
 
    end;
 
-   funciton isPrime( n : integer , divisor : integer ) : boolean
+   function isPrime( n : integer , divisor : integer ) : boolean
    begin
 	   return if divisibleBy( n, divisor) then 0
 	   else if divisor = 2 then false else isPrime( n, divisor-1)
