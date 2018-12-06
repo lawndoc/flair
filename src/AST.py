@@ -1185,7 +1185,7 @@ class FunctionCall(ASTnode):
                 print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
     def genCode(self, symbolTable, code, fName, child, level):
         # check if function can be inlined
-        if symbolTable[self.getName()].isNotTail():
+        if not symbolTable[self.getName()].isNotTail():
             code = symbolTable[self.getName()].getBody().genCode(symbolTable, code, self.getName(), False)
             return code
 
