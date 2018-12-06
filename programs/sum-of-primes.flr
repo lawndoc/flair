@@ -2,6 +2,7 @@ program sum_of_primes( maximum : integer );
   { ----------------------------------------------
     functions from the Flair library
     ---------------------------------------------- }
+  {test}
 
   function MOD( m : integer, n : integer ) : integer
   begin
