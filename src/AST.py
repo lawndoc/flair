@@ -50,8 +50,10 @@ class PrintStatement(ASTnode):
         self.expr.analyze(symbolTable, ids, fName)
         self.setType(self.expr.getType())
     def genCode(self, symbolTable, code, fName, fromMain, level):
-        print("Compiler Error: currently cannot use Print Statements.")
-        exit()
+        # get value for expression
+        code = self.expr.genCode(symbolTable, code, fName, 0, level)
+        # expr value should be in r6 at the end of the function's frame
+        code += lineRM(symbolTable,"LD",1,0,6,"put value of print expr into r1")
         ## add Activation Record for PRINT
         # load registers into AR
         code += lineRM(symbolTable,"ST",6,-8,6,"save register 6 to AR")
@@ -62,23 +64,50 @@ class PrintStatement(ASTnode):
         code += lineRM(symbolTable,"ST",1,-3,6,"save register 1 to AR")
         # set r5 and r6 to beginning and end of PRINT's AR, respectively
         code += lineRM(symbolTable,"LDA",5,-1,6,"set r5 to beginning of PRINT's AR")
-        code += lineRM(symbolTable,"LDC",2,7,0,"load 7 into r2")
-        code += lineRO(symbolTable,"SUB",6,5,2,"set r6 to end of PRINT's AR")
+        code += lineRO(symbolTable,"LDA",6,-7,5,"set r6 to end of PRINT's AR")
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
-        # evaluate expression and place in PRINT's arg slot
-        code = self.expr.genCode(symbolTable, code, fName, 0, 0)
-        code += lineRM(symbolTable,"LD",1,(3*level),0,"load expr's temp value offset into r1")
-        code += lineRO(symbolTable,"SUB",3,5,1,"get temp value's address in DMEM")
-        code += lineRM(symbolTable,"LD",2,0,3,"load temp value into r2 for arg slot")
-        code += lineRM(symbolTable,"ST",2,-8,5,"load arg into AR")
-        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
-        code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        code += lineRM(symbolTable,"ST",1,-8,5,"put value to be printed into arg slot")
+        code += lineRM(symbolTable,"LDA",6,-1,6,"decrement stack pointer")
+        code += lineRM(symbolTable,"LDA",4,1,4,"increment offset")
+        # now arg should be at end of PRINT's frame, lets look at the PRINT function
+        # to make sure it is pulling it from the right place
+
+# going to be changing below -- should be just one arg. cause it's just printing
+# one final value. I think we should genCode for the expression before we start
+# building the stack frame though, so we should probably do that before the stuff
+# above and then put it in r1 or something
+# true we could just comment it out you're right lets do that
+        # # optionally generate code if function gives arguments
+        # if len(symbolTable[self.getName()].getFormals()) > 0:
+        #     # compute args and store at end of new frame in temp variables
+        #     # keeping track of their offset from beginning
+        #     for i in range(0,len(symbolTable[self.getName()].getFormals())):
+        #         symbolTable.fromCall()
+        #         code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+i//3)
+        #         symbolTable.notFromCall()
+        #     code += lineRM(symbolTable,"LDA",6,-7,5,"reset end of frame")
+        #     code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+            # # move args into correct slots in new stack frame
+            # for i in range(0,len(symbolTable[self.getName()].getFormals())):
+            #     code += lineRM(symbolTable,"LD",2,(3*(level+(i//3)+1)+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
+            #     code += lineRO(symbolTable,"SUB",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
+            #     code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
+            #     code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
+            #     code += lineRM(symbolTable,"LDA",6,-1,6,"decrement end of stack pointer")
+            #     code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
         # add return address to PRINT's AR
         code += lineRM(symbolTable,"LDA",1,2,7,"set r1 to return address")
         code += lineRM(symbolTable,"ST",1,-1,5,"store return address into PRINT's AR")
         # jump to PRINT body
-        code += lineRM(symbolTable,"LDA",7,"<PRINT>",0,"jump to PRINT")
+        code += lineRM(symbolTable,"LDA",7,"<{}>".format(self.getName()),0,"jump to {}".format(self.getName()))
         code += lineRO(symbolTable,"SUB",4,5,6,"update current offset")
+        # restore registers
+        code += lineRM(symbolTable,"LD",1,-2,5,"restore r1")
+        code += lineRM(symbolTable,"LD",2,-3,5,"restore r2")
+        code += lineRM(symbolTable,"LD",3,-4,5,"restore r3")
+        code += lineRM(symbolTable,"LD",4,-5,5,"restore r4")
+        code += lineRM(symbolTable,"LD",6,-7,5,"restore r6")
+        code += lineRM(symbolTable,"LD",5,-6,5,"restore r5")
         return code
     def setType(self, myType):
         self.type = myType
