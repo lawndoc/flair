@@ -142,7 +142,7 @@ class LessThan(ASTnode):
     def checkIfTail(self):
         left = self.left.checkIfTail()
         right = self.right.checkIfTail()
-        if any(left, right):
+        if any(x for x in [left, right]):
             return True
         return False
 
@@ -197,7 +197,7 @@ class EqualTo(ASTnode):
     def checkIfTail(self):
         left = self.left.checkIfTail()
         right = self.right.checkIfTail()
-        if any(left, right):
+        if any(x for x in [left, right]):
             return True
         return False
 
@@ -245,7 +245,7 @@ class PlusExpr(ASTnode):
     def checkIfTail(self):
         left = self.left.checkIfTail()
         right = self.right.checkIfTail()
-        if any(left, right):
+        if any(x for x in [left, right]):
             return True
         return False
 
@@ -293,7 +293,7 @@ class MinusExpr(ASTnode):
     def checkIfTail(self):
         left = self.left.checkIfTail()
         right = self.right.checkIfTail()
-        if any(left, right):
+        if any(x for x in [left, right]):
             return True
         return False
 
@@ -341,7 +341,7 @@ class TimesExpr(ASTnode):
     def checkIfTail(self):
         left = self.left.checkIfTail()
         right = self.right.checkIfTail()
-        if any(left, right):
+        if any(x for x in [left, right]):
             return True
         return False
 
@@ -389,7 +389,7 @@ class DivideExpr(ASTnode):
     def checkIfTail(self):
         left = self.left.checkIfTail()
         right = self.right.checkIfTail()
-        if any(left, right):
+        if any(x for x in [left, right]):
             return True
         return False
 
@@ -446,7 +446,7 @@ class AndExpr(ASTnode):
     def checkIfTail(self):
         left = self.left.checkIfTail()
         right = self.right.checkIfTail()
-        if any(left, right):
+        if any(x for x in [left, right]):
             return True
         return False
 
@@ -501,7 +501,7 @@ class OrExpr(ASTnode):
     def checkIfTail(self):
         left = self.left.checkIfTail()
         right = self.right.checkIfTail()
-        if any(left, right):
+        if any(x for x in [left, right]):
             return True
         return False
 
@@ -627,7 +627,7 @@ class IfStatement(ASTnode):
         ifC = self.ifExpr.checkIfTail()
         thenC = self.thenExpr.checkIfTail()
         elseC = self.elseExpr.checkIfTail()
-        if any(ifC, thenC, elseC):
+        if any(x for x in [ifC, thenC, elseC]):
             return True
         return False
 
@@ -1105,7 +1105,7 @@ class Body(ASTnode):
         if psc > 0:
             psC = True
         retC = self.returnStatement.checkIfTail()
-        if any(psC, retC):
+        if any(x for x in [psC, retC]):
             return True
         return False
 
@@ -1184,7 +1184,7 @@ class FunctionCall(ASTnode):
         # check if function can be inlined
         if symbolTable[self.getName()].isNotTail():
             code = symbolTable[self.getName()].getBody().genCode(symbolTable, code, self.getName(), False)
-            return code #I'm not sure if I did those last two right you know python way better than me
+            return code
 
         else:
             ## add Activation Record for function
