@@ -1099,6 +1099,7 @@ class Body(ASTnode):
         pass # TODO: body value
     def checkIfTail(self):
         psc = 0
+        psC = False
         for ps in self.printStatements:
             if ps.checkIfTail():
                 psc += 1
