@@ -949,6 +949,8 @@ class Program(ASTnode):
                    code[code.index(placeholder)+phLen:]
 
         return code
+    def checkIfTail(self):
+        return True
 
 
 class Formals(ASTnode):
