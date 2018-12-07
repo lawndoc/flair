@@ -1211,8 +1211,7 @@ class FunctionCall(ASTnode):
                 numFormals = len(symbolTable[self.getName()].getFormals())
                 for i in range(0,numFormals):
                     if self.actuals[i].hasFunctionCall():
-                        print("Unimplemented Feature: Cannot pass a function call as an argument into \
-                        a function call.")
+                        print("Unimplemented Feature: Cannot pass a function call as an argument into a function call.")
                         exit()
                     # generate code for actual and put value in temp variable
                     symbolTable.fromCall()
