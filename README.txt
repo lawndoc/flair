@@ -1,21 +1,17 @@
 Malwareswaldo: C.J. May, Nick Sanford
 
-New to Project 6:
-    - Made tm-debug to help debug TM programs (some full paths need modified
-        to run)
-    - Updated src/generator.py but most of the heavy lifting goes on
-        in src/AST.py with the genCode() method for each node
-    - Made lots of test files to test features of language
-    - Made a "late CS1 program" named "sum-of-primes.flr" that will
-        add all of the prime numbers less than the maximum number inputted
-        by the user. This was a solution to one of the Euler Project Problems
-        (Problem 10) to find the sum of all primes below 2 million.
+New to Project 7:
+    - Fixed various issues with code generator. Now implements everything
+        except for those noted below.
+    - Created test programs to test features of the flair language.
 
 Known Bugs:
+    - Status stack pointer implementation is hard-coded in each function that is
+        generated because it is handled by Python instead of TM.
 
 Features Not Implemented:
     - Compiler doesn't track which line of code an error occurred on.
-    - Can't yet generate print statements.
+    - Can't pass a function call as an argument to another function call.
 
 Optimizations:
     - Scanner: We combined multiple states when possibly reading a word reserved

@@ -1,5 +1,12 @@
 #!/usr/bin/python3
 
+import sys
+
+def excepthook(type, value, traceback):
+    print("Unexpected Compiler Error in SymbolTable")
+
+sys.excepthook = excepthook
+
 class SymbolTable():
     def __init__(self):
         self.table = {}

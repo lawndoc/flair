@@ -6,10 +6,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.errors import SemanticError
 from src.symbolTable import SymbolTable, FunctionRecord, FormalRecord
 
-# def excepthook(type, value, traceback):
-#     print(str(value))
-#
-# sys.excepthook = excepthook
+def excepthook(type, value, traceback):
+    print(str(value))
+
+sys.excepthook = excepthook
 
 
 def lineRO(symbolTable, instruction, r1, r2, r3, comment = ""):
@@ -1185,7 +1185,7 @@ class FunctionCall(ASTnode):
                 symbolTable.newError()
                 print("Semantic error: in function '{}', the call to function '{}' does not pass in the correct number of arguments".format(fName, self.getName()))
     def genCode(self, symbolTable, code, fName, child, level):
-        # check if function can be inlined
+        # check if function can be inlined -- TODO: not working yet
         # if not symbolTable[self.getName()].isNotTail():
         #     code = symbolTable[self.getName()].getBody().genCode(symbolTable, code, self.getName(), False)
         #     return code
@@ -1210,6 +1210,10 @@ class FunctionCall(ASTnode):
                 # keeping track of their offset from beginning
                 numFormals = len(symbolTable[self.getName()].getFormals())
                 for i in range(0,numFormals):
+                    if self.actuals[i].hasFunctionCall():
+                        print("Unimplemented Feature: Cannot pass a function call as an argument into \
+                        a function call.")
+                        exit()
                     # generate code for actual and put value in temp variable
                     symbolTable.fromCall()
                     code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+(i//3))
@@ -1317,4 +1321,6 @@ class Actual(ASTnode):
     def getType(self):
         return self.type
     def checkIfTail(self):
+        return self.expr.checkIfTail()
+    def hasFunctionCall(self):
         return self.expr.checkIfTail()

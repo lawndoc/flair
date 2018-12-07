@@ -9,10 +9,10 @@ from src.errors import ParseError
 from src import AST
 from src.parseTable import NonTerminal, parse_table
 
-# def excepthook(type, value, traceback):
-#     print(str(value))
-#
-# sys.excepthook = excepthook
+def excepthook(type, value, traceback):
+    print(str(value))
+
+sys.excepthook = excepthook
 
 class Parser:
     def __init__(self, scanner):
