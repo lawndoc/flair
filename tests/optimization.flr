@@ -1,0 +1,15 @@
+program optimizable( a: integer, b: integer );
+    function tail( a: integer, b: integer ) : integer
+    begin
+        return a + b
+    end;
+    function test( a: integer, loop: integer ) : integer
+    begin
+        return if loop = 0 then
+                tail( a, a )
+            else
+                loop(a, loop-1)
+    end;
+begin
+    return loop(a, b)
+end.
