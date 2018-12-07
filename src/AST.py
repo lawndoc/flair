@@ -1210,11 +1210,12 @@ class FunctionCall(ASTnode):
                 # keeping track of their offset from beginning
                 numFormals = len(symbolTable[self.getName()].getFormals())
                 for i in range(0,numFormals):
+                    # generate code for actual and put value in temp variable
                     symbolTable.fromCall()
-                    code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+i//3)
+                    code = self.actuals[i].genCode(symbolTable, code, fName, i%3, level+1+(i//3))
                     symbolTable.notFromCall()
                     # move arg into correct slot in new stack frame
-                    code += lineRM(symbolTable,"LD",2,(3*(level+(i//3)+1)+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
+                    code += lineRM(symbolTable,"LD",2,(3*(level+1+(i//3))+i%3),0,"load arg{}'s offset into r2".format(str(i+1)))
                     code += lineRO(symbolTable,"SUB",3,5,2,"load temp arg{}'s address into r3".format(str(i+1)))
                     code += lineRM(symbolTable,"LD",2,0,3,"load arg{} into r2".format(str(i+1)))
                     code += lineRM(symbolTable,"ST",2,-(i+8),5,"load arg{} into AR".format(str(i+1)))
