@@ -8,8 +8,8 @@ program optimizable( a: integer, b: integer );
         return if loop = 0 then
                 tail( a, a )
             else
-                loop(a, loop-1)
+                test(a, loop-1)
     end;
 begin
-    return loop(a, b)
+    return test(a, b)
 end.
