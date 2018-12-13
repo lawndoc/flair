@@ -3,7 +3,7 @@ program IsPrime(n : integer);
     function MOD( n : integer, divisor : integer ) : integer
     begin
 
-        return m - m/n * n
+        return divisor - divisor/n * n
     end;
 
     function isPrime( n : integer , divisor : integer ) : boolean

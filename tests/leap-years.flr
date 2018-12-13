@@ -1,21 +1,20 @@
-program NextTwentyLeapYears(last: integer);
+program LeapYears(last: integer);
 	{ Input the last leap year and return the next 20 leap years. }
 	function MOD( n: integer, divisor: integer ) : integer
 	begin
-		return m - m/n * n
+		return divisor - divisor/n * n
 	end;
 	function getNextLeapYear( n: integer, m: integer ) : integer
 	begin
-		print( if m > 1 then
-				if MOD(n, 100) = 0 then
-					if MOD(n, 400) = 0 then
-						n + 4
-					else
-						n + 8
-				else
+		print( if 2 < m then
+				getNextLeapYear(n+4, m-1)
+			else if MOD(n, 100) = 0 then
+				if MOD(n, 400) = 0 then
 					n + 4
+				else
+					n + 8
 			else
-				getNextLeapYear(n+4, m-1) );
+				n + 4 );
 		return if m = 1 then
 				if MOD(n, 100) = 0 then
 					if MOD(n, 400) = 0 then
@@ -26,7 +25,7 @@ program NextTwentyLeapYears(last: integer);
 					n + 4
 			else
 				getNextLeapYear(n+4, m-1)
-	end{;}
+	end;
 begin
 	return getNextLeapYear(last, 20)
 end.
