@@ -1,0 +1,14 @@
+{
+  This program predicts the US population in a future year based
+  on the current rates of birth, death, and net migration.  It
+  uses the 2014 population of 318,817,047 as its starting point.
+}
+
+program main();
+begin
+  return
+    318817047
+    + (( (2020 - 2014) * 1461 * 24 * 60 * 60 ) / 4) /  8   { birth }
+    - (( (2020 - 2014) * 1461 * 24 * 60 * 60 ) / 4) / 13   { death }
+    + (( (2020 - 2014) * 1461 * 24 * 60 * 60 ) / 4) / 38   { migration }
+end.

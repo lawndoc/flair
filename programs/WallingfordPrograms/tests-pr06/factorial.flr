@@ -1,0 +1,10 @@
+program factorial(n : integer);
+  function factAPS(n : integer, acc : integer) : integer
+  begin
+    return if n = 0
+              then acc
+              else factorial(n-1, n*acc)
+  end;
+begin
+   return factAPS(n, 1)
+end.

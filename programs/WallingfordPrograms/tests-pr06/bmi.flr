@@ -1,0 +1,26 @@
+{
+  This program computes a person's body mass index.  Inputs are
+  the person's height in feet and inches and the person's height
+  in pounds.  The height and weight are converted to meters and
+  kilograms, respectively.  The computation typically uses one
+  significant digit after the decimal point, so I multiply the
+  weight by 100, divide the BMI value by 10, and then use 10x
+  the usual numbers for the category boindaries.
+
+  Ordinarily, we would have a function to compute the BMI and
+  a function to classify the BMI using an integer code:
+     0   underweight
+     1   normal
+     2   overweight
+     3   obese
+  But without functions, I just return the BMI.
+}
+
+program main();
+begin
+  return
+     ((1000 * ((453592 * 160) / 10000))           { 160 pounds }
+      /
+      ((254 * (12 * 6 + 0) / 100) *               { 6 feet, 0 inches }
+       (254 * (12 * 6 + 0) / 100)))               { 6 feet, 0 inches }
+end.
